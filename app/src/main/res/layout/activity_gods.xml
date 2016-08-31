@@ -1,0 +1,181 @@
+<?xml version="1.0" encoding="utf-8"?>
+<LinearLayout
+    xmlns:android="http://schemas.android.com/apk/res/android"
+    xmlns:app="http://schemas.android.com/apk/res-auto"
+    xmlns:tools="http://schemas.android.com/tools"
+    android:layout_width="match_parent"
+    android:layout_height="match_parent"
+    android:background="@color/backcolor"
+    android:orientation="vertical"
+    tools:context="com.chinalooke.android.cheju.activity.GodsActivity">
+
+    <ImageView
+        android:id="@+id/iv_qcord"
+        android:layout_width="match_parent"
+        android:layout_height="match_parent"
+        android:visibility="gone"/>
+
+
+    <RelativeLayout
+        android:layout_width="match_parent"
+        android:layout_height="wrap_content"
+        android:background="#3D96F8"
+        >
+
+
+        <FrameLayout
+            android:id="@+id/iv_wirte_back"
+            android:layout_width="36dp"
+            android:layout_height="36dp"
+            android:layout_marginTop="6dp"
+            android:clickable="true">
+
+
+            <ImageView
+                android:layout_width="24dp"
+                android:layout_height="24dp"
+                android:layout_centerVertical="true"
+                android:layout_gravity="center"
+                android:layout_marginStart="8dp"
+                android:background="@mipmap/icon_back"/>
+
+
+        </FrameLayout>
+
+
+        <TextView
+            android:id="@+id/tv_goods_name"
+            android:layout_width="match_parent"
+            android:layout_height="@dimen/edit_height"
+            android:gravity="center"
+            android:paddingLeft="16dp"
+            android:text="商品详情"
+            android:textColor="#FFFFFF"
+            android:textSize="18dp"
+            android:textStyle="bold"
+            />
+
+
+    </RelativeLayout>
+
+
+    <com.chinalooke.android.cheju.view.MyScrollView
+        android:id="@+id/scrollView"
+        android:layout_width="fill_parent"
+        android:layout_height="fill_parent">
+
+        <LinearLayout
+            android:layout_width="match_parent"
+            android:layout_height="wrap_content"
+            android:orientation="vertical">
+
+            <krelve.view.Kanner
+                android:id="@+id/kanner_goods"
+                android:layout_width="match_parent"
+                android:layout_height="160dp"
+                android:scaleType="centerCrop"/>
+
+            <include
+                android:id="@+id/buy"
+                layout="@layout/buy_layout"/>
+
+            <TextView
+                style="@style/linestyle"
+                android:layout_height="0.5dp"/>
+
+            <LinearLayout
+                android:layout_width="match_parent"
+                android:layout_height="48dp"
+                android:layout_weight="1"
+                android:background="@android:color/white"
+                android:gravity="center_vertical"
+                android:orientation="horizontal"
+                android:paddingLeft="8dp">
+
+                <ImageView
+                    android:id="@+id/iv1"
+                    android:layout_width="16dp"
+                    android:layout_height="16dp"
+                    android:layout_marginLeft="1dp"
+                    android:background="@drawable/collect_selector"/>
+
+                <ImageView
+                    android:id="@+id/iv2"
+                    android:layout_width="16dp"
+                    android:layout_height="16dp"
+                    android:layout_marginLeft="1dp"
+                    android:src="@drawable/collect_selector"/>
+
+                <ImageView
+                    android:id="@+id/iv3"
+                    android:layout_width="16dp"
+                    android:layout_height="16dp"
+                    android:layout_marginLeft="1dp"
+                    android:src="@drawable/collect_selector"/>
+
+                <ImageView
+                    android:id="@+id/iv4"
+                    android:layout_width="16dp"
+                    android:layout_height="16dp"
+                    android:layout_marginLeft="1dp"
+                    android:src="@drawable/collect_selector"/>
+
+                <ImageView
+                    android:id="@+id/iv5"
+                    android:layout_width="16dp"
+                    android:layout_height="16dp"
+                    android:layout_marginLeft="1dp"
+                    android:src="@drawable/collect_selector"/>
+
+                <TextView
+                    android:id="@+id/tv_score_goods"
+                    android:layout_width="wrap_content"
+                    android:layout_height="16dp"
+                    android:layout_marginLeft="8dp"
+                    android:text="5.0分"
+                    android:textSize="14sp"/>
+
+
+                <RelativeLayout
+                    android:layout_width="match_parent"
+                    android:layout_height="match_parent"
+                    android:gravity="center_vertical">
+
+                    <ImageView
+                        android:layout_width="24dp"
+                        android:layout_height="24dp"
+                        android:layout_alignTop="@+id/tv_sales"
+                        android:layout_marginRight="8dp"
+                        android:layout_toLeftOf="@id/tv_sales"
+                        android:src="@mipmap/sales"/>
+
+
+                    <TextView
+                        android:id="@+id/tv_sales"
+                        android:layout_width="wrap_content"
+                        android:layout_height="24dp"
+                        android:layout_alignParentRight="true"
+                        android:layout_marginRight="8dp"
+                        android:gravity="center"
+                        android:text="已售87777"/>
+
+                </RelativeLayout>
+
+
+            </LinearLayout>
+
+            <TextView
+                android:id="@+id/tv_goods_descript"
+                android:layout_width="match_parent"
+                android:layout_height="100dp"
+                android:layout_marginTop="16dp"
+                android:background="@android:color/white"
+                android:paddingLeft="16dp"
+                android:paddingRight="16dp"/>
+
+
+        </LinearLayout>
+    </com.chinalooke.android.cheju.view.MyScrollView>
+
+
+</LinearLayout>

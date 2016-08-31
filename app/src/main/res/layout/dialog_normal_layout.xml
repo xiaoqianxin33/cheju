@@ -1,0 +1,37 @@
+<?xml version="1.0" encoding="utf-8"?>
+<FrameLayout xmlns:android="http://schemas.android.com/apk/res/android"
+             android:layout_width="fill_parent"
+             android:layout_height="fill_parent"
+             android:clickable="true"
+             android:orientation="vertical"
+             android:padding="20.0dip">
+
+    <LinearLayout
+        android:layout_width="match_parent"
+        android:layout_height="wrap_content"
+        android:background="@android:color/white"
+        android:orientation="vertical">
+
+        <Button
+            android:id="@+id/btn_album_photoway"
+            style="@style/Botton"
+            android:text="从相册选择"
+            />
+
+        <Button
+            android:id="@+id/btn_take_photoway"
+            style="@style/Botton"
+            android:text="手机拍照"/>
+
+        <Button
+            android:id="@+id/btn_cancle_photoway"
+            style="@style/Botton"
+            android:layout_marginBottom="16dp"
+            android:background="@android:color/holo_red_light"
+            android:text="取消"/>
+
+
+    </LinearLayout>
+
+
+</FrameLayout>

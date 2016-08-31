@@ -1,0 +1,73 @@
+<?xml version="1.0" encoding="utf-8"?>
+<LinearLayout
+    xmlns:android="http://schemas.android.com/apk/res/android"
+    xmlns:tools="http://schemas.android.com/tools"
+    android:layout_width="match_parent"
+    android:layout_height="match_parent"
+    android:orientation="vertical"
+    tools:context="com.chinalooke.android.cheju.activity.salesman.MainSalesActivity">
+
+    <TextView
+        style="@style/basetitle"
+        android:text="@string/cheju"
+        />
+
+
+    <android.support.v4.view.ViewPager
+        android:id="@+id/vp_sales_main"
+        android:layout_width="match_parent"
+        android:layout_height="0dp"
+        android:layout_weight="1"/>
+
+
+    <RadioGroup
+        android:id="@+id/rg_main"
+        android:layout_width="match_parent"
+        android:layout_height="@dimen/edit_height"
+        android:background="#EEEDEB"
+        android:orientation="horizontal"
+        >
+
+        <RadioButton
+            android:id="@+id/rb_yh"
+            android:layout_width="wrap_content"
+            android:layout_height="match_parent"
+            android:layout_gravity="center_vertical"
+            android:layout_weight="1"
+            android:button="@null"
+            android:drawableTop="@drawable/main_home_salesman_selector"
+            android:gravity="center"
+            android:text="客户"
+            android:textColor="@color/main_bottom_text_selector"
+            android:textSize="12sp"/>
+
+        <RadioButton
+            android:id="@+id/rb_bdh"
+            android:layout_width="wrap_content"
+            android:layout_height="match_parent"
+            android:layout_gravity="center_vertical"
+            android:layout_weight="1"
+            android:button="@null"
+            android:drawableTop="@drawable/main_policy_salesman_selector"
+            android:gravity="center"
+            android:text="审核"
+            android:textColor="@color/main_bottom_text_selector"
+            android:textSize="12sp"/>
+
+        <RadioButton
+            android:id="@+id/rb_yj"
+            android:layout_width="wrap_content"
+            android:layout_height="match_parent"
+            android:layout_gravity="center_vertical"
+            android:layout_weight="1"
+            android:button="@null"
+            android:drawableTop="@drawable/main_preformence_salesman_selector"
+            android:gravity="center"
+            android:text="业绩"
+            android:textColor="@color/main_bottom_text_selector"
+            android:textSize="12sp"/>
+
+    </RadioGroup>
+
+
+</LinearLayout>

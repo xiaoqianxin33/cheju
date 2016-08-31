@@ -1,0 +1,41 @@
+<?xml version="1.0" encoding="utf-8"?>
+<LinearLayout
+    xmlns:android="http://schemas.android.com/apk/res/android"
+    xmlns:tools="http://schemas.android.com/tools"
+    android:layout_width="match_parent"
+    android:layout_height="match_parent"
+    android:background="#EDEBE9"
+    android:orientation="vertical"
+    tools:context="com.chinalooke.android.cheju.activity.LipeiActivity">
+
+    <TextView
+        style="@style/basetitle"
+        android:text="在线理赔"
+        />
+
+    <ImageView
+        android:layout_width="match_parent"
+        android:layout_height="200dp"
+        android:scaleType="fitXY"
+        android:src="@mipmap/pic1"/>
+
+    <TextView
+        android:layout_width="match_parent"
+        android:layout_height="wrap_content"
+        android:background="@android:color/white"
+        android:paddingBottom="8dp"
+        android:paddingEnd="8dp"
+        android:paddingStart="8dp"
+        android:paddingTop="8dp"
+        android:text="@string/lipei"
+        android:textColor="@android:color/black"
+        android:textSize="16sp"
+        />
+
+    <Button
+        android:id="@+id/btn_lipei"
+        style="@style/Botton"
+        android:layout_marginTop="16dp"
+        android:text="免费拨打电话"/>
+
+</LinearLayout>

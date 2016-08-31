@@ -1,0 +1,181 @@
+<?xml version="1.0" encoding="utf-8"?>
+<LinearLayout
+    xmlns:android="http://schemas.android.com/apk/res/android"
+    xmlns:tools="http://schemas.android.com/tools"
+    android:id="@+id/ll_policy_detail"
+    android:layout_width="match_parent"
+    android:layout_height="match_parent"
+    android:background="@android:color/white"
+    android:orientation="vertical"
+    tools:context="com.chinalooke.android.cheju.activity.TakePhotoActivity">
+
+    <LinearLayout
+        android:layout_width="match_parent"
+        android:layout_height="48dp"
+        android:gravity="center_vertical"
+        android:orientation="horizontal">
+
+        <TextView
+            android:layout_width="0dp"
+            android:layout_height="match_parent"
+            android:layout_weight="1"
+            android:gravity="center_vertical"
+            android:paddingLeft="16dp"
+            android:text="价格明细"
+            android:textColor="@android:color/black"/>
+
+        <TextView
+            android:id="@+id/tv_topolicy"
+            android:layout_width="70dp"
+            android:layout_height="wrap_content"
+            android:text="查看订单"
+            android:textColor="@color/selectcolor"
+            android:textSize="14dp"/>
+
+
+    </LinearLayout>
+
+
+    <TextView
+        android:layout_width="match_parent"
+        android:layout_height="1dp"
+        android:background="@android:color/black"/>
+
+    <com.chinalooke.android.cheju.view.XListView
+        android:id="@+id/xlv_detail"
+        android:layout_width="match_parent"
+        android:layout_height="wrap_content"
+        android:divider="#00000000"/>
+
+
+    <!--<LinearLayout-->
+    <!--android:layout_width="match_parent"-->
+    <!--android:layout_height="48dp"-->
+    <!--android:layout_marginEnd="8dp"-->
+    <!--android:layout_marginStart="8dp"-->
+    <!--android:orientation="horizontal">-->
+
+    <!--<TextView-->
+
+    <!--style="@style/rowstyle"-->
+    <!--android:text="保险公司名"-->
+    <!--/>-->
+
+    <!--<TextView-->
+    <!--android:id="@+id/tv_photo_compan"-->
+    <!--style="@style/rowstyle"-->
+    <!--android:text="保险公司名"-->
+    <!--/>-->
+    <!--</LinearLayout>-->
+
+    <!--<TextView-->
+    <!--android:layout_width="match_parent"-->
+    <!--android:layout_height="1dp"-->
+    <!--android:layout_marginEnd="8dp"-->
+    <!--android:layout_marginStart="8dp"-->
+    <!--android:background="#ADA9A4"/>-->
+
+
+    <!--<LinearLayout-->
+    <!--android:layout_width="match_parent"-->
+    <!--android:layout_height="48dp"-->
+    <!--android:layout_marginEnd="8dp"-->
+    <!--android:layout_marginStart="8dp"-->
+    <!--android:orientation="horizontal">-->
+
+    <!--<TextView-->
+
+    <!--style="@style/rowstyle"-->
+    <!--android:text="保单生效日期"-->
+    <!--/>-->
+
+    <!--<TextView-->
+    <!--android:id="@+id/tv_photo_data"-->
+    <!--style="@style/rowstyle"-->
+    <!--android:text="保单生效日期"-->
+    <!--/>-->
+    <!--</LinearLayout>-->
+
+    <!--<TextView-->
+    <!--android:layout_width="match_parent"-->
+    <!--android:layout_height="1dp"-->
+    <!--android:layout_marginEnd="8dp"-->
+    <!--android:layout_marginStart="8dp"-->
+    <!--android:background="#ADA9A4"/>-->
+
+
+    <!--<LinearLayout-->
+    <!--android:layout_width="match_parent"-->
+    <!--android:layout_height="48dp"-->
+    <!--android:layout_marginEnd="8dp"-->
+    <!--android:layout_marginStart="8dp"-->
+    <!--android:orientation="horizontal">-->
+
+    <!--<TextView-->
+
+    <!--style="@style/rowstyle"-->
+    <!--android:text="保单到期时间"-->
+    <!--/>-->
+
+    <!--<TextView-->
+    <!--android:id="@+id/tv_photo_expire"-->
+    <!--style="@style/rowstyle"-->
+    <!--android:text="保单到期时间"-->
+    <!--/>-->
+    <!--</LinearLayout>-->
+
+    <!--<TextView-->
+    <!--android:layout_width="match_parent"-->
+    <!--android:layout_height="1dp"-->
+    <!--android:layout_marginEnd="8dp"-->
+    <!--android:layout_marginStart="8dp"-->
+    <!--android:background="#ADA9A4"/>-->
+
+
+    <!--<LinearLayout-->
+    <!--android:layout_width="match_parent"-->
+    <!--android:layout_height="48dp"-->
+    <!--android:layout_marginEnd="8dp"-->
+    <!--android:layout_marginStart="8dp"-->
+    <!--android:orientation="horizontal">-->
+
+    <!--<TextView-->
+
+    <!--style="@style/rowstyle"-->
+    <!--android:text="保单状态"-->
+    <!--/>-->
+
+    <!--<TextView-->
+    <!--android:id="@+id/tv_photo_statu"-->
+    <!--style="@style/rowstyle"-->
+    <!--android:text="保单状态"-->
+    <!--/>-->
+    <!--</LinearLayout>-->
+
+    <!--<TextView-->
+    <!--style="@style/linestyle"-->
+    <!--android:layout_marginEnd="8dp"-->
+    <!--android:layout_marginStart="8dp"-->
+    <!--/>-->
+
+
+    <!--<LinearLayout-->
+    <!--android:layout_width="match_parent"-->
+    <!--android:layout_height="48dp"-->
+    <!--android:layout_marginEnd="8dp"-->
+    <!--android:layout_marginStart="8dp"-->
+    <!--android:orientation="horizontal">-->
+
+    <!--<TextView-->
+
+    <!--style="@style/rowstyle"-->
+    <!--android:text="核算价格"-->
+    <!--/>-->
+
+    <!--<TextView-->
+    <!--android:id="@+id/tv_photo_price"-->
+    <!--style="@style/rowstyle"-->
+    <!--android:text="核算价格"-->
+    <!--/>-->
+    <!--</LinearLayout>-->
+</LinearLayout>

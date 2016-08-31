@@ -1,0 +1,130 @@
+<?xml version="1.0" encoding="utf-8"?>
+<LinearLayout
+    xmlns:android="http://schemas.android.com/apk/res/android"
+    xmlns:tools="http://schemas.android.com/tools"
+    android:layout_width="match_parent"
+    android:layout_height="wrap_content"
+    android:background="@color/backcolor"
+    android:orientation="vertical"
+    tools:context=".activity.salesman.PolicyCalculateActivity">
+
+
+    <RelativeLayout
+        android:layout_width="match_parent"
+        android:layout_height="wrap_content"
+        android:background="#3D96F8"
+        >
+
+
+        <FrameLayout
+            android:id="@+id/iv_caculate_back"
+            android:layout_width="36dp"
+            android:layout_height="36dp"
+            android:layout_marginTop="6dp"
+            android:clickable="true"
+            android:onClick="finish">
+
+
+            <ImageView
+                android:layout_width="24dp"
+                android:layout_height="24dp"
+                android:layout_centerVertical="true"
+                android:layout_gravity="center"
+                android:layout_marginStart="8dp"
+                android:background="@mipmap/icon_back"/>
+
+
+        </FrameLayout>
+
+
+        <TextView
+            android:layout_width="match_parent"
+            android:layout_height="@dimen/edit_height"
+            android:gravity="center"
+            android:paddingLeft="16dp"
+            android:text="保单算价"
+            android:textColor="#FFFFFF"
+            android:textSize="18dp"
+            android:textStyle="bold"
+            />
+    </RelativeLayout>
+
+    <ScrollView
+        android:layout_width="match_parent"
+        android:layout_height="0dp"
+        android:layout_weight="1">
+
+        <LinearLayout
+            android:layout_width="match_parent"
+            android:layout_height="match_parent"
+            android:orientation="vertical">
+
+            <com.chinalooke.android.cheju.view.SyListView
+                android:id="@+id/lv_policy_check"
+                android:layout_width="match_parent"
+                android:layout_height="wrap_content"
+                android:divider="@null">
+            </com.chinalooke.android.cheju.view.SyListView>
+
+            <LinearLayout
+                android:layout_width="match_parent"
+                android:layout_height="48dp"
+                android:layout_marginEnd="8dp"
+                android:layout_marginStart="8dp"
+                android:orientation="horizontal">
+
+                <TextView
+
+                    style="@style/rowstyle"
+                    android:paddingLeft="8dp"
+                    android:text="推荐保险公司"
+                    />
+
+                <EditText
+                    android:id="@+id/et_recommend_company"
+                    style="@style/rowstyle"
+                    android:background="@null"
+                    android:hint="可多填，用逗号隔开"/>
+            </LinearLayout>
+
+            <TextView
+                style="@style/linestyle"
+                android:layout_marginLeft="8dp"
+                android:layout_marginRight="8dp"/>
+
+
+            <LinearLayout
+                android:layout_width="match_parent"
+                android:layout_height="48dp"
+                android:layout_marginEnd="8dp"
+                android:layout_marginStart="8dp"
+                android:orientation="horizontal">
+
+                <TextView
+                    style="@style/rowstyle"
+
+                    android:paddingLeft="8dp"
+                    android:text="预估价格"
+                    />
+
+                <EditText
+                    android:id="@+id/et_pridict_price"
+                    style="@style/rowstyle"
+                    android:background="@null"
+                    android:hint="请填写"/>
+            </LinearLayout>
+
+            <TextView
+                style="@style/linestyle"
+                android:layout_marginLeft="8dp"
+                android:layout_marginRight="8dp"/>
+        </LinearLayout>
+    </ScrollView>
+
+    <Button
+        android:id="@+id/btn_policy_check"
+        style="@style/Botton"
+        android:layout_marginBottom="16dp"
+        android:text="完成"/>
+
+</LinearLayout>
