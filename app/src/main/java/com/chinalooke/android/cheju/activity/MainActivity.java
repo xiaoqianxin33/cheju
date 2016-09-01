@@ -13,6 +13,7 @@ import android.view.KeyEvent;
 import android.widget.RadioButton;
 import android.widget.RadioGroup;
 
+import com.avos.avoscloud.AVUser;
 import com.chinalooke.android.cheju.R;
 import com.chinalooke.android.cheju.adapter.MyPagerAdapter;
 import com.chinalooke.android.cheju.fragment.OrderFragment;
@@ -44,12 +45,19 @@ public class MainActivity extends FragmentActivity {
     RadioButton mRbWd;
     private FragmentManager mFragmentManager;
     private ArrayList<Fragment> mFragments = new ArrayList<>();
+    private AVUser mCurrentUser;
+
+    public AVUser getCurrentUser() {
+        return mCurrentUser;
+    }
 
     @Override
     protected void onCreate(Bundle savedInstanceState) {
         super.onCreate(savedInstanceState);
         setContentView(R.layout.activity_main);
         ButterKnife.bind(this);
+        mCurrentUser = AVUser.getCurrentUser();
+
         setDrwableSize();
         initView();
         initEvent();
@@ -147,13 +155,10 @@ public class MainActivity extends FragmentActivity {
 
         if (keyCode == KeyEvent.KEYCODE_BACK) {
 
-            MyUtills.showDialog(MainActivity.this,"提示","确定退出车聚吗?");
+            MyUtills.showDialog(MainActivity.this, "提示", "确定退出车聚吗?");
         }
         return super.onKeyDown(keyCode, event);
     }
-
-
-
 
 
 }

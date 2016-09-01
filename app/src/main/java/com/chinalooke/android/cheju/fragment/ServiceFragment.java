@@ -13,6 +13,8 @@ import android.view.ViewGroup;
 
 import com.avos.avoscloud.AVUser;
 import com.chinalooke.android.cheju.R;
+import com.chinalooke.android.cheju.activity.LoginActivity;
+import com.chinalooke.android.cheju.activity.MainActivity;
 import com.chinalooke.android.cheju.activity.ServiceActivity;
 import com.chinalooke.android.cheju.utills.PreferenceUtils;
 import com.hyphenate.EMCallBack;
@@ -39,6 +41,7 @@ public class ServiceFragment extends Fragment {
     };
     private String mName;
     private String mPsd;
+    private AVUser mCurrentUser;
 
     private void login() {
         EMClient.getInstance().login(mName, mPsd, new EMCallBack() {//回调
@@ -66,32 +69,35 @@ public class ServiceFragment extends Fragment {
     public View onCreateView(LayoutInflater inflater, ViewGroup container, Bundle savedInstanceState) {
         View view = inflater.inflate(R.layout.fragment_service, container, false);
         ButterKnife.bind(this, view);
+        mCurrentUser = ((MainActivity) getActivity()).getCurrentUser();
         initData();
         return view;
     }
 
     private void initData() {
-        mName = "a" + AVUser.getCurrentUser().getMobilePhoneNumber();
-        mPsd = AVUser.getCurrentUser().getMobilePhoneNumber();
-        String hx = PreferenceUtils.getPrefString(getActivity(), "hx", "");
-        if (TextUtils.isEmpty(hx)) {
-            new Thread(new Runnable() {
-                @Override
-                public void run() {
-                    try {
-                        EMClient.getInstance().createAccount(mName, mPsd);
-                        PreferenceUtils.setPrefString(getActivity(), "hx", "a" + AVUser.getCurrentUser().getMobilePhoneNumber());
-                        mHandler.sendEmptyMessage(1);
-                    } catch (HyphenateException e) {
-                        login();
-                        e.printStackTrace();
+        if (mCurrentUser != null) {
+            mName = "a" + AVUser.getCurrentUser().getMobilePhoneNumber();
+            mPsd = AVUser.getCurrentUser().getMobilePhoneNumber();
+            String hx = PreferenceUtils.getPrefString(getActivity(), "hx", "");
+            if (TextUtils.isEmpty(hx)) {
+                new Thread(new Runnable() {
+                    @Override
+                    public void run() {
+                        try {
+                            EMClient.getInstance().createAccount(mName, mPsd);
+                            PreferenceUtils.setPrefString(getActivity(), "hx", "a" + AVUser.getCurrentUser().getMobilePhoneNumber());
+                            mHandler.sendEmptyMessage(1);
+                        } catch (HyphenateException e) {
+                            login();
+                            e.printStackTrace();
+                        }
                     }
-                }
-            }) {
+                }) {
 
-            }.start();
-        } else {
-            login();
+                }.start();
+            } else {
+                login();
+            }
         }
     }
 
@@ -105,7 +111,11 @@ public class ServiceFragment extends Fragment {
     public void onClick(View view) {
         switch (view.getId()) {
             case R.id.btn_inquir_service:
-                startActivity(new Intent(getActivity(), ServiceActivity.class));
+                if (mCurrentUser != null) {
+                    startActivity(new Intent(getActivity(), ServiceActivity.class));
+                } else {
+                    startActivity(new Intent(getActivity(), LoginActivity.class));
+                }
                 break;
             case R.id.btn_phone_service:
                 break;

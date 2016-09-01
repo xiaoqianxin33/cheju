@@ -90,4 +90,10 @@ dependencies {
     compile files('libs/ShareSDK-SinaWeibo-2.7.6.jar')
     compile files('libs/ShareSDK-TencentWeibo-2.7.6.jar')
     compile 'cn.leancloud.android:avoscloud-push:v3.7.1@aar'
+    compile files('libs/BaiduLBS_Android.jar')
+    compile files('libs/glide-3.6.1.jar')
+    compile files('libs/google-play-services.jar')
+    compile files('libs/HwPush_SDK_V2705_nomap.jar')
+    compile files('libs/MiPush_SDK_Client_2_2_19.jar')
+    compile files('libs/org.apache.http.legacy.jar')
 }

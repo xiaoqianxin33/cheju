@@ -26,6 +26,7 @@ import com.avos.avoscloud.AVQuery;
 import com.avos.avoscloud.AVUser;
 import com.avos.avoscloud.CloudQueryCallback;
 import com.chinalooke.android.cheju.R;
+import com.chinalooke.android.cheju.activity.MainActivity;
 import com.chinalooke.android.cheju.activity.TakePhotoActivity;
 import com.chinalooke.android.cheju.activity.WriteMessgeActivity;
 import com.chinalooke.android.cheju.bean.Policy;
@@ -69,14 +70,15 @@ public class OrderFragment extends Fragment implements AdapterView.OnItemClickLi
         public void handleMessage(Message msg) {
             if (1 == msg.what) {
                 setDtail();
-                mProgressDialog.dismiss();
                 mMyOrderAdapt = new MyOrderAdapt();
                 setAdapt(0);
+                mProgressDialog.dismiss();
                 isDone = true;
             }
         }
     };
     private boolean isVisible;
+    private AVUser mCurrentUser;
 
     @Override
     public View onCreateView(LayoutInflater inflater, ViewGroup container, Bundle savedInstanceState) {
@@ -84,6 +86,7 @@ public class OrderFragment extends Fragment implements AdapterView.OnItemClickLi
         ButterKnife.bind(this, mView);
         mPolicy = new Policy();
         isPrepared = true;
+        mCurrentUser = ((MainActivity) getActivity()).getCurrentUser();
         lazyLoad();
         return mView;
     }
@@ -91,19 +94,25 @@ public class OrderFragment extends Fragment implements AdapterView.OnItemClickLi
     @Override
     public void onActivityCreated(Bundle savedInstanceState) {
         super.onActivityCreated(savedInstanceState);
-
     }
 
 
     private void initDialog() {
-        mProgressDialog = new ProgressDialog(getActivity());
-        mProgressDialog.setProgressStyle(ProgressDialog.STYLE_SPINNER);
-        mProgressDialog.setMessage("数据加载中");
-        mProgressDialog.setCancelable(true);
-        mProgressDialog.show();
+        if (mCurrentUser != null) {
+            mProgressDialog = new ProgressDialog(getActivity());
+            mProgressDialog.setProgressStyle(ProgressDialog.STYLE_SPINNER);
+            mProgressDialog.setMessage("数据加载中");
+            mProgressDialog.setCancelable(true);
+            mProgressDialog.show();
+            mTvNopolicy.setVisibility(View.GONE);
+        } else {
+            mTvNopolicy.setVisibility(View.VISIBLE);
+        }
+
     }
 
     private void initEvent() {
+
         mLvChexianOrder.setOnItemClickListener(this);
         mSr.setColorSchemeResources(android.R.color.holo_blue_bright,
                 android.R.color.holo_green_light,
@@ -140,24 +149,25 @@ public class OrderFragment extends Fragment implements AdapterView.OnItemClickLi
     }
 
     private void initChexianData() {
-        final String userObjectID = PreferenceUtils.getPrefString(getActivity(), "userObjectID", "");
 
-        AVQuery.doCloudQueryInBackground(SQLwords.requirPolicy, new CloudQueryCallback<AVCloudQueryResult>() {
-            @Override
-            public void done(AVCloudQueryResult avCloudQueryResult, AVException e) {
-                if (e == null) {
-                    List<AVObject> results = (List<AVObject>) avCloudQueryResult.getResults();
-                    if (results == null || results.size() == 0) {
-                        mProgressDialog.dismiss();
-                        mTvNopolicy.setVisibility(View.VISIBLE);
-                    } else {
-                        mTvNopolicy.setVisibility(View.GONE);
-                        mAvObject = results.get(0);
-                        mHandler.sendEmptyMessage(1);
+        if (mCurrentUser != null) {
+            AVQuery.doCloudQueryInBackground(SQLwords.requirPolicy, new CloudQueryCallback<AVCloudQueryResult>() {
+                @Override
+                public void done(AVCloudQueryResult avCloudQueryResult, AVException e) {
+                    if (e == null) {
+                        List<AVObject> results = (List<AVObject>) avCloudQueryResult.getResults();
+                        if (results == null || results.size() == 0) {
+                            mProgressDialog.dismiss();
+                            mTvNopolicy.setVisibility(View.VISIBLE);
+                        } else {
+                            mTvNopolicy.setVisibility(View.GONE);
+                            mAvObject = results.get(0);
+                            mHandler.sendEmptyMessage(1);
+                        }
                     }
                 }
-            }
-        }, AVUser.getCurrentUser().getUsername());
+            }, AVUser.getCurrentUser().getUsername());
+        }
 
     }
 

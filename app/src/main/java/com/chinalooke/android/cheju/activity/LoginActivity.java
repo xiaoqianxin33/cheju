@@ -180,8 +180,7 @@ public class LoginActivity extends Activity {
             case R.id.btn_login_getsms:
                 phoneNumer = mEtRegisterPhone.getText().toString();
                 if (MyUtills.CheckPhoneNumer(phoneNumer)) {
-                    mProgressDialog.setMessage("加载中");
-                    mProgressDialog.show();
+                    initDialog("正在发送中...");
                     mHandler.postDelayed(new Runnable() {
                         @Override
                         public void run() {
@@ -195,7 +194,7 @@ public class LoginActivity extends Activity {
                 break;
 
             case R.id.iv_login_back:
-                MyUtills.showDialog(this, "提示", "确定要退出车聚吗？");
+                finish();
                 break;
             case R.id.btn_fastlogin:
                 mPhone = mEPhone.getText().toString();
@@ -418,7 +417,7 @@ public class LoginActivity extends Activity {
     public boolean onKeyDown(int keyCode, KeyEvent event) {
 
         if (keyCode == KeyEvent.KEYCODE_BACK) {
-            MyUtills.showDialog(this, "提示", "确定要退出车聚吗");
+            finish();
         }
         return super.onKeyDown(keyCode, event);
     }

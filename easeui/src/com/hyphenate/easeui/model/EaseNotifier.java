@@ -11,18 +11,6 @@
  */
 package com.hyphenate.easeui.model;
 
-import java.util.HashSet;
-import java.util.List;
-import java.util.Locale;
-
-import com.hyphenate.chat.EMChatManager;
-import com.hyphenate.chat.EMClient;
-import com.hyphenate.chat.EMMessage;
-import com.hyphenate.easeui.controller.EaseUI;
-import com.hyphenate.easeui.controller.EaseUI.EaseSettingsProvider;
-import com.hyphenate.util.EMLog;
-import com.hyphenate.util.EasyUtils;
-
 import android.app.Notification;
 import android.app.NotificationManager;
 import android.app.PendingIntent;
@@ -36,6 +24,17 @@ import android.net.Uri;
 import android.os.Build;
 import android.os.Vibrator;
 import android.support.v4.app.NotificationCompat;
+
+import com.hyphenate.chat.EMClient;
+import com.hyphenate.chat.EMMessage;
+import com.hyphenate.easeui.controller.EaseUI;
+import com.hyphenate.easeui.controller.EaseUI.EaseSettingsProvider;
+import com.hyphenate.util.EMLog;
+import com.hyphenate.util.EasyUtils;
+
+import java.util.HashSet;
+import java.util.List;
+import java.util.Locale;
 
 /**
  * new message notifier class
@@ -119,7 +118,7 @@ public class EaseNotifier {
      * @param message
      */
     public synchronized void onNewMsg(EMMessage message) {
-        if(EMClient.getInstance().chatManager().isSlientMessage(message)){
+        if(EMClient.getInstance().chatManager().isSilentMessage(message)){
             return;
         }
         EaseSettingsProvider settingsProvider = EaseUI.getInstance().getSettingsProvider();
@@ -140,7 +139,7 @@ public class EaseNotifier {
     }
     
     public synchronized void onNewMesg(List<EMMessage> messages) {
-        if(EMClient.getInstance().chatManager().isSlientMessage(messages.get(messages.size()-1))){
+        if(EMClient.getInstance().chatManager().isSilentMessage(messages.get(messages.size()-1))){
             return;
         }
         EaseSettingsProvider settingsProvider = EaseUI.getInstance().getSettingsProvider();
@@ -287,7 +286,7 @@ public class EaseNotifier {
      */
     public void vibrateAndPlayTone(EMMessage message) {
         if(message != null){
-            if(EMClient.getInstance().chatManager().isSlientMessage(message)){
+            if(EMClient.getInstance().chatManager().isSilentMessage(message)){
                 return;
             } 
         }

@@ -30,7 +30,6 @@ import android.widget.Toast;
 
 import com.baidu.location.BDLocation;
 import com.baidu.location.BDLocationListener;
-import com.baidu.location.BDNotifyListener;
 import com.baidu.location.LocationClient;
 import com.baidu.location.LocationClientOption;
 import com.baidu.mapapi.SDKInitializer;
@@ -56,7 +55,6 @@ public class EaseBaiduMapActivity extends EaseBaseActivity {
 	FrameLayout mMapViewContainer = null;
 	LocationClient mLocClient;
 	public MyLocationListenner myListener = new MyLocationListenner();
-	public NotifyLister mNotifyer = null;
 
 	Button sendButton = null;
 
@@ -67,9 +65,7 @@ public class EaseBaiduMapActivity extends EaseBaseActivity {
 	public static EaseBaiduMapActivity instance = null;
 	ProgressDialog progressDialog;
 	private BaiduMap mBaiduMap;
-	
-	private LocationMode mCurrentMode;
-	
+
 	public class BaiduSDKReceiver extends BroadcastReceiver {
 		public void onReceive(Context context, Intent intent) {
 			String s = intent.getAction();
@@ -98,7 +94,7 @@ public class EaseBaiduMapActivity extends EaseBaseActivity {
 		sendButton = (Button) findViewById(R.id.btn_location_send);
 		Intent intent = getIntent();
 		double latitude = intent.getDoubleExtra("latitude", 0);
-		mCurrentMode = LocationMode.NORMAL;
+		LocationMode mCurrentMode = LocationMode.NORMAL;
 		mBaiduMap = mMapView.getMap();
 		MapStatusUpdate msu = MapStatusUpdateFactory.zoomTo(15.0f);
 		mBaiduMap.setMapStatus(msu);
@@ -106,7 +102,7 @@ public class EaseBaiduMapActivity extends EaseBaseActivity {
 		if (latitude == 0) {
 			mMapView = new MapView(this, new BaiduMapOptions());
 			mBaiduMap.setMyLocationConfigeration(new MyLocationConfiguration(
-							mCurrentMode, true, null));
+					mCurrentMode, true, null));
 			showMapWithLocationClient();
 		} else {
 			double longtitude = intent.getDoubleExtra("longitude", 0);
@@ -246,11 +242,6 @@ public class EaseBaiduMapActivity extends EaseBaseActivity {
 			if (poiLocation == null) {
 				return;
 			}
-		}
-	}
-
-	public class NotifyLister extends BDNotifyListener {
-		public void onNotify(BDLocation mlocation, float distance) {
 		}
 	}
 

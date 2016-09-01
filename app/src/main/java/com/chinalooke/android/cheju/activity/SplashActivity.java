@@ -33,13 +33,13 @@ public class SplashActivity extends AppCompatActivity {
         public void handleMessage(Message msg) {
             super.handleMessage(msg);
             if (msg.what == 1) {
-                if (mCurrentUser != null) {
-                    startActivity(new Intent(SplashActivity.this, MainActivity.class));
-                    finish();
-                } else {
-                    startActivity(new Intent(SplashActivity.this, LoginActivity.class));
-                    finish();
-                }
+//                if (mCurrentUser != null) {
+                startActivity(new Intent(SplashActivity.this, MainActivity.class));
+                finish();
+//                } else {
+//                    startActivity(new Intent(SplashActivity.this, LoginActivity.class));
+//                    finish();
+//                }
             }
         }
     };

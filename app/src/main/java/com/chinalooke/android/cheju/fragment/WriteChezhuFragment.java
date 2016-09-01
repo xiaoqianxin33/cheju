@@ -196,9 +196,30 @@ public class WriteChezhuFragment extends Fragment implements AMapLocationListene
         });
 
         mEtPhoneWritechezhu.addTextChangedListener(new TextChange(0));
-        mEtCarnumWritechezhu.addTextChangedListener(new TextChange(1));
+        mEtCarnumWritechezhu.addTextChangedListener(new TextWatcher() {
+            int index = 0;
+
+            @Override
+            public void beforeTextChanged(CharSequence s, int start, int count, int after) {
+
+            }
+
+            @Override
+            public void onTextChanged(CharSequence s, int start, int before, int count) {
+
+            }
+
+            @Override
+            public void afterTextChanged(Editable s) {
+                mEtCarnumWritechezhu.removeTextChangedListener(this);//解除文字改变事件
+                index = mEtCarnumWritechezhu.getSelectionStart();//获取光标位置
+                mEtCarnumWritechezhu.setText(s.toString().toUpperCase());
+                mEtCarnumWritechezhu.setSelection(index);//重新设置光标位置
+                mEtCarnumWritechezhu.addTextChangedListener(this);//重新绑定事件
+                mPolicy.setCarNo(s.toString());
+            }
+        });
         mEtIdWritechezhu.addTextChangedListener(new TextChange(2));
-        mTvLocation.addTextChangedListener(new TextChange(3));
     }
 
 
@@ -226,6 +247,7 @@ public class WriteChezhuFragment extends Fragment implements AMapLocationListene
                     mPolicy.setPhone(s.toString());
                     break;
                 case 1:
+//                    mEtCarnumWritechezhu.removeTextChangedListener();
                     mPolicy.setCarNo(s.toString());
                     break;
                 case 2:

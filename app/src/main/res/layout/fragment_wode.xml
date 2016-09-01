@@ -12,20 +12,21 @@
         android:visibility="gone"/>
 
     <LinearLayout
+        android:id="@+id/ll_wode"
         android:layout_width="match_parent"
         android:layout_height="80dp"
         android:gravity="center_vertical"
         android:orientation="horizontal">
 
 
-        <com.chinalooke.android.cheju.view.RoundImageView
-            android:id="@+id/head"
-            android:layout_width="0dp"
-            android:layout_height="match_parent"
-            android:layout_marginBottom="8dp"
-            android:layout_marginTop="8dp"
-            android:layout_weight="1"
-            android:scaleType="fitXY"/>
+        <!--<com.chinalooke.android.cheju.view.RoundImageView-->
+        <!--android:id="@+id/head"-->
+        <!--android:layout_width="0dp"-->
+        <!--android:layout_height="match_parent"-->
+        <!--android:layout_marginBottom="8dp"-->
+        <!--android:layout_marginTop="8dp"-->
+        <!--android:layout_weight="1"-->
+        <!--android:scaleType="fitXY"/>-->
 
 
         <TextView
@@ -63,15 +64,51 @@
         android:layout_marginStart="8dp"
         android:background="#ADA9A4"/>
 
+    <RelativeLayout
+        android:id="@+id/rl_wode"
+        android:layout_width="match_parent"
+        android:layout_height="48dp"
+        android:gravity="center_vertical"
+        android:orientation="horizontal">
+
+        <TextView
+            android:id="@+id/textView3"
+            android:layout_width="180dp"
+            android:layout_height="match_parent"
+            android:gravity="center_vertical"
+            android:paddingStart="32dp"
+            android:text="我的收藏"
+            android:textColor="@android:color/black"
+            android:textSize="16sp"/>
+
+        <ImageView
+            android:id="@+id/imageView3"
+            android:layout_width="18dp"
+            android:layout_height="18dp"
+            android:layout_alignParentEnd="true"
+            android:layout_centerVertical="true"
+            android:background="@mipmap/arrow_right"/>
+
+        <TextView
+            android:layout_width="wrap_content"
+            android:layout_height="wrap_content"
+            android:layout_alignTop="@+id/imageView3"
+            android:layout_marginStart="41dp"
+            android:layout_toEndOf="@+id/textView3"
+            android:text="推荐购险打折返利"
+            android:textColor="@android:color/holo_red_light"
+            android:textSize="12sp"/>
+
+    </RelativeLayout>
+
     <ListView
         android:id="@+id/lv_wode"
         android:layout_width="match_parent"
-        android:layout_height="wrap_content"
+        android:layout_height="0dp"
         android:layout_marginEnd="8dp"
         android:layout_marginStart="8dp"
+        android:layout_weight="1"
         android:background="@null">
-
-
     </ListView>
 
     <TextView
@@ -80,5 +117,15 @@
         android:layout_marginEnd="8dp"
         android:layout_marginStart="8dp"
         android:background="#ADA9A4"/>
+
+
+    <Button
+        android:id="@+id/button_login"
+        style="@style/Botton"
+        android:layout_gravity="center_horizontal"
+        android:layout_marginBottom="8dp"
+        android:layout_marginTop="8dp"
+        android:text="登录"/>
+
 
 </LinearLayout>

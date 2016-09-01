@@ -16,7 +16,6 @@ import android.provider.MediaStore;
 import android.support.v4.app.Fragment;
 import android.support.v7.app.AlertDialog;
 import android.support.v7.view.ContextThemeWrapper;
-import android.text.TextUtils;
 import android.util.Log;
 import android.view.LayoutInflater;
 import android.view.View;
@@ -24,9 +23,12 @@ import android.view.ViewGroup;
 import android.widget.AdapterView;
 import android.widget.ArrayAdapter;
 import android.widget.BaseAdapter;
+import android.widget.Button;
 import android.widget.ImageView;
+import android.widget.LinearLayout;
 import android.widget.ListAdapter;
 import android.widget.ListView;
+import android.widget.RelativeLayout;
 import android.widget.TextView;
 import android.widget.Toast;
 
@@ -40,15 +42,14 @@ import com.chinalooke.android.cheju.R;
 import com.chinalooke.android.cheju.activity.AddressActivity;
 import com.chinalooke.android.cheju.activity.CustomerActivity;
 import com.chinalooke.android.cheju.activity.LoginActivity;
+import com.chinalooke.android.cheju.activity.MainActivity;
 import com.chinalooke.android.cheju.activity.PersonActivity;
 import com.chinalooke.android.cheju.constant.Constant;
 import com.chinalooke.android.cheju.utills.ImageTools;
 import com.chinalooke.android.cheju.utills.MyUtills;
 import com.chinalooke.android.cheju.utills.NetUtil;
-import com.chinalooke.android.cheju.view.RoundImageView;
 import com.hyphenate.EMCallBack;
 import com.hyphenate.chat.EMClient;
-import com.squareup.picasso.Picasso;
 
 import java.io.File;
 import java.io.Serializable;
@@ -73,12 +74,18 @@ public class WodeFragment extends Fragment {
     TextView mTvUserphoneWode;
     @Bind(R.id.lv_wode)
     ListView mLvWode;
-    @Bind(R.id.head)
-    RoundImageView mHead;
+    //    @Bind(R.id.head)
+//    RoundImageView mHead;
     @Bind(R.id.iv_qcord)
     ImageView mIvQcord;
     @Bind(R.id.iv_qcor)
     ImageView mIvQcor;
+    @Bind(R.id.ll_wode)
+    LinearLayout mLlWode;
+    @Bind(R.id.rl_wode)
+    RelativeLayout mRlWode;
+    @Bind(R.id.button_login)
+    Button mButtonLogin;
     private View mView;
     private Bitmap mBitmap;
     private File mPhotoFile;
@@ -88,23 +95,41 @@ public class WodeFragment extends Fragment {
     private ProgressDialog mProgressDialog;
     private Toast mToast;
     private List<AVUser> mAVUsers;
+    private MainActivity mMainActivity;
+    private AVUser mCurrentUser;
+    private boolean isLogin = false;
 
     @Override
     public View onCreateView(LayoutInflater inflater, ViewGroup container, Bundle savedInstanceState) {
         mView = inflater.inflate(R.layout.fragment_wode, container, false);
         ButterKnife.bind(this, mView);
+        mMainActivity = (MainActivity) getActivity();
+        mCurrentUser = mMainActivity.getCurrentUser();
         return mView;
 
     }
 
     @Override
     public void onActivityCreated(Bundle savedInstanceState) {
-        mToast = Toast.makeText(getActivity(), "", Toast.LENGTH_SHORT);
-        createQRcard();
-        initData();
-        initView();
-        initEvent();
         super.onActivityCreated(savedInstanceState);
+        mToast = Toast.makeText(getActivity(), "", Toast.LENGTH_SHORT);
+        if (mCurrentUser != null) {
+            isLogin = true;
+            createQRcard();
+            initData();
+            initEvent();
+            initView();
+            mLvWode.setVisibility(View.VISIBLE);
+            mLlWode.setVisibility(View.VISIBLE);
+            mButtonLogin.setVisibility(View.GONE);
+            mRlWode.setVisibility(View.GONE);
+        } else {
+            mRlWode.setVisibility(View.VISIBLE);
+            mLvWode.setVisibility(View.GONE);
+            mLlWode.setVisibility(View.GONE);
+            mButtonLogin.setVisibility(View.VISIBLE);
+        }
+
 
     }
 
@@ -176,9 +201,9 @@ public class WodeFragment extends Fragment {
         AVFile head = AVUser.getCurrentUser().getAVFile("head");
         if (head != null) {
             String url = head.getUrl();
-            Picasso.with(getActivity()).load(url).placeholder(R.mipmap.zhanweitu).into(mHead);
+//            Picasso.with(getActivity()).load(url).placeholder(R.mipmap.zhanweitu).into(mHead);
         } else {
-            Picasso.with(getActivity()).load(R.mipmap.zhanweitu).into(mHead);
+//            Picasso.with(getActivity()).load(R.mipmap.zhanweitu).into(mHead);
         }
     }
 
@@ -188,26 +213,33 @@ public class WodeFragment extends Fragment {
                 .substring(0, 5) + "******");
     }
 
-    @OnClick({R.id.iv_qcord, R.id.iv_qcor, R.id.head, R.id.tv_userphone_wode
-            , R.id.iv_arrow})
+    @OnClick({R.id.iv_qcord, R.id.iv_qcor, R.id.tv_userphone_wode
+            , R.id.iv_arrow, R.id.button_login, R.id.rl_wode})
     public void onClick(View view) {
         switch (view.getId()) {
             case R.id.tv_userphone_wode:
                 startActivity(new Intent(getActivity(), PersonActivity.class));
                 break;
+            case R.id.rl_wode:
+                showShare();
+                break;
+            case R.id.button_login:
+                startActivity(new Intent(getActivity(), LoginActivity.class));
+                getActivity().finish();
+                break;
             case R.id.iv_arrow:
                 startActivity(new Intent(getActivity(), PersonActivity.class));
                 break;
-            case R.id.head:
-                showDialog();
+//            case R.id.head:
+//                showDialog();
+//                break;
+            case R.id.iv_qcord:
+                mIvQcor.setVisibility(View.VISIBLE);
+                mIvQcor.setImageBitmap(mBitmap);
                 break;
-//            case R.id.iv_qcord:
-//                mIvQcor.setVisibility(View.VISIBLE);
-//                mIvQcor.setImageBitmap(mBitmap);
-//                break;
-//            case R.id.iv_qcor:
-//                mIvQcor.setVisibility(View.GONE);
-//                break;
+            case R.id.iv_qcor:
+                mIvQcor.setVisibility(View.GONE);
+                break;
         }
 
     }
@@ -216,7 +248,11 @@ public class WodeFragment extends Fragment {
 
         @Override
         public int getCount() {
-            return Constant.wodeListView.length;
+            if (isLogin) {
+                return Constant.wodeListView.length;
+            } else {
+                return 1;
+            }
         }
 
         @Override
@@ -237,19 +273,29 @@ public class WodeFragment extends Fragment {
                 convertView = getActivity().getLayoutInflater().inflate(R.layout.item_wode_listview, null);
                 viewHolder = new ViewHolder();
                 viewHolder.mTextView = (TextView) convertView.findViewById(R.id.tv_wode_listview);
+                viewHolder.mTextHong = (TextView) convertView.findViewById(R.id.tv_hongzi);
                 convertView.setTag(viewHolder);
             } else {
                 viewHolder = (ViewHolder) convertView.getTag();
             }
-
-            viewHolder.mTextView.setText(Constant.wodeListView[position]);
-
+            if (isLogin) {
+                viewHolder.mTextView.setText(Constant.wodeListView[position]);
+                if (position == 5) {
+                    viewHolder.mTextHong.setText("推荐购险，打折返利");
+                } else {
+                    viewHolder.mTextHong.setText("");
+                }
+            } else {
+                viewHolder.mTextView.setText("推荐车聚APP");
+                viewHolder.mTextHong.setText("推荐购险，打折返利");
+            }
             return convertView;
         }
     }
 
     class ViewHolder {
         TextView mTextView;
+        TextView mTextHong;
     }
 
     @Override
@@ -416,13 +462,13 @@ public class WodeFragment extends Fragment {
                     mToast.show();
                     switch (i) {
                         case 0:
-                            Picasso.with(getActivity()).load(new File(mPhotoPath)).resize(100, 100).centerInside().into(mHead);
+//                            Picasso.with(getActivity()).load(new File(mPhotoPath)).resize(100, 100).centerInside().into(mHead);
                             break;
                         case 1:
-                            Picasso.with(getActivity()).load(url).resize(100, 100).centerCrop().into(mHead);
+//                            Picasso.with(getActivity()).load(url).resize(100, 100).centerCrop().into(mHead);
                             break;
                         case 2:
-                            mHead.setImageBitmap(bitmap);
+//                            mHead.setImageBitmap(bitmap);
                             break;
                     }
 
