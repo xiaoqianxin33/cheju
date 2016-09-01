@@ -48,6 +48,13 @@ public class AddressActivity extends FragmentActivity {
     private List<AVObject> mAddresses = new ArrayList<>();
     private AVUser mCurrentUser;
 
+    public ShowAddressFragment getShowAddressFragment() {
+        return mShowAddressFragment;
+    }
+
+    public AddAdressFragment getAddAdressFragment() {
+        return mAddAdressFragment;
+    }
 
     public Button getBtnAddress() {
         return mBtnAddress;

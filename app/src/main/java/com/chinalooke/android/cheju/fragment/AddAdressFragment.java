@@ -13,6 +13,10 @@ import android.widget.EditText;
 import android.widget.TextView;
 import android.widget.Toast;
 
+import com.amap.api.location.AMapLocation;
+import com.amap.api.location.AMapLocationClient;
+import com.amap.api.location.AMapLocationClientOption;
+import com.amap.api.location.AMapLocationListener;
 import com.avos.avoscloud.AVException;
 import com.avos.avoscloud.AVObject;
 import com.avos.avoscloud.AVRelation;
@@ -28,7 +32,7 @@ import butterknife.ButterKnife;
 import butterknife.OnClick;
 
 
-public class AddAdressFragment extends Fragment {
+public class AddAdressFragment extends Fragment implements AMapLocationListener {
 
 
     private static final int REQUSET = 1;
@@ -46,6 +50,11 @@ public class AddAdressFragment extends Fragment {
     private String mPhone;
     private Toast mToast;
     private ProgressDialog mProgressDialog;
+    private AddressActivity mAddressActivity;
+    private AMapLocationClient mLocationClient;
+    private AMapLocationClientOption mLocationOption;
+    private String aMapLocationAddress;
+    private String mLocation;
 
     @Override
     public View onCreateView(LayoutInflater inflater, ViewGroup container,
@@ -59,6 +68,8 @@ public class AddAdressFragment extends Fragment {
     public void onActivityCreated(Bundle savedInstanceState) {
         super.onActivityCreated(savedInstanceState);
         mToast = Toast.makeText(getActivity(), "", Toast.LENGTH_SHORT);
+        mAddressActivity = (AddressActivity) getActivity();
+        location();
     }
 
     @Override
@@ -91,7 +102,7 @@ public class AddAdressFragment extends Fragment {
         AVObject tag2 = new AVObject("Address");// 构建对象
         tag2.put("name", mName);
         tag2.put("phone", mPhone);
-        tag2.put("address", mAddress);
+        tag2.put("address", mLocation + mAddress);
         AVRelation<AVObject> relation = mCurrentUser.getRelation("address");
 
         relation.add(tag2);
@@ -102,12 +113,36 @@ public class AddAdressFragment extends Fragment {
                 if (e == null) {
                     mToast.setText("地址保存成功！");
                     mToast.show();
+                    mAddressActivity.switchContent(mAddressActivity.getAddAdressFragment(), mAddressActivity.getShowAddressFragment());
                 } else {
                     mToast.setText(e.getMessage());
                     mToast.show();
                 }
             }
         });
+
+    }
+
+
+    private void location() {
+
+        mLocationClient = new AMapLocationClient(getActivity());
+
+        mLocationClient.setLocationListener(this);
+
+        mLocationOption = new AMapLocationClientOption();
+
+        mLocationOption.setLocationMode(AMapLocationClientOption.AMapLocationMode.Hight_Accuracy);
+
+        mLocationOption.setInterval(5000);
+
+        mLocationOption.setWifiActiveScan(false);
+
+        mLocationOption.setOnceLocationLatest(true);
+
+        mLocationClient.setLocationOption(mLocationOption);
+
+        mLocationClient.startLocation();
 
     }
 
@@ -139,8 +174,8 @@ public class AddAdressFragment extends Fragment {
             return false;
         }
 
-        String location = mTvLocationAddress.getText().toString();
-        if (TextUtils.isEmpty(location)) {
+        mLocation = mTvLocationAddress.getText().toString();
+        if (TextUtils.isEmpty(mLocation)) {
             MyUtills.showToast(getActivity(), "请选择地址");
             return false;
         }
@@ -155,6 +190,14 @@ public class AddAdressFragment extends Fragment {
             String location = data.getStringExtra("location1");
             if (location != null)
                 mTvLocationAddress.setText(location);
+        }
+    }
+
+    @Override
+    public void onLocationChanged(AMapLocation aMapLocation) {
+        aMapLocationAddress = aMapLocation.getAddress();
+        if (!TextUtils.isEmpty(aMapLocationAddress)) {
+            mTvLocationAddress.setText(aMapLocationAddress);
         }
     }
 }
