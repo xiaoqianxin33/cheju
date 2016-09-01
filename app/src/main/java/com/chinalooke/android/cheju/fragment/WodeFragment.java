@@ -86,6 +86,8 @@ public class WodeFragment extends Fragment {
     RelativeLayout mRlWode;
     @Bind(R.id.button_login)
     Button mButtonLogin;
+    @Bind(R.id.tv_blank)
+    TextView mTvBlank;
     private View mView;
     private Bitmap mBitmap;
     private File mPhotoFile;
@@ -104,7 +106,6 @@ public class WodeFragment extends Fragment {
         mView = inflater.inflate(R.layout.fragment_wode, container, false);
         ButterKnife.bind(this, mView);
         mMainActivity = (MainActivity) getActivity();
-        mCurrentUser = mMainActivity.getCurrentUser();
         return mView;
 
     }
@@ -112,6 +113,7 @@ public class WodeFragment extends Fragment {
     @Override
     public void onActivityCreated(Bundle savedInstanceState) {
         super.onActivityCreated(savedInstanceState);
+        mCurrentUser = AVUser.getCurrentUser();
         mToast = Toast.makeText(getActivity(), "", Toast.LENGTH_SHORT);
         if (mCurrentUser != null) {
             isLogin = true;
@@ -119,11 +121,13 @@ public class WodeFragment extends Fragment {
             initData();
             initEvent();
             initView();
+            mTvBlank.setVisibility(View.GONE);
             mLvWode.setVisibility(View.VISIBLE);
             mLlWode.setVisibility(View.VISIBLE);
             mButtonLogin.setVisibility(View.GONE);
             mRlWode.setVisibility(View.GONE);
         } else {
+            mTvBlank.setVisibility(View.VISIBLE);
             mRlWode.setVisibility(View.VISIBLE);
             mLvWode.setVisibility(View.GONE);
             mLlWode.setVisibility(View.GONE);
@@ -153,7 +157,7 @@ public class WodeFragment extends Fragment {
 
                                                 @Override
                                                 public void onSuccess() {
-                                                    MyUtills.showToast(getActivity(), "退出成功");
+//                                                    MyUtills.showToast(getActivity(), "退出成功");
                                                 }
 
                                                 @Override
@@ -196,7 +200,6 @@ public class WodeFragment extends Fragment {
         });
     }
 
-
     private void initData() {
         AVFile head = AVUser.getCurrentUser().getAVFile("head");
         if (head != null) {
@@ -221,11 +224,10 @@ public class WodeFragment extends Fragment {
                 startActivity(new Intent(getActivity(), PersonActivity.class));
                 break;
             case R.id.rl_wode:
-                showShare();
+                startActivity(new Intent(getActivity(), LoginActivity.class));
                 break;
             case R.id.button_login:
                 startActivity(new Intent(getActivity(), LoginActivity.class));
-                getActivity().finish();
                 break;
             case R.id.iv_arrow:
                 startActivity(new Intent(getActivity(), PersonActivity.class));

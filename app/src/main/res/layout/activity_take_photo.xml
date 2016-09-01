@@ -42,10 +42,112 @@
             android:paddingLeft="16dp"
             android:text="订单详情"
             android:textColor="#FFFFFF"
-            android:textSize="18dp"
+            android:textSize="18sp"
             android:textStyle="bold"
             />
     </RelativeLayout>
+
+    <LinearLayout
+        android:layout_width="match_parent"
+        android:layout_height="80dp"
+        android:background="@android:color/white"
+        android:orientation="horizontal">
+
+        <RelativeLayout
+
+            android:layout_width="40dp"
+            android:layout_height="match_parent">
+
+
+            <ImageView
+                android:id="@+id/imageView4"
+                android:layout_width="24dp"
+                android:layout_height="24dp"
+                android:layout_alignParentBottom="true"
+                android:layout_centerHorizontal="true"
+                android:layout_marginBottom="12dp"
+                android:src="@mipmap/zuobiao"/>
+        </RelativeLayout>
+
+        <LinearLayout
+            android:layout_width="0dp"
+            android:layout_height="match_parent"
+            android:layout_weight="1"
+            android:orientation="vertical">
+
+            <RelativeLayout
+                android:layout_width="match_parent"
+                android:layout_height="40dp"
+                android:background="@android:color/white"
+                android:gravity="center_vertical"
+                android:orientation="horizontal">
+
+                <TextView
+                    android:id="@+id/tv_name"
+                    android:layout_width="wrap_content"
+                    android:layout_height="wrap_content"
+                    android:layout_alignParentStart="true"
+                    android:layout_centerVertical="true"
+                    android:gravity="center_vertical"
+                    android:text="收货人:王江飞"
+                    android:textColor="@android:color/black"
+                    android:textSize="16sp"/>
+
+                <TextView
+                    android:id="@+id/tv_phone"
+                    android:layout_width="wrap_content"
+                    android:layout_height="wrap_content"
+                    android:layout_alignParentEnd="true"
+                    android:layout_alignTop="@+id/tv_name"
+                    android:layout_marginEnd="34dp"
+                    android:gravity="center_vertical"
+                    android:paddingRight="16dp"
+                    android:text="188888888"
+                    android:textColor="@android:color/black"
+                    android:textSize="16sp"/>
+            </RelativeLayout>
+
+
+            <TextView
+                android:id="@+id/tv_address"
+                android:layout_width="match_parent"
+                android:layout_height="40dp"
+                android:background="@android:color/white"
+                android:gravity="center_vertical"
+                android:text="收货地址：中国河南省洛阳市涧西区河南科技大学"
+                android:textColor="@android:color/black"
+                android:textSize="12sp"/>
+        </LinearLayout>
+
+        <RelativeLayout
+            android:layout_width="24dp"
+            android:layout_height="match_parent"
+            android:layout_marginRight="8dp">
+
+            <ImageView
+                android:id="@+id/imageView5"
+                android:layout_width="24dp"
+                android:layout_height="24dp"
+                android:layout_alignParentBottom="true"
+                android:layout_centerHorizontal="true"
+                android:src="@mipmap/arrow_right"/>
+        </RelativeLayout>
+
+    </LinearLayout>
+
+    <TextView
+        android:layout_width="match_parent"
+        android:layout_height="24dp"
+        android:background="@android:color/white"
+        android:paddingLeft="40dp"
+        android:text="(本公司保障您的权益，支付后保证出单。)"
+        android:textColor="#FFA741"
+        android:textSize="12sp"/>
+
+    <TextView
+        android:layout_width="match_parent"
+        android:layout_height="1dp"
+        android:background="@color/backcolor"/>
 
 
     <ScrollView
@@ -114,6 +216,7 @@
         android:orientation="horizontal">
 
         <TextView
+            android:id="@+id/tv_price"
             android:layout_width="0dp"
             android:layout_height="match_parent"
             android:layout_weight="1"
@@ -123,6 +226,7 @@
             android:textSize="20sp"/>
 
         <TextView
+            android:id="@+id/tv_discountprice"
             android:layout_width="0dp"
             android:layout_height="match_parent"
             android:layout_weight="1"

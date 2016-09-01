@@ -1,6 +1,7 @@
 package com.chinalooke.android.cheju.activity;
 
 import android.content.DialogInterface;
+import android.content.Intent;
 import android.graphics.drawable.Drawable;
 import android.os.Bundle;
 import android.support.v4.app.Fragment;
@@ -13,7 +14,10 @@ import android.view.KeyEvent;
 import android.widget.RadioButton;
 import android.widget.RadioGroup;
 
+import com.avos.avoscloud.AVException;
+import com.avos.avoscloud.AVObject;
 import com.avos.avoscloud.AVUser;
+import com.avos.avoscloud.GetCallback;
 import com.chinalooke.android.cheju.R;
 import com.chinalooke.android.cheju.adapter.MyPagerAdapter;
 import com.chinalooke.android.cheju.fragment.OrderFragment;
@@ -61,6 +65,30 @@ public class MainActivity extends FragmentActivity {
         setDrwableSize();
         initView();
         initEvent();
+    }
+
+//    @Override
+//    protected void onre() {
+//        super.onStart();
+//        if(mCurrentUser!=null){
+//
+//            mCurrentUser.fetchIfNeededInBackground(new GetCallback<AVObject>() {
+//                @Override
+//                public void done(AVObject avObject, AVException e) {
+//
+//                }
+//            });
+//        }
+//    }
+
+
+    @Override
+    protected void onNewIntent(Intent intent) {
+        super.onNewIntent(intent);
+        AVUser currentUser = AVUser.getCurrentUser();
+        if (currentUser != null) {
+            mCurrentUser = currentUser;
+        }
     }
 
     private void initView() {

@@ -1,2 +1,2 @@
-include ':app', ':kanner', ':easeui'
+include ':app', ':kanner'
 include ':wheel'

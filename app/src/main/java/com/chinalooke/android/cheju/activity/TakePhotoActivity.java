@@ -1,20 +1,27 @@
 package com.chinalooke.android.cheju.activity;
 
 import android.content.Intent;
+import android.graphics.Paint;
 import android.os.Bundle;
 import android.support.v7.app.AppCompatActivity;
-import android.util.Log;
 import android.view.View;
 import android.view.ViewGroup;
 import android.widget.BaseAdapter;
 import android.widget.LinearLayout;
+import android.widget.TextView;
 
+import com.avos.avoscloud.AVException;
+import com.avos.avoscloud.AVObject;
+import com.avos.avoscloud.AVQuery;
+import com.avos.avoscloud.AVRelation;
+import com.avos.avoscloud.AVUser;
+import com.avos.avoscloud.FindCallback;
 import com.chinalooke.android.cheju.R;
 import com.chinalooke.android.cheju.bean.Policy;
 import com.chinalooke.android.cheju.view.XListView;
 
-import java.io.Serializable;
 import java.util.ArrayList;
+import java.util.List;
 
 import butterknife.Bind;
 import butterknife.ButterKnife;
@@ -27,8 +34,22 @@ public class TakePhotoActivity extends AppCompatActivity {
     XListView mXlvDetail;
     @Bind(R.id.ll_policy_detail)
     LinearLayout mLlPolicyDetail;
+    @Bind(R.id.tv_price)
+    TextView mTvPrice;
+    @Bind(R.id.tv_discountprice)
+    TextView mTvDiscountprice;
+    @Bind(R.id.tv_name)
+    TextView mTvName;
+    @Bind(R.id.tv_phone)
+    TextView mTvPhone;
+    @Bind(R.id.tv_address)
+    TextView mTvAddress;
     private Policy mPolicy;
     private ArrayList<String> mStrings = new ArrayList<>();
+    private AVUser mCurrentUser;
+    private List<AVObject> mAddresses;
+    private MyAdapt mMyAdapt;
+    private ArrayList<String> mPrices = new ArrayList<>();
 
     @Override
     protected void onCreate(Bundle savedInstanceState) {
@@ -36,11 +57,48 @@ public class TakePhotoActivity extends AppCompatActivity {
         setContentView(R.layout.activity_take_photo);
         ButterKnife.bind(this);
         initData();
+        initView();
+    }
+
+    private void initView() {
+        mXlvDetail.setPullRefreshEnable(false);
+        mXlvDetail.setPullLoadEnable(false);
+        mMyAdapt = new MyAdapt();
+        mXlvDetail.setAdapter(mMyAdapt);
+        mTvPrice.setText(mPolicy.getPrice());
+        mTvDiscountprice.setText(mPolicy.getDiscountPrice());
+        mTvPrice.getPaint().setFlags(Paint.STRIKE_THRU_TEXT_FLAG);
     }
 
     private void initData() {
+        mStrings.add("商业险");
+        mStrings.add("交强险");
+        mPrices.add("1900");
+        mPrices.add("800");
         mPolicy = (Policy) getIntent().getSerializableExtra("policy");
+        mCurrentUser = AVUser.getCurrentUser();
+        AVRelation<AVObject> relation = mCurrentUser.getRelation("address");
+        AVQuery<AVObject> query = relation.getQuery();
+        query.findInBackground(new FindCallback<AVObject>() {
+            @Override
+            public void done(List<AVObject> list, AVException e) {
+                if (e == null) {
+                    mAddresses = list;
+                    initAddress();
+                }
+            }
+        });
+    }
 
+    private void initAddress() {
+        if (mAddresses != null && mAddresses.size() != 0) {
+            AVObject avObject = mAddresses.get(0);
+            mTvName.setText("收货人:" + avObject.getString("name"));
+            mTvPhone.setText(avObject.getString("phone"));
+            mTvAddress.setText("收货地址：" + avObject.getString("address"));
+        } else {
+            mTvAddress.setText("点击添加收货地址");
+        }
     }
 
 
@@ -86,7 +144,31 @@ public class TakePhotoActivity extends AppCompatActivity {
 
         @Override
         public View getView(int position, View convertView, ViewGroup parent) {
-            return null;
+            ViewHolder viewHolder;
+            if (convertView == null) {
+                convertView = View.inflate(getApplicationContext(), R.layout.item_pricedetail_listview, null);
+                viewHolder = new ViewHolder(convertView);
+                convertView.setTag(viewHolder);
+            } else {
+                viewHolder = (ViewHolder) convertView.getTag();
+            }
+
+            viewHolder.mTvDetailname.setText(mStrings.get(position));
+            viewHolder.mTvDetailprice.setText(mPrices.get(position));
+            return convertView;
+        }
+
+
+    }
+
+    static class ViewHolder {
+        @Bind(R.id.tv_detailname)
+        TextView mTvDetailname;
+        @Bind(R.id.tv_detailprice)
+        TextView mTvDetailprice;
+
+        ViewHolder(View view) {
+            ButterKnife.bind(this, view);
         }
     }
 }

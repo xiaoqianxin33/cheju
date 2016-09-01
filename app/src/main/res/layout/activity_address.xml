@@ -62,12 +62,6 @@
             android:gravity="center"
             android:text="暂无收货地址"/>
 
-        <ProgressBar
-            android:id="@+id/pb_address"
-            android:layout_width="200dp"
-            android:layout_height="200dp"
-            android:layout_gravity="center"/>
-
     </FrameLayout>
 
     <Button

@@ -73,8 +73,8 @@ public class CustomerActivity extends AppCompatActivity implements XListView.IXL
 
     private void initView() {
         mXlistviewCustomer.setPullLoadEnable(true);
-        mXlistviewCustomer.setPullRefreshEnable(true);
-        mXlistviewCustomer.setAutoLoadEnable(true);
+//        mXlistviewCustomer.setPullRefreshEnable(true);
+//        mXlistviewCustomer.setAutoLoadEnable(true);
         mXlistviewCustomer.setXListViewListener(this);
         mXlistviewCustomer.setRefreshTime(getTime());
         mMyAdapt = new MyAdapt();
@@ -106,7 +106,7 @@ public class CustomerActivity extends AppCompatActivity implements XListView.IXL
                 mXlistviewCustomer.setAdapter(mMyAdapt);
                 onLoad();
             }
-        }, 2500);
+        }, 50);
     }
 
     private void onLoad() {
@@ -125,7 +125,7 @@ public class CustomerActivity extends AppCompatActivity implements XListView.IXL
                 mMyAdapt.notifyDataSetChanged();
                 onLoad();
             }
-        }, 2500);
+        }, 200);
     }
 
     @Override

@@ -85,7 +85,7 @@
         </activity>
         <activity
             android:name=".activity.MainActivity"
-            android:launchMode="singleTask">
+            android:launchMode="singleTop">
         </activity>
         <activity
             android:name=".activity.WriteMessgeActivity"

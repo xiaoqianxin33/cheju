@@ -2,6 +2,7 @@ package com.chinalooke.android.cheju.fragment;
 
 
 import android.app.Fragment;
+import android.app.ProgressDialog;
 import android.content.Intent;
 import android.os.Bundle;
 import android.text.TextUtils;
@@ -10,8 +11,11 @@ import android.view.View;
 import android.view.ViewGroup;
 import android.widget.EditText;
 import android.widget.TextView;
+import android.widget.Toast;
 
 import com.avos.avoscloud.AVException;
+import com.avos.avoscloud.AVObject;
+import com.avos.avoscloud.AVRelation;
 import com.avos.avoscloud.AVUser;
 import com.avos.avoscloud.SaveCallback;
 import com.chinalooke.android.cheju.R;
@@ -38,6 +42,10 @@ public class AddAdressFragment extends Fragment {
     TextView mTvLocationAddress;
     private String mAddress;
     private String mName;
+    private AVUser mCurrentUser;
+    private String mPhone;
+    private Toast mToast;
+    private ProgressDialog mProgressDialog;
 
     @Override
     public View onCreateView(LayoutInflater inflater, ViewGroup container,
@@ -47,6 +55,11 @@ public class AddAdressFragment extends Fragment {
         return view;
     }
 
+    @Override
+    public void onActivityCreated(Bundle savedInstanceState) {
+        super.onActivityCreated(savedInstanceState);
+        mToast = Toast.makeText(getActivity(), "", Toast.LENGTH_SHORT);
+    }
 
     @Override
     public void onDestroyView() {
@@ -63,6 +76,7 @@ public class AddAdressFragment extends Fragment {
             case R.id.btn_address_ok:
                 boolean checkInput = checkInput();
                 if (checkInput) {
+                    initDialog("正在保存中");
                     saveAddress();
                 }
                 break;
@@ -73,18 +87,37 @@ public class AddAdressFragment extends Fragment {
     }
 
     private void saveAddress() {
-        AVUser.getCurrentUser().put("address", mAddress);
-        AVUser.getCurrentUser().put("addressName", mName);
-        AVUser.getCurrentUser().saveInBackground(new SaveCallback() {
+        mCurrentUser = AVUser.getCurrentUser();
+        AVObject tag2 = new AVObject("Address");// 构建对象
+        tag2.put("name", mName);
+        tag2.put("phone", mPhone);
+        tag2.put("address", mAddress);
+        AVRelation<AVObject> relation = mCurrentUser.getRelation("address");
+
+        relation.add(tag2);
+        mCurrentUser.saveInBackground(new SaveCallback() {
             @Override
             public void done(AVException e) {
+                mProgressDialog.dismiss();
                 if (e == null) {
-                    MyUtills.showNorDialog(getActivity(), "提示", "地址保存成功");
-                    ((AddressActivity) getActivity()).getBtnAddress().setVisibility(View.VISIBLE);
-                    ((AddressActivity) getActivity()).changeFragment(0);
+                    mToast.setText("地址保存成功！");
+                    mToast.show();
+                } else {
+                    mToast.setText(e.getMessage());
+                    mToast.show();
                 }
             }
         });
+
+    }
+
+
+    private void initDialog(String message) {
+        mProgressDialog = new ProgressDialog(getActivity());
+        mProgressDialog.setProgressStyle(ProgressDialog.STYLE_SPINNER);
+        mProgressDialog.setMessage(message);
+        mProgressDialog.setCancelable(true);
+        mProgressDialog.show();
     }
 
     private boolean checkInput() {
@@ -94,8 +127,8 @@ public class AddAdressFragment extends Fragment {
             return false;
         }
 
-        String phone = mEtPhoneAddress.getText().toString();
-        if (TextUtils.isEmpty(phone)) {
+        mPhone = mEtPhoneAddress.getText().toString();
+        if (TextUtils.isEmpty(mPhone)) {
             MyUtills.showToast(getActivity(), "收货人号码不能为空");
             return false;
         }

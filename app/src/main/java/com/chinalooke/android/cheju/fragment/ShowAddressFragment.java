@@ -12,6 +12,7 @@ import android.widget.CheckBox;
 import android.widget.ListView;
 import android.widget.TextView;
 
+import com.avos.avoscloud.AVObject;
 import com.chinalooke.android.cheju.R;
 import com.chinalooke.android.cheju.activity.AddressActivity;
 
@@ -33,7 +34,7 @@ public class ShowAddressFragment extends Fragment {
     @Bind(R.id.lv_address)
     ListView mLvAddress;
     private AddressActivity mAddressActivity;
-    private List<JSONObject> mJsonObjects;
+    private List<AVObject> mAdresse;
     private Map<Integer, Boolean> isSelected;
     private List beSelectedData = new ArrayList();
     private MyAdapt mMyAdapt;
@@ -50,7 +51,7 @@ public class ShowAddressFragment extends Fragment {
     public void onActivityCreated(@Nullable Bundle savedInstanceState) {
         super.onActivityCreated(savedInstanceState);
         mAddressActivity = (AddressActivity) getActivity();
-        mJsonObjects = mAddressActivity.getJSONObjects();
+        mAdresse = mAddressActivity.getAddresses();
         initView();
     }
 
@@ -58,13 +59,13 @@ public class ShowAddressFragment extends Fragment {
         if (isSelected != null)
             isSelected = null;
         isSelected = new HashMap<Integer, Boolean>();
-        for (int i = 0; i < mJsonObjects.size(); i++) {
+        for (int i = 0; i < mAdresse.size(); i++) {
             isSelected.put(i, false);
         }
         if (beSelectedData.size() > 0) {
             beSelectedData.clear();
         }
-        mMyAdapt = new MyAdapt(mJsonObjects);
+        mMyAdapt = new MyAdapt(mAdresse);
         mLvAddress.setAdapter(mMyAdapt);
     }
 
@@ -85,12 +86,12 @@ public class ShowAddressFragment extends Fragment {
 
         @Override
         public int getCount() {
-            return mJsonObjects.size();
+            return mAdresse.size();
         }
 
         @Override
         public Object getItem(int position) {
-            return mJsonObjects.get(position);
+            return mAdresse.get(position);
         }
 
         @Override
@@ -128,15 +129,11 @@ public class ShowAddressFragment extends Fragment {
     }
 
     private void setDetail(ViewHolder viewHolder, int position) {
-        JSONObject jsonObject = mJsonObjects.get(position);
-        try {
-            viewHolder.mTvAddress.setText(jsonObject.getString("address"));
-            viewHolder.mTvName.setText(jsonObject.getString("name"));
-            viewHolder.mTvPhone.setText(jsonObject.getString("phone"));
-            viewHolder.mCbCheck.setChecked(jsonObject.getBoolean("default"));
-        } catch (JSONException e) {
-            e.printStackTrace();
-        }
+        AVObject avObject = mAdresse.get(position);
+        viewHolder.mTvAddress.setText(avObject.getString("address"));
+        viewHolder.mTvName.setText(avObject.getString("name"));
+        viewHolder.mTvPhone.setText(avObject.getString("phone"));
+        viewHolder.mCbCheck.setChecked(avObject.getBoolean("default"));
     }
 
     static class ViewHolder {

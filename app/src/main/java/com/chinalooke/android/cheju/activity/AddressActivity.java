@@ -39,13 +39,13 @@ public class AddressActivity extends FragmentActivity {
     Button mBtnAddress;
     @Bind(R.id.tv_noaddress)
     TextView mTvNoaddress;
-    @Bind(R.id.pb_address)
-    ProgressBar mPbAddress;
+    //    @Bind(R.id.pb_address)
+//    ProgressBar mPbAddress;
     private Fragment mContent;
     private FragmentManager mFragmentManager;
     private ShowAddressFragment mShowAddressFragment;
     private AddAdressFragment mAddAdressFragment;
-    private List<JSONObject> mJSONObjects = new ArrayList<>();
+    private List<AVObject> mAddresses = new ArrayList<>();
     private AVUser mCurrentUser;
 
 
@@ -71,37 +71,42 @@ public class AddressActivity extends FragmentActivity {
         query.findInBackground(new FindCallback<AVObject>() {
             @Override
             public void done(List<AVObject> list, AVException e) {
-
+                if (e == null && list.size() != 0) {
+                    mAddresses = list;
+                    mTvNoaddress.setVisibility(View.GONE);
+                } else {
+                    mTvNoaddress.setVisibility(View.VISIBLE);
+                }
             }
         });
 
-        String address = AVUser.getCurrentUser().getString("address");
-
-        if (!TextUtils.isEmpty(address)) {
-            try {
-                JSONArray jsonArray = new JSONArray(address);
-                for (int i = 0; i < jsonArray.length(); i++) {
-                    JSONObject o = (JSONObject) jsonArray.get(i);
-                    mJSONObjects.add(o);
-                }
-                if (mJSONObjects.size() == 0) {
-                    mTvNoaddress.setVisibility(View.VISIBLE);
-                } else {
-                    mTvNoaddress.setVisibility(View.GONE);
-                    mBtnAddress.setText("添加新地址");
-                    switchContent(null, mShowAddressFragment);
-                }
-            } catch (JSONException e) {
-                e.printStackTrace();
-            }
-        } else {
-            mTvNoaddress.setVisibility(View.VISIBLE);
-        }
+//        String address = AVUser.getCurrentUser().getString("address");
+//
+//        if (!TextUtils.isEmpty(address)) {
+//            try {
+//                JSONArray jsonArray = new JSONArray(address);
+//                for (int i = 0; i < jsonArray.length(); i++) {
+//                    JSONObject o = (JSONObject) jsonArray.get(i);
+////                    mJSONObjects.add(o);
+//                }
+//                if (mJSONObjects.size() == 0) {
+//                    mTvNoaddress.setVisibility(View.VISIBLE);
+//                } else {
+//                    mTvNoaddress.setVisibility(View.GONE);
+//                    mBtnAddress.setText("添加新地址");
+//                    switchContent(null, mShowAddressFragment);
+//                }
+//            } catch (JSONException e) {
+//                e.printStackTrace();
+//            }
+//        } else {
+//            mTvNoaddress.setVisibility(View.VISIBLE);
+//        }
     }
 
-    public List<JSONObject> getJSONObjects() {
-        return mJSONObjects;
-    }
+//    public List<JSONObject> getJSONObjects() {
+//        return mJSONObjects;
+//    }
 
     @OnClick({R.id.iv_address_back, R.id.fl_address_back, R.id.btn_address})
     public void onClick(View view) {
@@ -140,5 +145,9 @@ public class AddressActivity extends FragmentActivity {
                 transaction.hide(from).show(to).commit(); // 隐藏当前的fragment，显示下一个
             }
         }
+    }
+
+    public List<AVObject> getAddresses() {
+        return mAddresses;
     }
 }

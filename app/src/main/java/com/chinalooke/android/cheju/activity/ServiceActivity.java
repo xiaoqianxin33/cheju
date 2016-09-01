@@ -5,14 +5,14 @@ import android.support.v7.app.AppCompatActivity;
 import android.os.Bundle;
 
 import com.avos.avoscloud.AVUser;
+import com.chinalooke.android.cheju.EaseConstant;
 import com.chinalooke.android.cheju.R;
-//import com.hyphenate.easeui.EaseConstant;
-//import com.hyphenate.easeui.ui.EaseChatFragment;
+import com.chinalooke.android.cheju.ui.EaseChatFragment;
 
 public class ServiceActivity extends AppCompatActivity {
 
     private FragmentManager mSupportFragmentManager;
-//    private EaseChatFragment mEaseChatFragment;
+    private EaseChatFragment mEaseChatFragment;
 
     @Override
     protected void onCreate(Bundle savedInstanceState) {
@@ -25,15 +25,15 @@ public class ServiceActivity extends AppCompatActivity {
 
     private void initView() {
 
-//        mEaseChatFragment = new EaseChatFragment();
-//        Bundle args = new Bundle();
-//        args.putInt(EaseConstant.EXTRA_CHAT_TYPE, EaseConstant.CHATTYPE_SINGLE);
-//        args.putString(EaseConstant.EXTRA_USER_ID, AVUser.getCurrentUser().getMobilePhoneNumber());
-//        mEaseChatFragment.setArguments(args);
-//
-//
-//        mSupportFragmentManager.beginTransaction()
-//                .replace(R.id.fl_service, mEaseChatFragment).commit();
+        mEaseChatFragment = new EaseChatFragment();
+        Bundle args = new Bundle();
+        args.putInt(EaseConstant.EXTRA_CHAT_TYPE, EaseConstant.CHATTYPE_SINGLE);
+        args.putString(EaseConstant.EXTRA_USER_ID, AVUser.getCurrentUser().getMobilePhoneNumber());
+        mEaseChatFragment.setArguments(args);
+
+
+        mSupportFragmentManager.beginTransaction()
+                .replace(R.id.fl_service, mEaseChatFragment).commit();
 
     }
 }

@@ -133,8 +133,6 @@ public class GodsActivity extends AppCompatActivity implements MyScrollView.OnSc
             strings[i] = mImages.get(i);
         }
         mKannerGoods.setImagesUrl(strings);
-
-
     }
 
     private void setStar(int grade) {
