@@ -299,6 +299,7 @@
     <Button
         android:id="@+id/write"
         style="@style/Botton"
+        android:layout_marginTop="16dp"
         android:text="下一步"/>
 
     <TextView

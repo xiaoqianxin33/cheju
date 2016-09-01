@@ -1,10 +1,9 @@
 package com.chinalooke.android.cheju.fragment;
 
 
+import android.app.Fragment;
 import android.content.Intent;
 import android.os.Bundle;
-import android.support.annotation.Nullable;
-import android.support.v4.app.Fragment;
 import android.text.TextUtils;
 import android.view.LayoutInflater;
 import android.view.View;
@@ -18,7 +17,6 @@ import com.avos.avoscloud.SaveCallback;
 import com.chinalooke.android.cheju.R;
 import com.chinalooke.android.cheju.activity.AddressActivity;
 import com.chinalooke.android.cheju.activity.WheelViewActivity;
-import com.chinalooke.android.cheju.utills.LeanCloudTools;
 import com.chinalooke.android.cheju.utills.MyUtills;
 
 import butterknife.Bind;

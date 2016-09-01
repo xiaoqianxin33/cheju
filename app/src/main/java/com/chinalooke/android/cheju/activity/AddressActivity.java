@@ -1,18 +1,32 @@
 package com.chinalooke.android.cheju.activity;
 
+import android.app.Fragment;
+import android.app.FragmentManager;
+import android.app.FragmentTransaction;
 import android.os.Bundle;
 import android.support.v4.app.FragmentActivity;
-import android.support.v4.app.FragmentManager;
-import android.support.v4.app.FragmentTransaction;
 import android.text.TextUtils;
 import android.view.View;
 import android.widget.Button;
+import android.widget.ProgressBar;
+import android.widget.TextView;
 
+import com.avos.avoscloud.AVException;
+import com.avos.avoscloud.AVObject;
+import com.avos.avoscloud.AVQuery;
+import com.avos.avoscloud.AVRelation;
 import com.avos.avoscloud.AVUser;
+import com.avos.avoscloud.FindCallback;
 import com.chinalooke.android.cheju.R;
-import com.chinalooke.android.cheju.bean.User;
 import com.chinalooke.android.cheju.fragment.AddAdressFragment;
 import com.chinalooke.android.cheju.fragment.ShowAddressFragment;
+
+import org.json.JSONArray;
+import org.json.JSONException;
+import org.json.JSONObject;
+
+import java.util.ArrayList;
+import java.util.List;
 
 import butterknife.Bind;
 import butterknife.ButterKnife;
@@ -23,8 +37,17 @@ public class AddressActivity extends FragmentActivity {
 
     @Bind(R.id.btn_address)
     Button mBtnAddress;
-    private User mUser;
-    private FragmentManager mSupportFragmentManager;
+    @Bind(R.id.tv_noaddress)
+    TextView mTvNoaddress;
+    @Bind(R.id.pb_address)
+    ProgressBar mPbAddress;
+    private Fragment mContent;
+    private FragmentManager mFragmentManager;
+    private ShowAddressFragment mShowAddressFragment;
+    private AddAdressFragment mAddAdressFragment;
+    private List<JSONObject> mJSONObjects = new ArrayList<>();
+    private AVUser mCurrentUser;
+
 
     public Button getBtnAddress() {
         return mBtnAddress;
@@ -35,26 +58,49 @@ public class AddressActivity extends FragmentActivity {
         super.onCreate(savedInstanceState);
         setContentView(R.layout.activity_address);
         ButterKnife.bind(this);
-
+        mFragmentManager = getFragmentManager();
+        mCurrentUser = AVUser.getCurrentUser();
         initData();
     }
 
     private void initData() {
+        mShowAddressFragment = new ShowAddressFragment();
+        mAddAdressFragment = new AddAdressFragment();
+        AVRelation<AVObject> relation = mCurrentUser.getRelation("address");
+        AVQuery<AVObject> query = relation.getQuery();
+        query.findInBackground(new FindCallback<AVObject>() {
+            @Override
+            public void done(List<AVObject> list, AVException e) {
+
+            }
+        });
 
         String address = AVUser.getCurrentUser().getString("address");
 
         if (!TextUtils.isEmpty(address)) {
-            mBtnAddress.setText("编辑收货地址");
-            mUser = new User();
-            mUser.setAddress(address);
-            mUser.setRealName(AVUser.getCurrentUser().getString("realName"));
-            mUser.setPhone(AVUser.getCurrentUser().getMobilePhoneNumber());
-            changeFragment(0);
+            try {
+                JSONArray jsonArray = new JSONArray(address);
+                for (int i = 0; i < jsonArray.length(); i++) {
+                    JSONObject o = (JSONObject) jsonArray.get(i);
+                    mJSONObjects.add(o);
+                }
+                if (mJSONObjects.size() == 0) {
+                    mTvNoaddress.setVisibility(View.VISIBLE);
+                } else {
+                    mTvNoaddress.setVisibility(View.GONE);
+                    mBtnAddress.setText("添加新地址");
+                    switchContent(null, mShowAddressFragment);
+                }
+            } catch (JSONException e) {
+                e.printStackTrace();
+            }
+        } else {
+            mTvNoaddress.setVisibility(View.VISIBLE);
         }
     }
 
-    public User getUser() {
-        return mUser;
+    public List<JSONObject> getJSONObjects() {
+        return mJSONObjects;
     }
 
     @OnClick({R.id.iv_address_back, R.id.fl_address_back, R.id.btn_address})
@@ -74,16 +120,25 @@ public class AddressActivity extends FragmentActivity {
     }
 
     public void changeFragment(int i) {
-        mSupportFragmentManager = getSupportFragmentManager();
-        FragmentTransaction fragmentTransaction = mSupportFragmentManager.beginTransaction();
         switch (i) {
             case 1:
-                fragmentTransaction.replace(R.id.fl_address, new AddAdressFragment()).commit();
+                switchContent(mShowAddressFragment, mAddAdressFragment);
                 break;
             case 0:
-                fragmentTransaction.replace(R.id.fl_address, new ShowAddressFragment()).commit();
+                switchContent(mAddAdressFragment, mShowAddressFragment);
                 break;
+        }
+    }
 
+    public void switchContent(Fragment from, Fragment to) {
+        if (mContent != to) {
+            mContent = to;
+            FragmentTransaction transaction = mFragmentManager.beginTransaction();
+            if (!to.isAdded()) {    // 先判断是否被add过
+                transaction.hide(from).add(R.id.fl_address, to).commit(); // 隐藏当前的fragment，add下一个到Activity中
+            } else {
+                transaction.hide(from).show(to).commit(); // 隐藏当前的fragment，显示下一个
+            }
         }
     }
 }

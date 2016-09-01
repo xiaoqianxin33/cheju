@@ -6,89 +6,14 @@
               android:orientation="vertical"
               tools:context="com.chinalooke.android.cheju.fragment.AddAdressFragment">
 
-    <LinearLayout
+    <ListView
+        android:id="@+id/lv_address"
         android:layout_width="match_parent"
-        android:layout_height="48dp"
-        android:layout_marginEnd="8dp"
-        android:layout_marginStart="8dp"
-        android:orientation="horizontal">
-
-        <TextView
-
-            style="@style/rowstyle"
-            android:paddingLeft="8dp"
-            android:text="收货人"
-            />
-
-        <TextView
-            android:id="@+id/tv_address_name"
-            style="@style/rowstyle"
-            android:background="@null"
-            />
-    </LinearLayout>
-
-    <TextView
-        android:layout_width="match_parent"
-        android:layout_height="1dp"
-        android:layout_marginEnd="8dp"
-        android:layout_marginStart="8dp"
-        android:background="#ADA9A4"/>
-
-    <LinearLayout
-        android:layout_width="match_parent"
-        android:layout_height="48dp"
-        android:layout_marginEnd="8dp"
-        android:layout_marginStart="8dp"
-        android:orientation="horizontal">
-
-        <TextView
-
-            style="@style/rowstyle"
-            android:paddingLeft="8dp"
-            android:text="手机号码"
-            />
-
-        <TextView
-            android:id="@+id/tv_address_phone"
-            style="@style/rowstyle"
-            android:background="@null"
-            />
-    </LinearLayout>
-
-    <TextView
-        android:layout_width="match_parent"
-        android:layout_height="1dp"
-        android:layout_marginEnd="8dp"
-        android:layout_marginStart="8dp"
-        android:background="#ADA9A4"/>
-
-    <LinearLayout
-        android:layout_width="match_parent"
-        android:layout_height="48dp"
-        android:layout_marginEnd="8dp"
-        android:layout_marginStart="8dp"
-        android:orientation="horizontal">
-
-        <TextView
-
-            style="@style/rowstyle"
-            android:paddingLeft="8dp"
-            android:text="收货地址"
-            />
-
-        <TextView
-            android:id="@+id/tv_address_address"
-            style="@style/rowstyle"
-            android:background="@null"
-            />
-    </LinearLayout>
-
-    <TextView
-        android:layout_width="match_parent"
-        android:layout_height="1dp"
-        android:layout_marginEnd="8dp"
-        android:layout_marginStart="8dp"
-        android:background="#ADA9A4"/>
-
-
+        android:layout_height="match_parent"
+        android:layout_marginLeft="8dp"
+        android:layout_marginRight="8dp"
+        android:layout_marginTop="16dp"
+        android:divider="@color/backcolor"
+        android:dividerHeight="8dp"
+        android:scrollbars="none"/>
 </LinearLayout>

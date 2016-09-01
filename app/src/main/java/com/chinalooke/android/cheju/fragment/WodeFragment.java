@@ -37,6 +37,7 @@ import com.avos.avoscloud.AVUser;
 import com.avos.avoscloud.FindCallback;
 import com.avos.avoscloud.SaveCallback;
 import com.chinalooke.android.cheju.R;
+import com.chinalooke.android.cheju.activity.AddressActivity;
 import com.chinalooke.android.cheju.activity.CustomerActivity;
 import com.chinalooke.android.cheju.activity.LoginActivity;
 import com.chinalooke.android.cheju.activity.PersonActivity;
@@ -158,7 +159,7 @@ public class WodeFragment extends Fragment {
 
                         break;
                     case 4:
-//                        startActivity(new Intent(getActivity(), AddressActivity.class));
+                        startActivity(new Intent(getActivity(), AddressActivity.class));
                         break;
 
                     case 3:
@@ -169,17 +170,6 @@ public class WodeFragment extends Fragment {
             }
         });
     }
-
-//    private void checkCustomers() {
-//        String customers = AVUser.getCurrentUser().getString("customers");
-//        if (TextUtils.isEmpty(customers)) {
-//            MyUtills.showGodDialog(getActivity(), "提示", "快去分享下载 好友打折买保险 积分返点全归你");
-//        } else {
-//            Intent intent = new Intent(getActivity(), CustomerActivity.class);
-//            intent.putExtra("customers", customers);
-//            startActivity(intent);
-//        }
-//    }
 
 
     private void initData() {
@@ -211,13 +201,13 @@ public class WodeFragment extends Fragment {
             case R.id.head:
                 showDialog();
                 break;
-            case R.id.iv_qcord:
-                mIvQcor.setVisibility(View.VISIBLE);
-                mIvQcor.setImageBitmap(mBitmap);
-                break;
-            case R.id.iv_qcor:
-                mIvQcor.setVisibility(View.GONE);
-                break;
+//            case R.id.iv_qcord:
+//                mIvQcor.setVisibility(View.VISIBLE);
+//                mIvQcor.setImageBitmap(mBitmap);
+//                break;
+//            case R.id.iv_qcor:
+//                mIvQcor.setVisibility(View.GONE);
+//                break;
         }
 
     }
