@@ -19,7 +19,7 @@ android {
         versionCode 1
         versionName "1.0"
         multiDexEnabled true
-        resConfigs "zh"
+//        resConfigs "zh"
 
         ndk {
             moduleName "my_so_lib"
@@ -79,8 +79,6 @@ dependencies {
     compile 'cn.bingoogolapple:bga-qrcodecore:1.1.3@aar'
     compile 'cn.bingoogolapple:bga-zxing:1.1.3@aar'
     compile files('libs/nineoldandroids-2.4.0.jar')
-    compile files('libs/hyphenatechat_3.1.5.jar')
-    compile 'com.android.support:support-v4:24.2.0'
     compile 'cn.bingoogolapple:bga-banner:2.0.9@aar'
     compile 'liji.library.dev:citypickerview:0.2.0'
     compile 'com.bigkoo:pickerview:2.1.1'
@@ -89,10 +87,9 @@ dependencies {
     compile files('libs/ShareSDK-SinaWeibo-2.7.6.jar')
     compile files('libs/ShareSDK-TencentWeibo-2.7.6.jar')
     compile 'cn.leancloud.android:avoscloud-push:v3.7.1@aar'
-    compile files('libs/BaiduLBS_Android.jar')
-    compile files('libs/glide-3.6.1.jar')
     compile files('libs/google-play-services.jar')
     compile files('libs/HwPush_SDK_V2705_nomap.jar')
     compile files('libs/MiPush_SDK_Client_2_2_19.jar')
     compile files('libs/org.apache.http.legacy.jar')
+    compile project(':easeui-release_3.1.5')
 }

@@ -31,7 +31,6 @@ import com.chinalooke.android.cheju.activity.TakePhotoActivity;
 import com.chinalooke.android.cheju.activity.WriteMessgeActivity;
 import com.chinalooke.android.cheju.bean.Policy;
 import com.chinalooke.android.cheju.constant.SQLwords;
-import com.chinalooke.android.cheju.utills.PreferenceUtils;
 
 import java.util.List;
 

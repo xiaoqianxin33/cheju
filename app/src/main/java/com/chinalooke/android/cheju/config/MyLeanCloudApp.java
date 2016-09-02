@@ -3,11 +3,11 @@ package com.chinalooke.android.cheju.config;
 import android.app.Application;
 import android.support.multidex.MultiDex;
 
-import com.avos.avoscloud.AVInstallation;
 import com.avos.avoscloud.AVOSCloud;
 import com.hyphenate.chat.EMClient;
 import com.hyphenate.chat.EMOptions;
-//import com.hyphenate.easeui.controller.EaseUI;
+import com.hyphenate.easeui.controller.EaseUI;
+
 
 /**
  * Created by xiao on 2016/8/5.
@@ -22,7 +22,7 @@ public class MyLeanCloudApp extends Application {
         EMOptions options = new EMOptions();
         EMClient.getInstance().init(this, options);
 
-//        EaseUI.getInstance().init(getApplicationContext(), options);
+        EaseUI.getInstance().init(getApplicationContext(), options);
         EMClient.getInstance().setDebugMode(true);
         MultiDex.install(this);
 

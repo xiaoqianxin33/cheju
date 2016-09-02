@@ -56,35 +56,35 @@ public class SplashActivity extends AppCompatActivity {
     }
 
 
-//    @Override
-//    protected void onStart() {
-//        super.onStart();
-//
-//        new Thread(new Runnable() {
-//            public void run() {
-//                if (EMClient.getInstance().isLoggedInBefore()) {
-//                    // auto login mode, make sure all group and conversation is loaed before enter the main screen
-//                    long start = System.currentTimeMillis();
-//                    EMClient.getInstance().groupManager().loadAllGroups();
-//                    EMClient.getInstance().chatManager().loadAllConversations();
-//                    long costTime = System.currentTimeMillis() - start;
-//                    //wait
-//                    if (sleepTime - costTime > 0) {
-//                        try {
-//                            Thread.sleep(sleepTime - costTime);
-//                        } catch (InterruptedException e) {
-//                            e.printStackTrace();
-//                        }
-//                    }
-//                    //enter main screen
-//                } else {
-//                    try {
-//                        Thread.sleep(sleepTime);
-//                    } catch (InterruptedException e) {
-//                    }
-//                }
-//            }
-//        }).start();
-//
-//    }
+    @Override
+    protected void onStart() {
+        super.onStart();
+
+        new Thread(new Runnable() {
+            public void run() {
+                if (EMClient.getInstance().isLoggedInBefore()) {
+                    // auto login mode, make sure all group and conversation is loaed before enter the main screen
+                    long start = System.currentTimeMillis();
+                    EMClient.getInstance().groupManager().loadAllGroups();
+                    EMClient.getInstance().chatManager().loadAllConversations();
+                    long costTime = System.currentTimeMillis() - start;
+                    //wait
+                    if (sleepTime - costTime > 0) {
+                        try {
+                            Thread.sleep(sleepTime - costTime);
+                        } catch (InterruptedException e) {
+                            e.printStackTrace();
+                        }
+                    }
+                    //enter main screen
+                } else {
+                    try {
+                        Thread.sleep(sleepTime);
+                    } catch (InterruptedException e) {
+                    }
+                }
+            }
+        }).start();
+
+    }
 }
