@@ -16,6 +16,9 @@
     <color name="bottonpress">#3881FB</color>
 
 
+    <color name="transparent_background">#80000000</color>
+
+
     <!-- 自定义Dialog的背景颜色 -->
     <color name="dialog_bg">#ffe74c3c</color>
     <!-- 自定义Dialog的字体的颜色 -->

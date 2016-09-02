@@ -1,5 +1,6 @@
 package com.chinalooke.android.cheju.activity;
 
+import android.content.DialogInterface;
 import android.content.Intent;
 import android.graphics.Paint;
 import android.os.Bundle;
@@ -18,6 +19,8 @@ import com.avos.avoscloud.AVUser;
 import com.avos.avoscloud.FindCallback;
 import com.chinalooke.android.cheju.R;
 import com.chinalooke.android.cheju.bean.Policy;
+import com.chinalooke.android.cheju.utills.MyUtills;
+import com.chinalooke.android.cheju.view.PayDialog;
 import com.chinalooke.android.cheju.view.XListView;
 
 import java.util.ArrayList;
@@ -50,6 +53,7 @@ public class TakePhotoActivity extends AppCompatActivity {
     private List<AVObject> mAddresses;
     private MyAdapt mMyAdapt;
     private ArrayList<String> mPrices = new ArrayList<>();
+    private String mAdress;
 
     @Override
     protected void onCreate(Bundle savedInstanceState) {
@@ -65,8 +69,8 @@ public class TakePhotoActivity extends AppCompatActivity {
         mXlvDetail.setPullLoadEnable(false);
         mMyAdapt = new MyAdapt();
         mXlvDetail.setAdapter(mMyAdapt);
-        mTvPrice.setText(mPolicy.getPrice());
-        mTvDiscountprice.setText(mPolicy.getDiscountPrice());
+//        mTvPrice.setText(mPolicy.getPrice());
+//        mTvDiscountprice.setText(mPolicy.getDiscountPrice());
         mTvPrice.getPaint().setFlags(Paint.STRIKE_THRU_TEXT_FLAG);
     }
 
@@ -96,6 +100,7 @@ public class TakePhotoActivity extends AppCompatActivity {
             mTvName.setText("收货人:" + avObject.getString("name"));
             mTvPhone.setText(avObject.getString("phone"));
             mTvAddress.setText("收货地址：" + avObject.getString("address"));
+            mAdress = "收货地址：" + avObject.getString("address");
         } else {
             mTvAddress.setText("点击添加收货地址");
         }
@@ -120,6 +125,9 @@ public class TakePhotoActivity extends AppCompatActivity {
                 startActivity(intent);
                 break;
             case R.id.btn_pay:
+                Intent intent1 = new Intent(TakePhotoActivity.this, PayActivity.class);
+                intent1.putExtra("address", mAdress);
+                startActivityForResult(intent1, 0);
                 break;
         }
     }
@@ -170,5 +178,46 @@ public class TakePhotoActivity extends AppCompatActivity {
         ViewHolder(View view) {
             ButterKnife.bind(this, view);
         }
+    }
+
+    @Override
+    protected void onActivityResult(int requestCode, int resultCode, Intent data) {
+        super.onActivityResult(requestCode, resultCode, data);
+        if (data != null) {
+            boolean statu = data.getBooleanExtra("statu", false);
+            if (statu) {
+//                PayDialog.Builder builder = new PayDialog.Builder(this);
+//                builder.setTitle("系统提示");
+//                builder.setPositiveButton("确定", new DialogInterface.OnClickListener() {
+//                    public void onClick(DialogInterface dialog, int which) {
+//                        dialog.dismiss();
+//                        startActivity(new Intent(TakePhotoActivity.this, OrderActivity.class));
+//                    }
+//                });
+//
+//                builder.setNegativeButton("支付遇到问题",
+//                        new android.content.DialogInterface.OnClickListener() {
+//                            public void onClick(DialogInterface dialog, int which) {
+//                                dialog.dismiss();
+//                            }
+//                        });
+//
+//                builder.create().show();
+                MyUtills.showPayDialog(this, "系统提示", "已完成支付？", new DialogInterface.OnClickListener() {
+                    @Override
+                    public void onClick(DialogInterface dialog, int which) {
+                        dialog.dismiss();
+                        startActivity(new Intent(TakePhotoActivity.this, OrderActivity.class));
+                    }
+                }, new DialogInterface.OnClickListener() {
+                    @Override
+                    public void onClick(DialogInterface dialog, int which) {
+                        dialog.dismiss();
+                    }
+                });
+
+            }
+        }
+
     }
 }

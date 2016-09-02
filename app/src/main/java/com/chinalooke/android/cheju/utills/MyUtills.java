@@ -158,5 +158,14 @@ public class MyUtills {
         builder.setNegativeButton("取消", NonClickListener);
         builder.show();
     }
+    public static void showPayDialog(final Activity context, String title, String message, DialogInterface.OnClickListener PonClickListener, DialogInterface.OnClickListener NonClickListener) {
+
+        android.support.v7.app.AlertDialog.Builder builder = new android.support.v7.app.AlertDialog.Builder(context);
+        builder.setTitle(title);
+        builder.setMessage(message);
+        builder.setPositiveButton("确定", PonClickListener);
+        builder.setNegativeButton("支付遇到问题", NonClickListener);
+        builder.show();
+    }
 
 }

@@ -6,6 +6,7 @@ import android.app.FragmentTransaction;
 import android.os.Bundle;
 import android.support.v4.app.FragmentActivity;
 import android.text.TextUtils;
+import android.util.Log;
 import android.view.View;
 import android.widget.Button;
 import android.widget.ProgressBar;
@@ -73,7 +74,8 @@ public class AddressActivity extends FragmentActivity {
     private void initData() {
         mShowAddressFragment = new ShowAddressFragment();
         mAddAdressFragment = new AddAdressFragment();
-        AVRelation<AVObject> relation = mCurrentUser.getRelation("address");
+        AVObject todoFolder = AVObject.createWithoutData("_User", mCurrentUser.getObjectId());
+        AVRelation<AVObject> relation = todoFolder.getRelation("address");
         AVQuery<AVObject> query = relation.getQuery();
         query.findInBackground(new FindCallback<AVObject>() {
             @Override
@@ -81,39 +83,17 @@ public class AddressActivity extends FragmentActivity {
                 if (e == null && list.size() != 0) {
                     mAddresses = list;
                     mTvNoaddress.setVisibility(View.GONE);
+//                    changeFragment(0);
+                    FragmentTransaction transaction = mFragmentManager.beginTransaction();
+                    transaction.add(R.id.fl_address, mShowAddressFragment).commit();
                 } else {
                     mTvNoaddress.setVisibility(View.VISIBLE);
                 }
             }
         });
 
-//        String address = AVUser.getCurrentUser().getString("address");
-//
-//        if (!TextUtils.isEmpty(address)) {
-//            try {
-//                JSONArray jsonArray = new JSONArray(address);
-//                for (int i = 0; i < jsonArray.length(); i++) {
-//                    JSONObject o = (JSONObject) jsonArray.get(i);
-////                    mJSONObjects.add(o);
-//                }
-//                if (mJSONObjects.size() == 0) {
-//                    mTvNoaddress.setVisibility(View.VISIBLE);
-//                } else {
-//                    mTvNoaddress.setVisibility(View.GONE);
-//                    mBtnAddress.setText("添加新地址");
-//                    switchContent(null, mShowAddressFragment);
-//                }
-//            } catch (JSONException e) {
-//                e.printStackTrace();
-//            }
-//        } else {
-//            mTvNoaddress.setVisibility(View.VISIBLE);
-//        }
     }
 
-//    public List<JSONObject> getJSONObjects() {
-//        return mJSONObjects;
-//    }
 
     @OnClick({R.id.iv_address_back, R.id.fl_address_back, R.id.btn_address})
     public void onClick(View view) {

@@ -9,15 +9,18 @@ import android.view.View;
 import android.view.ViewGroup;
 import android.widget.BaseAdapter;
 import android.widget.CheckBox;
+import android.widget.CompoundButton;
 import android.widget.ListView;
 import android.widget.TextView;
 
+import com.avos.avoscloud.AVException;
 import com.avos.avoscloud.AVObject;
+import com.avos.avoscloud.AVQuery;
+import com.avos.avoscloud.AVRelation;
+import com.avos.avoscloud.AVUser;
+import com.avos.avoscloud.FindCallback;
 import com.chinalooke.android.cheju.R;
 import com.chinalooke.android.cheju.activity.AddressActivity;
-
-import org.json.JSONException;
-import org.json.JSONObject;
 
 import java.util.ArrayList;
 import java.util.HashMap;
@@ -38,6 +41,7 @@ public class ShowAddressFragment extends Fragment {
     private Map<Integer, Boolean> isSelected;
     private List beSelectedData = new ArrayList();
     private MyAdapt mMyAdapt;
+    private AVUser mCurrentUser;
 
     @Override
     public View onCreateView(LayoutInflater inflater, ViewGroup container,
@@ -51,11 +55,47 @@ public class ShowAddressFragment extends Fragment {
     public void onActivityCreated(@Nullable Bundle savedInstanceState) {
         super.onActivityCreated(savedInstanceState);
         mAddressActivity = (AddressActivity) getActivity();
-        mAdresse = mAddressActivity.getAddresses();
-        initView();
+        mCurrentUser = AVUser.getCurrentUser();
+        initData();
+//        mAdresse = mAddressActivity.getAddresses();
+
+    }
+
+    public void refreshData() {
+        initData();
+    }
+
+    private void initData() {
+
+        AVRelation<AVObject> relation = mCurrentUser.getRelation("address");
+        AVQuery<AVObject> query = relation.getQuery();
+        query.findInBackground(new FindCallback<AVObject>() {
+            @Override
+            public void done(List<AVObject> list, AVException e) {
+                if (e == null && list.size() != 0) {
+                    mAdresse = list;
+                    if (mMyAdapt != null)
+                        mMyAdapt.notifyDataSetChanged();
+                    initView();
+                } else {
+
+                }
+            }
+        });
+
+    }
+
+
+    @Override
+    public void onResume() {
+        super.onResume();
+        initData();
+        if (mMyAdapt != null)
+            mMyAdapt.notifyDataSetChanged();
     }
 
     private void initView() {
+
         if (isSelected != null)
             isSelected = null;
         isSelected = new HashMap<Integer, Boolean>();
@@ -123,7 +163,7 @@ public class ShowAddressFragment extends Fragment {
                     if (cu) beSelectedData.add(cs.get(position));
                 }
             });
-//            viewHolder.mCbCheck.setChecked(isSelected.get(position));
+            viewHolder.mCbCheck.setChecked(isSelected.get(position));
             return convertView;
         }
     }
@@ -134,6 +174,16 @@ public class ShowAddressFragment extends Fragment {
         viewHolder.mTvName.setText(avObject.getString("name"));
         viewHolder.mTvPhone.setText(avObject.getString("phone"));
         viewHolder.mCbCheck.setChecked(avObject.getBoolean("default"));
+        viewHolder.mCbCheck.setOnCheckedChangeListener(new CompoundButton.OnCheckedChangeListener() {
+            @Override
+            public void onCheckedChanged(CompoundButton buttonView, boolean isChecked) {
+                if (isChecked) {
+                    buttonView.setText("默认地址");
+                } else {
+                    buttonView.setText("设为默认");
+                }
+            }
+        });
     }
 
     static class ViewHolder {

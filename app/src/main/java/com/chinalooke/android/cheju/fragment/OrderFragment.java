@@ -154,16 +154,18 @@ public class OrderFragment extends Fragment implements AdapterView.OnItemClickLi
             AVQuery.doCloudQueryInBackground(SQLwords.requirPolicy, new CloudQueryCallback<AVCloudQueryResult>() {
                 @Override
                 public void done(AVCloudQueryResult avCloudQueryResult, AVException e) {
+                    mProgressDialog.dismiss();
                     if (e == null) {
                         List<AVObject> results = (List<AVObject>) avCloudQueryResult.getResults();
                         if (results == null || results.size() == 0) {
-                            mProgressDialog.dismiss();
                             mTvNopolicy.setVisibility(View.VISIBLE);
                         } else {
                             mTvNopolicy.setVisibility(View.GONE);
                             mAvObject = results.get(0);
                             mHandler.sendEmptyMessage(1);
                         }
+                    } else {
+                        mTvNopolicy.setVisibility(View.VISIBLE);
                     }
                 }
             }, AVUser.getCurrentUser().getUsername());

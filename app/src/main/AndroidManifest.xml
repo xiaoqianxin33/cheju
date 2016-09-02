@@ -93,10 +93,6 @@
         </activity>
         <activity android:name=".activity.LipeiActivity">
         </activity>
-        <activity
-            android:name=".activity.WheelViewActivity"
-            android:theme="@android:style/Theme.Translucent.NoTitleBar">
-        </activity>
         <activity android:name=".activity.SplashActivity">
             <intent-filter>
                 <action android:name="android.intent.action.MAIN"/>
@@ -185,6 +181,10 @@
             android:windowSoftInputMode="adjustPan">
         </activity>
         <activity android:name=".activity.CustomerActivity">
+        </activity>
+        <activity android:name=".activity.PayActivity">
+        </activity>
+        <activity android:name=".activity.OrderActivity">
         </activity>
     </application>
 
