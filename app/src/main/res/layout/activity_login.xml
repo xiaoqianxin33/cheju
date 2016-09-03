@@ -4,7 +4,7 @@
     xmlns:tools="http://schemas.android.com/tools"
     android:layout_width="match_parent"
     android:layout_height="match_parent"
-    android:background="@mipmap/login_bg"
+    android:background="@android:color/white"
     android:orientation="vertical"
     tools:context=".activity.LoginActivity">
 
@@ -17,8 +17,8 @@
 
         <ImageView
             android:id="@+id/iv_login_back"
-            android:layout_width="36dp"
-            android:layout_height="36dp"
+            android:layout_width="24dp"
+            android:layout_height="24dp"
             android:layout_centerVertical="true"
             android:layout_marginStart="8dp"
             android:src="@mipmap/icon_back"/>
@@ -59,12 +59,12 @@
             android:textSize="16sp"
             />
 
-        <TextView
-            android:layout_width="match_parent"
-            android:layout_height="1dp"
-            android:layout_marginEnd="16dp"
-            android:layout_marginStart="16dp"
-            android:background="#ABA7A2"/>
+        <!--<TextView-->
+        <!--android:layout_width="match_parent"-->
+        <!--android:layout_height="1dp"-->
+        <!--android:layout_marginEnd="16dp"-->
+        <!--android:layout_marginStart="16dp"-->
+        <!--android:background="#ABA7A2"/>-->
 
         <RelativeLayout
             android:layout_width="match_parent"
@@ -85,18 +85,19 @@
                 android:textColor="@android:color/black"
                 android:textSize="16sp"
                 />
-        </RelativeLayout>
 
-        <TextView
-            android:id="@+id/tv_findpwd"
-            android:layout_width="wrap_content"
-            android:layout_height="24dp"
-            android:layout_gravity="end"
-            android:layout_marginTop="8dp"
-            android:gravity="end|center_vertical"
-            android:paddingRight="16dp"
-            android:text="密码找回"
-            android:textColor="@android:color/white"/>
+            <TextView
+                android:id="@+id/tv_findpwd"
+                android:layout_width="wrap_content"
+                android:layout_height="24dp"
+                android:layout_gravity="end"
+                android:gravity="end|center_vertical"
+                android:paddingRight="8dp"
+                android:text="忘记密码?"
+                android:textColor="#7C7974"
+                android:layout_centerVertical="true"
+                android:layout_alignEnd="@+id/et_login_password"/>
+        </RelativeLayout>
 
 
         <Button
@@ -107,9 +108,18 @@
 
         <Button
             android:id="@+id/btn_register"
-            style="@style/Botton"
+            android:layout_width="wrap_content"
+            android:layout_height="30dp"
+            android:layout_gravity="right"
+            android:layout_marginRight="8dp"
             android:layout_marginTop="8dp"
-            android:text="注册"/>
+            android:background="@drawable/translate_shape"
+            android:paddingLeft="2dp"
+            android:paddingRight="2dp"
+            android:text="没有账号?快速注册"
+            android:textColor="#7A7772"
+            android:textSize="12sp"/>
+
 
     </LinearLayout>
 

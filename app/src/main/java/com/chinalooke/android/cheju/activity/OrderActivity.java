@@ -43,13 +43,13 @@ public class OrderActivity extends AppCompatActivity {
 
     private void initData() {
         mStrings.add("订单编号：");
-        mStrings.add("支付宝交易号：");
+        mStrings.add("支付方式：");
         mStrings.add("付款金额：");
         mStrings.add("订单创建时间：");
         mStrings.add("付款时间：");
         mStrings.add("送货时间：");
         mPrices.add("9282764458");
-        mPrices.add("201609021001001460288044023");
+        mPrices.add("支付宝");
         mPrices.add("¥1300");
         mPrices.add("2016-09-02 20:38");
         mPrices.add("2016-09-02 20:38");

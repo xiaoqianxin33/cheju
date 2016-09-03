@@ -42,6 +42,8 @@ public class CustomerActivity extends AppCompatActivity implements XListView.IXL
     private int mInt;
     private Handler mHandler = new Handler();
     private Toast mToast;
+    private List<String> mTimes = new ArrayList<>();
+    private List<String> mMessage = new ArrayList<>();
 
     @Override
     protected void onCreate(Bundle savedInstanceState) {
@@ -55,6 +57,16 @@ public class CustomerActivity extends AppCompatActivity implements XListView.IXL
     }
 
     private void initData() {
+        mTimes.add("2016-9-1");
+        mTimes.add("2016-9-2");
+        mTimes.add("2016-9-3");
+        mTimes.add("2016-9-4");
+        mMessage.add("客户158********购买了商业险");
+        mMessage.add("客户138********购买了商业险");
+        mMessage.add("客户157********购买了强制险");
+        mMessage.add("客户156********购买了商业险");
+        mMessage.add("客户155********购买了商业险");
+
         mCustomers = (List<AVUser>) getIntent().getSerializableExtra("customers");
         getItems();
     }
@@ -73,7 +85,7 @@ public class CustomerActivity extends AppCompatActivity implements XListView.IXL
 
     private void initView() {
         mXlistviewCustomer.setPullLoadEnable(true);
-//        mXlistviewCustomer.setPullRefreshEnable(true);
+//        mXlistviewCustomer.setPullRefreshEnable(false);
 //        mXlistviewCustomer.setAutoLoadEnable(true);
         mXlistviewCustomer.setXListViewListener(this);
         mXlistviewCustomer.setRefreshTime(getTime());
@@ -85,11 +97,14 @@ public class CustomerActivity extends AppCompatActivity implements XListView.IXL
         return new SimpleDateFormat("MM-dd HH:mm", Locale.CHINA).format(new Date());
     }
 
-    @OnClick({R.id.iv_wirte_back})
+    @OnClick({R.id.iv_wirte_back, R.id.tv_lookscro})
     public void onClick(View view) {
         switch (view.getId()) {
             case R.id.iv_wirte_back:
                 finish();
+                break;
+            case R.id.tv_lookscro:
+                startActivity(new Intent(CustomerActivity.this, ScoreActivity.class));
                 break;
         }
     }
@@ -142,7 +157,7 @@ public class CustomerActivity extends AppCompatActivity implements XListView.IXL
 
         @Override
         public int getCount() {
-            return mAVUsers.size();
+            return mTimes.size();
         }
 
         @Override
@@ -169,30 +184,26 @@ public class CustomerActivity extends AppCompatActivity implements XListView.IXL
 
             setDtails(viewHolder, position);
 
-            viewHolder.mTvDial.setOnClickListener(new View.OnClickListener() {
-                @Override
-                public void onClick(View v) {
-                    String phoneNumber = mAVUsers.get(position).getUsername();
-                    Intent intentPhone = new Intent(Intent.ACTION_CALL, Uri.parse("tel:" + phoneNumber));
-                    startActivity(intentPhone);
-                }
-            });
+//            viewHolder.mTvDial.setOnClickListener(new View.OnClickListener() {
+//                @Override
+//                public void onClick(View v) {
+//                    String phoneNumber = mAVUsers.get(position).getUsername();
+//                    Intent intentPhone = new Intent(Intent.ACTION_CALL, Uri.parse("tel:" + phoneNumber));
+//                    startActivity(intentPhone);
+//                }
+//            });
 
             return convertView;
         }
     }
 
     static class ViewHolder {
-        @Bind(R.id.iv_customer)
-        ImageView mIvCustomer;
-        @Bind(R.id.tv_customer_name)
-        TextView mTvCustomerName;
-        @Bind(R.id.tv_customer_vip)
-        TextView mTvCustomerVIP;
-        @Bind(R.id.tv_customer_score)
-        TextView mTvCustomerScore;
-        @Bind(R.id.tv_dial)
-        TextView mTvDial;
+
+        @Bind(R.id.tv_time)
+        TextView mTvTime;
+        @Bind(R.id.tv_message)
+        TextView mTvMessage;
+
 
         ViewHolder(View view) {
             ButterKnife.bind(this, view);
@@ -201,30 +212,7 @@ public class CustomerActivity extends AppCompatActivity implements XListView.IXL
     }
 
     private void setDtails(ViewHolder viewHolder, int positon) {
-        String level = mCustomers.get(positon).getString("level");
-        int i = Integer.parseInt(level.substring(level.length() - 1, level.length()));
-        if (i >= 0 && i <= 3) {
-            viewHolder.mTvCustomerName.setTextColor(Color.GRAY);
-            viewHolder.mTvCustomerVIP.setTextColor(Color.GRAY);
-
-        } else if (i > 3 && i < 6) {
-            viewHolder.mTvCustomerName.setTextColor(Color.RED);
-            viewHolder.mTvCustomerVIP.setTextColor(Color.RED);
-        } else {
-            viewHolder.mTvCustomerName.setTextColor(getApplicationContext().getResources().getColor(R.color.gold));
-            viewHolder.mTvCustomerVIP.setTextColor(getApplicationContext().getResources().getColor(R.color.gold));
-        }
-//        AVObject mAvObject = new AVObject();
-//        for (AVObject avObject : mPolicys) {
-//            if (mAVUsers.get(positon).getUsername().equals(avObject.getString("phone"))) {
-//                mAvObject = avObject;
-//                break;
-//            }
-//        }
-        viewHolder.mTvCustomerName.setText(mCustomers.get(positon).getUsername());
-        viewHolder.mTvCustomerScore.setText("积分值:   " + mAVUsers.get(positon).getString("score"));
-        viewHolder.mTvCustomerVIP.setText(level);
-
-        Picasso.with(getApplicationContext()).load(R.mipmap.vip).into(viewHolder.mIvCustomer);
+        viewHolder.mTvTime.setText(mTimes.get(positon));
+        viewHolder.mTvMessage.setText(mMessage.get(positon));
     }
 }

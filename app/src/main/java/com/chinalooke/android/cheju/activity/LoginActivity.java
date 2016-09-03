@@ -8,6 +8,7 @@ import android.os.Bundle;
 import android.os.CountDownTimer;
 import android.os.Handler;
 import android.text.TextUtils;
+import android.util.Log;
 import android.view.KeyEvent;
 import android.view.View;
 import android.widget.Button;
@@ -18,9 +19,7 @@ import android.widget.Toast;
 
 import com.avos.avoscloud.AVException;
 import com.avos.avoscloud.AVOSCloud;
-import com.avos.avoscloud.AVObject;
 import com.avos.avoscloud.AVUser;
-import com.avos.avoscloud.GetCallback;
 import com.avos.avoscloud.LogInCallback;
 import com.avos.avoscloud.RequestMobileCodeCallback;
 import com.avos.avoscloud.SaveCallback;
@@ -147,6 +146,9 @@ public class LoginActivity extends Activity {
                             findSms();
                         }
                     }, 500);
+                } else {
+                    mToast.setText("请输入正确的手机号码");
+                    mToast.show();
                 }
                 break;
             case R.id.tv_findpwd:
@@ -199,11 +201,11 @@ public class LoginActivity extends Activity {
             case R.id.btn_fastlogin:
                 mPhone = mEPhone.getText().toString();
                 mPassword1 = mEtPassword.getText().toString();
-                if (TextUtils.isEmpty(mPassword1)) {
-                    mToast.setText("请输入密码");
-                    mToast.show();
-                } else {
-                    if (MyUtills.CheckPhoneNumer(mPhone)) {
+                if (MyUtills.CheckPhoneNumer(mPhone)) {
+                    if (TextUtils.isEmpty(mPassword1)) {
+                        mToast.setText("请输入密码");
+                        mToast.show();
+                    } else {
                         initDialog("登录中");
                         mHandler.postDelayed(new Runnable() {
                             @Override
@@ -211,10 +213,10 @@ public class LoginActivity extends Activity {
                                 login(mPhone, mPassword1);
                             }
                         }, 500);
-                    } else {
-                        mToast.setText("请输入正确的手机号码");
-                        mToast.show();
                     }
+                } else {
+                    mToast.setText("请输入正确的手机号码");
+                    mToast.show();
                 }
                 break;
         }

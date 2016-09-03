@@ -205,6 +205,8 @@
 
         <activity android:name=".activity.SelectAddressActivity">
         </activity>
+        <activity android:name=".activity.ScoreActivity">
+        </activity>
     </application>
 
 </manifest>

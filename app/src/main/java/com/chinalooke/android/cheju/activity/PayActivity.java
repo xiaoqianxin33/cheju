@@ -71,10 +71,12 @@ public class PayActivity extends AppCompatActivity implements TimePickerView.OnT
     public void onClick(View view) {
         switch (view.getId()) {
             case R.id.iv_alipay:
-                mRlPay.setVisibility(View.GONE);
-                mIvAli.setVisibility(View.VISIBLE);
-                saveOrder();
-                showPay();
+                if (check()) {
+                    mRlPay.setVisibility(View.GONE);
+                    mIvAli.setVisibility(View.VISIBLE);
+                    saveOrder();
+                    showPay();
+                }
                 break;
             case R.id.tv_time:
                 pvTime = new TimePickerView(this, TimePickerView.Type.ALL);
@@ -84,12 +86,10 @@ public class PayActivity extends AppCompatActivity implements TimePickerView.OnT
             case R.id.iv_weipay:
                 break;
             case R.id.iv_ali:
-                if (check()) {
-                    Intent intent = new Intent();
-                    intent.putExtra("statu", true);
-                    setResult(0, intent);
-                    finish();
-                }
+                Intent intent = new Intent();
+                intent.putExtra("statu", true);
+                setResult(0, intent);
+                finish();
                 break;
             case R.id.iv_x:
                 finish();

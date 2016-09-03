@@ -23,6 +23,7 @@ import android.widget.Toast;
 import com.avos.avoscloud.AVException;
 import com.avos.avoscloud.AVObject;
 import com.avos.avoscloud.AVQuery;
+import com.avos.avoscloud.AVRelation;
 import com.avos.avoscloud.AVUser;
 import com.avos.avoscloud.FindCallback;
 import com.avos.avoscloud.SaveCallback;
@@ -36,9 +37,12 @@ import com.chinalooke.android.cheju.utills.IDCardUtil;
 import com.chinalooke.android.cheju.utills.MyUtills;
 import com.chinalooke.android.cheju.utills.PreferenceUtils;
 
+import java.sql.Array;
 import java.text.SimpleDateFormat;
 import java.util.ArrayList;
+import java.util.Arrays;
 import java.util.Date;
+import java.util.HashMap;
 import java.util.List;
 
 import butterknife.Bind;
@@ -88,6 +92,9 @@ public class WriteCheliangFragment extends Fragment {
     private Handler mHandler = new Handler();
     private Policy mDpolicy;
     private boolean mDone;
+    private AVUser mCurrentUser;
+    private Date mDate;
+    private HashMap<String, String> mInsurance = new HashMap<>();
 
 
     @Override
@@ -114,11 +121,16 @@ public class WriteCheliangFragment extends Fragment {
         if (mDone) {
             mDpolicy = ((WriteMessgeActivity) getActivity()).getDpolicy();
             mWrite.setVisibility(View.GONE);
-            mTvDate.setText(mDpolicy.getRegDate());
+            mTvDate.setText(getTime(mDpolicy.getRegDate()).substring(0, getTime(mDpolicy.getRegDate()).length() - 5));
             mTvDate.setEnabled(false);
             mTvCompany.setText(mDpolicy.getCompany());
             mTvCompany.setEnabled(false);
-            mTvType.setText(mDpolicy.getType());
+            int type = mDpolicy.getType();
+            if (type == 0) {
+                mTvType.setText("强制险");
+            } else if (type == 1) {
+                mTvType.setText("商业险");
+            }
             mTvType.setEnabled(false);
             mIvCompany.setVisibility(View.GONE);
             mIvType.setVisibility(View.GONE);
@@ -136,6 +148,7 @@ public class WriteCheliangFragment extends Fragment {
                     if (list != null && list.size() != 0) {
                         for (AVObject avObject : list) {
                             mOption.add(avObject.getString("name"));
+                            mInsurance.put(avObject.getString("name"), avObject.getObjectId());
                         }
                     }
                 } else {
@@ -144,6 +157,7 @@ public class WriteCheliangFragment extends Fragment {
                 }
             }
         });
+
 
         AVQuery<AVObject> query2 = new AVQuery<>("Insurance_type");
         query2.findInBackground(new FindCallback<AVObject>() {
@@ -224,8 +238,13 @@ public class WriteCheliangFragment extends Fragment {
 
     private void setPolicy() {
         mPolicy.setCompany(mTvCompany.getText().toString());
-        mPolicy.setType(mTvType.getText().toString());
-        mPolicy.setRegDate(mTvDate.getText().toString());
+        String s = mTvType.getText().toString();
+        if ("商业险".equals(s)) {
+            mPolicy.setType(1);
+        } else if ("强制险".equals(s)) {
+            mPolicy.setType(0);
+        }
+        mPolicy.setRegDate(mDate);
     }
 
     private void showOption(final int i) {
@@ -269,6 +288,7 @@ public class WriteCheliangFragment extends Fragment {
 
             @Override
             public void onTimeSelect(Date date) {
+                mDate = date;
                 mTvDate.setText(getTime(date).substring(0, getTime(date).length() - 5));
             }
         });
@@ -435,13 +455,8 @@ public class WriteCheliangFragment extends Fragment {
             mToast.show();
             return false;
         }
-        if (TextUtils.isEmpty(mPolicy.getType()) || "点击选择".equals(mPolicy.getType())) {
+        if ("点击选择".equals(mTvType.getText())) {
             mToast.setText("请选择险种");
-            mToast.show();
-            return false;
-        }
-        if (TextUtils.isEmpty(mPolicy.getRegDate())) {
-            mToast.setText("请选择登记时间");
             mToast.show();
             return false;
         }
@@ -465,43 +480,50 @@ public class WriteCheliangFragment extends Fragment {
     }
 
     private void saveCloud() {
-
-        AVObject policy = AVObject.createWithoutData("Policy", mPolicy.getObjectId());
+        final AVObject policy = new AVObject("Policy");
         policy.put("userName", mPolicy.getUserName());
         policy.put("frameNo", mPolicy.getFrameNo());
         policy.put("engine", mPolicy.getEngine());
         policy.put("brand", mPolicy.getBrand());
         policy.put("policyDate", mPolicy.getPolicyDate());
-        policy.put("userid", PreferenceUtils.getPrefString(getActivity(), "userObjectID", ""));
-        policy.put("status", "待算价");
+        mCurrentUser = AVUser.getCurrentUser();
+        policy.put("status", 1);
         policy.put("city", mPolicy.getCity());
         policy.put("phone", mPolicy.getPhone());
-        policy.put("IdNo", mPolicy.getIdNo());
+        policy.put("IDNo", mPolicy.getIdNo());
         policy.put("CarNo", mPolicy.getCarNo());
-        policy.put("company", mPolicy.getCompany());
+//        policy.put("company", mPolicy.getCompany());
         policy.put("type", mPolicy.getType());
         policy.put("regDate", mPolicy.getRegDate());
-        policy.saveInBackground(new SaveCallback() {
+        policy.put("userid", mCurrentUser.getObjectId());
+        policy.put("insuranceId", mInsurance.get(mPolicy.getCompany()));
+
+        AVObject.saveAllInBackground(Arrays.asList(policy), new SaveCallback() {
             @Override
             public void done(AVException e) {
-                mProgressDialog.dismiss();
                 if (e == null) {
-                    MyUtills.showNorDialog(getActivity(), "提交成功！", "正在算价中，请在订单中查看详情");
-                    mWrite.setText("订单已提交");
-                    mWrite.setEnabled(false);
+                    AVRelation<AVObject> relation = mCurrentUser.getRelation("policy");// 新建一个 AVRelation
+                    relation.add(policy);
+                    mCurrentUser.saveInBackground(new SaveCallback() {
+                        @Override
+                        public void done(AVException e) {
+                            mProgressDialog.dismiss();
+                            if (e == null) {
+                                MyUtills.showNorDialog(getActivity(), "提交成功！", "正在算价中，请在订单中查看详情");
+                                mWrite.setText("订单已提交");
+                                mWrite.setEnabled(false);
+                            } else {
+                                mToast.setText(e.getMessage());
+                                mToast.show();
+                            }
+                        }
+                    });
                 } else {
-                    mToast.setText("网络错误，提交失败");
+                    mProgressDialog.dismiss();
+                    mToast.setText(e.getMessage());
                     mToast.show();
                 }
-
             }
         });
-        AVUser.getCurrentUser().put("addressName", mPolicy.getUserName());
-        AVUser.getCurrentUser().put("IDNo", mPolicy.getIdNo());
-        AVUser.getCurrentUser().put("phone", mPolicy.getPhone());
-        AVUser.getCurrentUser().saveInBackground();
-
     }
-
-
 }

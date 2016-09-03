@@ -44,12 +44,14 @@ import com.chinalooke.android.cheju.activity.CustomerActivity;
 import com.chinalooke.android.cheju.activity.LoginActivity;
 import com.chinalooke.android.cheju.activity.MainActivity;
 import com.chinalooke.android.cheju.activity.PersonActivity;
+import com.chinalooke.android.cheju.activity.ScoreActivity;
 import com.chinalooke.android.cheju.constant.Constant;
 import com.chinalooke.android.cheju.utills.ImageTools;
 import com.chinalooke.android.cheju.utills.MyUtills;
 import com.chinalooke.android.cheju.utills.NetUtil;
 import com.hyphenate.EMCallBack;
 import com.hyphenate.chat.EMClient;
+import com.squareup.picasso.Picasso;
 
 import java.io.File;
 import java.io.Serializable;
@@ -195,19 +197,25 @@ public class WodeFragment extends Fragment {
                         initDialog("正在获取客户信息");
                         initCustomerData();
                         break;
+
+                    case 1:
+                        startActivity(new Intent(getActivity(), ScoreActivity.class));
+                        break;
+
+
                 }
             }
         });
     }
 
     private void initData() {
-        AVFile head = AVUser.getCurrentUser().getAVFile("head");
-        if (head != null) {
-            String url = head.getUrl();
+//        AVFile head = AVUser.getCurrentUser().getAVFile("head");
+//        if (head != null) {
+//            String url = head.getUrl();
 //            Picasso.with(getActivity()).load(url).placeholder(R.mipmap.zhanweitu).into(mHead);
-        } else {
+//        } else {
 //            Picasso.with(getActivity()).load(R.mipmap.zhanweitu).into(mHead);
-        }
+//        }
     }
 
     private void initView() {

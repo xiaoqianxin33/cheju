@@ -1,6 +1,7 @@
 package com.chinalooke.android.cheju.bean;
 
 import java.io.Serializable;
+import java.util.Date;
 
 /**
  * Created by xiao on 2016/8/9.
@@ -11,14 +12,14 @@ public class Policy implements Serializable {
     private String phone;
     private String IdNo;
     private String carNo;
-    private String regDate;
+    private Date regDate;
     private String userName;
     private String frameNo;
     private String engine;
     private String brand;
     private String policyDate;
     private String price;
-    private String type;
+    private int type;
     private String objectId;
     private String userid;
     private String company;
@@ -26,6 +27,7 @@ public class Policy implements Serializable {
     private String businessimage;
     private String detail;
     private String discountPrice;
+
 
     public String getDetail() {
         return detail;
@@ -76,11 +78,11 @@ public class Policy implements Serializable {
         this.userid = userid;
     }
 
-    public String getType() {
+    public int getType() {
         return type;
     }
 
-    public void setType(String type) {
+    public void setType(int type) {
         this.type = type;
     }
 
@@ -92,7 +94,7 @@ public class Policy implements Serializable {
         this.objectId = objectId;
     }
 
-    private String status;
+    private int status;
 
     public String getPrice() {
         return price;
@@ -144,11 +146,11 @@ public class Policy implements Serializable {
         this.carNo = carNo;
     }
 
-    public String getRegDate() {
+    public Date getRegDate() {
         return regDate;
     }
 
-    public void setRegDate(String regDate) {
+    public void setRegDate(Date regDate) {
         this.regDate = regDate;
     }
 
@@ -192,11 +194,11 @@ public class Policy implements Serializable {
         this.policyDate = policyDate;
     }
 
-    public String getStatus() {
+    public int getStatus() {
         return status;
     }
 
-    public void setStatus(String status) {
+    public void setStatus(int status) {
         this.status = status;
     }
 

@@ -37,19 +37,13 @@
 
     </LinearLayout>
 
-    <TextView
-        android:layout_width="match_parent"
-        android:layout_height="1dp"
-        android:layout_marginEnd="16dp"
-        android:layout_marginStart="16dp"
-        android:background="#ABA7A2"/>
 
     <RelativeLayout
         android:layout_width="match_parent"
         android:layout_height="48dp"
         android:layout_marginEnd="16dp"
         android:layout_marginStart="16dp"
-        android:background="#EFEEEC">
+        android:background="@drawable/shape5">
 
         <LinearLayout
             android:layout_width="match_parent"
@@ -96,19 +90,13 @@
 
     </RelativeLayout>
 
-    <TextView
-        android:layout_width="match_parent"
-        android:layout_height="1dp"
-        android:layout_marginEnd="16dp"
-        android:layout_marginStart="16dp"
-        android:background="#ABA7A2"/>
 
     <LinearLayout
         android:layout_width="match_parent"
         android:layout_height="48dp"
         android:layout_marginEnd="16dp"
         android:layout_marginStart="16dp"
-        android:background="#EFEEEC"
+        android:background="@drawable/shape5"
         android:orientation="horizontal">
 
         <TextView
@@ -134,19 +122,14 @@
 
     </LinearLayout>
 
-    <TextView
-        android:layout_width="match_parent"
-        android:layout_height="1dp"
-        android:layout_marginEnd="16dp"
-        android:layout_marginStart="16dp"
-        android:background="#ABA7A2"/>
 
     <LinearLayout
+
         android:layout_width="match_parent"
         android:layout_height="48dp"
         android:layout_marginEnd="16dp"
         android:layout_marginStart="16dp"
-        android:background="#EFEEEC"
+        android:background="@drawable/shape5"
         android:orientation="horizontal">
 
         <TextView
@@ -172,12 +155,6 @@
 
     </LinearLayout>
 
-    <TextView
-        android:layout_width="match_parent"
-        android:layout_height="1dp"
-        android:layout_marginEnd="16dp"
-        android:layout_marginStart="16dp"
-        android:background="#ABA7A2"/>
 
     <LinearLayout
         android:layout_width="match_parent"

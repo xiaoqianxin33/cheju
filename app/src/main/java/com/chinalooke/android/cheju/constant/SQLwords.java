@@ -5,6 +5,6 @@ package com.chinalooke.android.cheju.constant;
  */
 public class SQLwords {
 
-    public static String requirPolicy = "select * from Policy where phone = ?";
+    public static String requirPolicy = "select * from Policy where userid = ?";
     public static String updatePolicyimgs = "update Policy set imgs=? where objectId=?";
 }

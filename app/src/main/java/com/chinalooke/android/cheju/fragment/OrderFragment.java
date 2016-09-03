@@ -9,6 +9,7 @@ import android.os.Message;
 import android.support.v4.app.Fragment;
 import android.support.v4.widget.SwipeRefreshLayout;
 import android.text.TextUtils;
+import android.util.Log;
 import android.view.LayoutInflater;
 import android.view.View;
 import android.view.ViewGroup;
@@ -23,15 +24,21 @@ import com.avos.avoscloud.AVCloudQueryResult;
 import com.avos.avoscloud.AVException;
 import com.avos.avoscloud.AVObject;
 import com.avos.avoscloud.AVQuery;
+import com.avos.avoscloud.AVRelation;
 import com.avos.avoscloud.AVUser;
 import com.avos.avoscloud.CloudQueryCallback;
+import com.avos.avoscloud.FindCallback;
 import com.chinalooke.android.cheju.R;
 import com.chinalooke.android.cheju.activity.MainActivity;
 import com.chinalooke.android.cheju.activity.TakePhotoActivity;
 import com.chinalooke.android.cheju.activity.WriteMessgeActivity;
 import com.chinalooke.android.cheju.bean.Policy;
 import com.chinalooke.android.cheju.constant.SQLwords;
+import com.chinalooke.android.cheju.utills.LeanCloudTools;
 
+import java.text.SimpleDateFormat;
+import java.util.ArrayList;
+import java.util.Date;
 import java.util.List;
 
 import butterknife.Bind;
@@ -63,12 +70,15 @@ public class OrderFragment extends Fragment implements AdapterView.OnItemClickLi
     private boolean isLoading = false;
     private boolean isPrepared = false;
     private boolean isDone = false;
+    private List<AVObject> mPolicys = new ArrayList<>();
+
+
     Handler mHandler = new Handler() {
 
         @Override
         public void handleMessage(Message msg) {
             if (1 == msg.what) {
-                setDtail();
+
                 mMyOrderAdapt = new MyOrderAdapt();
                 setAdapt(0);
                 mProgressDialog.dismiss();
@@ -148,28 +158,31 @@ public class OrderFragment extends Fragment implements AdapterView.OnItemClickLi
     }
 
     private void initChexianData() {
-
         if (mCurrentUser != null) {
-            AVQuery.doCloudQueryInBackground(SQLwords.requirPolicy, new CloudQueryCallback<AVCloudQueryResult>() {
+            AVRelation<AVObject> relation = mCurrentUser.getRelation("policy");
+            AVQuery<AVObject> query = relation.getQuery();
+            query.findInBackground(new FindCallback<AVObject>() {
                 @Override
-                public void done(AVCloudQueryResult avCloudQueryResult, AVException e) {
+                public void done(List<AVObject> list, AVException e) {
                     mProgressDialog.dismiss();
                     if (e == null) {
-                        List<AVObject> results = (List<AVObject>) avCloudQueryResult.getResults();
-                        if (results == null || results.size() == 0) {
+                        if (list == null || list.size() == 0) {
                             mTvNopolicy.setVisibility(View.VISIBLE);
                         } else {
+                            mPolicys = list;
                             mTvNopolicy.setVisibility(View.GONE);
-                            mAvObject = results.get(0);
                             mHandler.sendEmptyMessage(1);
                         }
                     } else {
                         mTvNopolicy.setVisibility(View.VISIBLE);
                     }
                 }
-            }, AVUser.getCurrentUser().getUsername());
-        }
+            });
 
+        } else {
+            mProgressDialog.dismiss();
+            mTvNopolicy.setVisibility(View.VISIBLE);
+        }
     }
 
     @Override
@@ -194,10 +207,12 @@ public class OrderFragment extends Fragment implements AdapterView.OnItemClickLi
 
     @Override
     public void onItemClick(AdapterView<?> parent, View view, int position, long id) {
-        String status = mPolicy.getStatus();
+        mAvObject = mPolicys.get(position);
+        int status = mAvObject.getInt("statu");
         Intent intent = new Intent();
         Bundle bundle = new Bundle();
-        if ("待算价".equals(status)) {
+        setDtail();
+        if (status == 0) {
             intent.setClass(getActivity(), WriteMessgeActivity.class);
             if (currentFragment == 0)
                 bundle.putSerializable("dpolicy", mPolicy);
@@ -229,7 +244,7 @@ public class OrderFragment extends Fragment implements AdapterView.OnItemClickLi
     class MyOrderAdapt extends BaseAdapter {
         @Override
         public int getCount() {
-            return 1;
+            return mPolicys.size();
         }
 
         @Override
@@ -253,7 +268,7 @@ public class OrderFragment extends Fragment implements AdapterView.OnItemClickLi
                 viewHolder = (ViewHolder) convertView.getTag();
             }
 
-            setOrderDatails(viewHolder);
+            setOrderDatails(viewHolder, position);
             return convertView;
         }
 
@@ -277,63 +292,78 @@ public class OrderFragment extends Fragment implements AdapterView.OnItemClickLi
     }
 
 
-    public void setOrderDatails(ViewHolder viewHolder) {
-
-        viewHolder.mTvDateOrder.setText(mPolicy.getRegDate());
-        viewHolder.mTvStatuOrder.setText(mPolicy.getStatus());
-        viewHolder.mTvCompanyOrder.setText(mPolicy.getCompany());
-
-        if (TextUtils.isEmpty(mPolicy.getPrice())) {
-            viewHolder.mTvPriceOrderListview.setText("算价中");
-        } else {
-            viewHolder.mTvPriceOrderListview.setText(mPolicy.getPrice());
+    public void setOrderDatails(final ViewHolder viewHolder, final int positon) {
+        final AVObject avObject = mPolicys.get(positon);
+        viewHolder.mTvDateOrder.setText(getTime(avObject.getDate("regDate")));
+        int statu = avObject.getInt("statu");
+        switch (statu) {
+            case 0:
+                viewHolder.mTvStatuOrder.setText("待算价");
+                break;
+            case 1:
+                viewHolder.mTvStatuOrder.setText("已算价");
+                break;
+            case 2:
+                viewHolder.mTvStatuOrder.setText("待审核");
+                break;
+            case 3:
+                viewHolder.mTvStatuOrder.setText("已完成");
+                break;
         }
 
-        switch (mPolicy.getStatus()) {
-            case "待算价":
+        String insuranceId = avObject.getString("insuranceId");
+        AVQuery<AVObject> query = new AVQuery<>("Insurance");
+        query.whereEqualTo("objectId", insuranceId);
+        query.findInBackground(new FindCallback<AVObject>() {
+            @Override
+            public void done(List<AVObject> list, AVException e) {
+                if (e == null) {
+                    AVObject avObject1 = list.get(positon);
+                    viewHolder.mTvCompanyOrder.setText(avObject.getString("name"));
+                }
+            }
+        });
 
+        Number price = avObject.getNumber("price");
+        if (price == 0) {
+            viewHolder.mTvPriceOrderListview.setText("算价中");
+        } else {
+            viewHolder.mTvPriceOrderListview.setText(price + "");
+        }
+        switch (statu) {
+            case 0:
                 viewHolder.mIvOrderChexianListview.setBackgroundResource(R.mipmap.dd_sjz);
-
                 break;
-            case "已算价":
-
+            case 1:
                 viewHolder.mIvOrderChexianListview.setBackgroundResource(R.mipmap.dd_ycj);
-
                 break;
-            case "待审核":
-
+            case 2:
                 viewHolder.mIvOrderChexianListview.setBackgroundResource(R.mipmap.dd_yzf);
-
                 break;
-            case "已完成":
-
+            case 3:
                 viewHolder.mIvOrderChexianListview.setBackgroundResource(R.mipmap.dd_ywc);
-
                 break;
-
         }
     }
 
     private void setDtail() {
         if (mAvObject != null) {
             mPolicy.setObjectId(mAvObject.getObjectId());
-            mPolicy.setPolicyDate(mAvObject.getString("policyDate"));
-            mPolicy.setCompany(mAvObject.getString("company"));
-            mPolicy.setStatus(mAvObject.getString("status"));
-            mPolicy.setPrice(mAvObject.getString("price"));
-            mPolicy.setRegDate(mAvObject.getString("regDate"));
-            mPolicy.setForceimgs(mAvObject.getString("forceimgs"));
-            mPolicy.setBusinessimage(mAvObject.getString("businessimage"));
+            mPolicy.setPolicyDate(getTime(mAvObject.getDate("policyDate")));
+//            mPolicy.setCompany(mAvObject.getString("company"));
+            mPolicy.setStatus(mAvObject.getInt("status"));
+            mPolicy.setPrice(mAvObject.getNumber("price") + "");
+            mPolicy.setRegDate(mAvObject.getDate("regDate"));
             mPolicy.setDetail(mAvObject.getString("detail"));
-            mPolicy.setDiscountPrice(mAvObject.getString("discountPrice"));
+            mPolicy.setDiscountPrice(mAvObject.getNumber("discountPrice") + "");
             mPolicy.setCarNo(mAvObject.getString("CarNo"));
             mPolicy.setCity(mAvObject.getString("city"));
             mPolicy.setBrand(mAvObject.getString("brand"));
-            mPolicy.setIdNo(mAvObject.getString("IdNo"));
+            mPolicy.setIdNo(mAvObject.getString("IDNo"));
             mPolicy.setEngine(mAvObject.getString("engine"));
             mPolicy.setFrameNo(mAvObject.getString("frameNo"));
             mPolicy.setUserName(mAvObject.getString("userName"));
-            mPolicy.setType(mAvObject.getString("type"));
+            mPolicy.setType(mAvObject.getInt("type"));
             mPolicy.setPhone(mAvObject.getString("phone"));
         }
     }
@@ -366,5 +396,11 @@ public class OrderFragment extends Fragment implements AdapterView.OnItemClickLi
         initDialog();
         initChexianData();
         initEvent();
+    }
+
+
+    public static String getTime(Date date) {
+        SimpleDateFormat format = new SimpleDateFormat("yyyy-MM-dd");
+        return format.format(date);
     }
 }
