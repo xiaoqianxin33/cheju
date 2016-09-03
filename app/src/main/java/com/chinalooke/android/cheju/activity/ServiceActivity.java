@@ -34,8 +34,5 @@ public class ServiceActivity extends AppCompatActivity {
                 .replace(R.id.fl_service, mEaseChatFragment).commit();
     }
 
-    @Override
-    protected void onResume() {
-        super.onResume();
-    }
+
 }

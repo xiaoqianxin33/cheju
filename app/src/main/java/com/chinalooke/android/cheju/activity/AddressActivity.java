@@ -3,6 +3,7 @@ package com.chinalooke.android.cheju.activity;
 import android.app.Fragment;
 import android.app.FragmentManager;
 import android.app.FragmentTransaction;
+import android.content.Intent;
 import android.os.Bundle;
 import android.support.v4.app.FragmentActivity;
 import android.text.TextUtils;
@@ -19,6 +20,7 @@ import com.avos.avoscloud.AVRelation;
 import com.avos.avoscloud.AVUser;
 import com.avos.avoscloud.FindCallback;
 import com.chinalooke.android.cheju.R;
+import com.chinalooke.android.cheju.adapter.MyListViewAdapt;
 import com.chinalooke.android.cheju.fragment.AddAdressFragment;
 import com.chinalooke.android.cheju.fragment.ShowAddressFragment;
 
@@ -40,8 +42,6 @@ public class AddressActivity extends FragmentActivity {
     Button mBtnAddress;
     @Bind(R.id.tv_noaddress)
     TextView mTvNoaddress;
-    //    @Bind(R.id.pb_address)
-//    ProgressBar mPbAddress;
     private Fragment mContent;
     private FragmentManager mFragmentManager;
     private ShowAddressFragment mShowAddressFragment;
@@ -69,7 +69,9 @@ public class AddressActivity extends FragmentActivity {
         mFragmentManager = getFragmentManager();
         mCurrentUser = AVUser.getCurrentUser();
         initData();
+
     }
+
 
     private void initData() {
         mShowAddressFragment = new ShowAddressFragment();
@@ -137,4 +139,6 @@ public class AddressActivity extends FragmentActivity {
     public List<AVObject> getAddresses() {
         return mAddresses;
     }
+
+
 }

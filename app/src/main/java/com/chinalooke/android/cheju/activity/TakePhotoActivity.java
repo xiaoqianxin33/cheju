@@ -5,6 +5,7 @@ import android.content.Intent;
 import android.graphics.Paint;
 import android.os.Bundle;
 import android.support.v7.app.AppCompatActivity;
+import android.util.Log;
 import android.view.View;
 import android.view.ViewGroup;
 import android.widget.BaseAdapter;
@@ -18,11 +19,13 @@ import com.avos.avoscloud.AVRelation;
 import com.avos.avoscloud.AVUser;
 import com.avos.avoscloud.FindCallback;
 import com.chinalooke.android.cheju.R;
+import com.chinalooke.android.cheju.bean.Address;
 import com.chinalooke.android.cheju.bean.Policy;
 import com.chinalooke.android.cheju.utills.MyUtills;
 import com.chinalooke.android.cheju.view.PayDialog;
 import com.chinalooke.android.cheju.view.XListView;
 
+import java.io.Serializable;
 import java.util.ArrayList;
 import java.util.List;
 
@@ -33,6 +36,7 @@ import butterknife.OnClick;
 public class TakePhotoActivity extends AppCompatActivity {
 
 
+    private static final int REQUST_ADDRESS = 2;
     @Bind(R.id.xlv_detail)
     XListView mXlvDetail;
     @Bind(R.id.ll_policy_detail)
@@ -53,7 +57,7 @@ public class TakePhotoActivity extends AppCompatActivity {
     private List<AVObject> mAddresses;
     private MyAdapt mMyAdapt;
     private ArrayList<String> mPrices = new ArrayList<>();
-    private String mAdress;
+    private String mAdress = "";
 
     @Override
     protected void onCreate(Bundle savedInstanceState) {
@@ -107,9 +111,19 @@ public class TakePhotoActivity extends AppCompatActivity {
     }
 
 
-    @OnClick({R.id.iv_check_back, R.id.fl_takes, R.id.tv_topolicy, R.id.btn_pay})
+    @OnClick({R.id.iv_check_back, R.id.fl_takes, R.id.tv_topolicy, R.id.btn_pay, R.id.ll_address})
     public void onClick(View view) {
         switch (view.getId()) {
+            case R.id.ll_address:
+                Intent address = new Intent();
+                Bundle bundle2 = new Bundle();
+                if (mAddresses != null) {
+                    bundle2.putSerializable("addresses", (Serializable) mAddresses);
+                    address.putExtras(bundle2);
+                }
+                address.setClass(TakePhotoActivity.this, SelectAddressActivity.class);
+                startActivityForResult(address, REQUST_ADDRESS);
+                break;
             case R.id.iv_check_back:
                 finish();
                 break;
@@ -183,40 +197,31 @@ public class TakePhotoActivity extends AppCompatActivity {
     @Override
     protected void onActivityResult(int requestCode, int resultCode, Intent data) {
         super.onActivityResult(requestCode, resultCode, data);
-        if (data != null) {
-            boolean statu = data.getBooleanExtra("statu", false);
-            if (statu) {
-//                PayDialog.Builder builder = new PayDialog.Builder(this);
-//                builder.setTitle("系统提示");
-//                builder.setPositiveButton("确定", new DialogInterface.OnClickListener() {
-//                    public void onClick(DialogInterface dialog, int which) {
-//                        dialog.dismiss();
-//                        startActivity(new Intent(TakePhotoActivity.this, OrderActivity.class));
-//                    }
-//                });
-//
-//                builder.setNegativeButton("支付遇到问题",
-//                        new android.content.DialogInterface.OnClickListener() {
-//                            public void onClick(DialogInterface dialog, int which) {
-//                                dialog.dismiss();
-//                            }
-//                        });
-//
-//                builder.create().show();
-                MyUtills.showPayDialog(this, "系统提示", "已完成支付？", new DialogInterface.OnClickListener() {
-                    @Override
-                    public void onClick(DialogInterface dialog, int which) {
-                        dialog.dismiss();
-                        startActivity(new Intent(TakePhotoActivity.this, OrderActivity.class));
-                    }
-                }, new DialogInterface.OnClickListener() {
-                    @Override
-                    public void onClick(DialogInterface dialog, int which) {
-                        dialog.dismiss();
-                    }
-                });
+        if (resultCode == 0 && requestCode == 0) {
+            if (data != null) {
+                boolean statu = data.getBooleanExtra("statu", false);
+                if (statu) {
+                    MyUtills.showPayDialog(this, "系统提示", "已完成支付？", new DialogInterface.OnClickListener() {
+                        @Override
+                        public void onClick(DialogInterface dialog, int which) {
+                            dialog.dismiss();
+                            startActivity(new Intent(TakePhotoActivity.this, OrderActivity.class));
+                        }
+                    }, new DialogInterface.OnClickListener() {
+                        @Override
+                        public void onClick(DialogInterface dialog, int which) {
+                            dialog.dismiss();
+                        }
+                    });
 
+                }
             }
+        } else if (resultCode == 1 && requestCode == REQUST_ADDRESS) {
+            Address address = (Address) data.getSerializableExtra("select");
+            mTvAddress.setText(address.getAddress());
+            mTvName.setText(address.getName());
+            mTvPhone.setText(address.getPhone());
+            mAdress = "收货地址：" + address.getAddress();
         }
 
     }

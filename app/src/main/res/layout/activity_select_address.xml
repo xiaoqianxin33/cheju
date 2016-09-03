@@ -1,0 +1,78 @@
+<?xml version="1.0" encoding="utf-8"?>
+<LinearLayout
+    xmlns:android="http://schemas.android.com/apk/res/android"
+    xmlns:tools="http://schemas.android.com/tools"
+    android:layout_width="match_parent"
+    android:layout_height="match_parent"
+    android:background="@color/backcolor"
+    android:orientation="vertical"
+    tools:context="com.chinalooke.android.cheju.activity.SelectAddressActivity">
+
+
+    <RelativeLayout
+        android:layout_width="match_parent"
+        android:layout_height="wrap_content"
+        android:background="#3D96F8"
+        >
+
+
+        <FrameLayout
+            android:id="@+id/fl_address_back"
+            android:layout_width="36dp"
+            android:layout_height="36dp"
+            android:layout_marginTop="6dp"
+            android:clickable="true">
+
+
+            <ImageView
+                android:id="@+id/iv_address_back"
+                android:layout_width="24dp"
+                android:layout_height="24dp"
+                android:layout_centerVertical="true"
+                android:layout_gravity="center"
+                android:layout_marginStart="8dp"
+                android:background="@mipmap/icon_back"/>
+
+
+        </FrameLayout>
+
+
+        <TextView
+            android:layout_width="match_parent"
+            android:layout_height="@dimen/edit_height"
+            android:gravity="center"
+            android:paddingLeft="16dp"
+            android:text="选择邮寄地址"
+            android:textColor="#FFFFFF"
+            android:textSize="18dp"
+            android:textStyle="bold"
+            />
+
+        <TextView
+            android:id="@+id/tv_guanli"
+            android:layout_width="wrap_content"
+            android:layout_height="wrap_content"
+            android:layout_alignParentEnd="true"
+            android:layout_centerVertical="true"
+            android:layout_marginRight="8dp"
+            android:text="管理"
+            android:textColor="@android:color/white"
+            android:textSize="14sp"/>
+    </RelativeLayout>
+
+
+    <ScrollView
+        android:layout_width="match_parent"
+        android:layout_height="wrap_content"
+        android:layout_marginTop="16dp"
+        android:background="@android:color/white">
+
+        <com.chinalooke.android.cheju.view.SyListView
+            android:id="@+id/lv_guanli"
+            android:layout_width="match_parent"
+            android:layout_height="wrap_content">
+        </com.chinalooke.android.cheju.view.SyListView>
+    </ScrollView>
+
+
+</LinearLayout>
