@@ -58,7 +58,7 @@ public class ImageTools {
                 proj,                 // Which columns to return
                 null,       // WHERE clause; which rows to return (all rows)
                 null,       // WHERE clause selection arguments (none)
-                null);                 // Order-by clause (ascending by name)
+                null);
 
         int column_index = cursor.getColumnIndexOrThrow(MediaStore.Images.Media.DATA);
         cursor.moveToFirst();

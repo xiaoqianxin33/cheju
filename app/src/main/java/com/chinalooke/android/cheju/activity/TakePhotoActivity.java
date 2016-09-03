@@ -224,7 +224,7 @@ public class TakePhotoActivity extends AppCompatActivity {
                         public void onClick(DialogInterface dialog, int which) {
                             dialog.dismiss();
                             Intent intent = new Intent();
-                            intent.setClass(TakePhotoActivity.this, WriteMessgeActivity.class);
+                            intent.setClass(TakePhotoActivity.this, OrderActivity.class);
                             Bundle bundle = new Bundle();
                             bundle.putSerializable("dpolicy", mPolicy);
                             intent.putExtras(bundle);

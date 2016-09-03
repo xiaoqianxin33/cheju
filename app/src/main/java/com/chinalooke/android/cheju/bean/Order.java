@@ -1,23 +1,47 @@
 package com.chinalooke.android.cheju.bean;
 
+import java.util.Date;
+
 /**
- * Created by xiao on 2016/8/9.
+ * Created by xiao on 2016/9/3.
  */
 public class Order {
 
-    private String date  ;
+    private String objectId;
+    private String userId;
+    private Date addDate;
     private String goodsId;
-    private String price;
-    private String carriage;
-    private String count   ;
-    private String status;
+    private String policyId;
+    private Number price;
+    private Number carriage;
+    private Number count;
+    private Number status;
+    private String addressId;
+    private Date sendDate;
+    private String payType;
 
-    public String getDate() {
-        return date;
+    public String getObjectId() {
+        return objectId;
     }
 
-    public void setDate(String date) {
-        this.date = date;
+    public void setObjectId(String objectId) {
+        this.objectId = objectId;
+    }
+
+    public String getUserId() {
+        return userId;
+    }
+
+    public void setUserId(String userId) {
+        this.userId = userId;
+    }
+
+    public Date getAddDate() {
+        return addDate;
+    }
+
+    public void setAddDate(Date addDate) {
+        this.addDate = addDate;
     }
 
     public String getGoodsId() {
@@ -28,35 +52,67 @@ public class Order {
         this.goodsId = goodsId;
     }
 
-    public String getPrice() {
+    public String getPolicyId() {
+        return policyId;
+    }
+
+    public void setPolicyId(String policyId) {
+        this.policyId = policyId;
+    }
+
+    public Number getPrice() {
         return price;
     }
 
-    public void setPrice(String price) {
+    public void setPrice(Number price) {
         this.price = price;
     }
 
-    public String getCarriage() {
+    public Number getCarriage() {
         return carriage;
     }
 
-    public void setCarriage(String carriage) {
+    public void setCarriage(Number carriage) {
         this.carriage = carriage;
     }
 
-    public String getCount() {
+    public Number getCount() {
         return count;
     }
 
-    public void setCount(String count) {
+    public void setCount(Number count) {
         this.count = count;
     }
 
-    public String getStatus() {
+    public Number getStatus() {
         return status;
     }
 
-    public void setStatus(String status) {
+    public void setStatus(Number status) {
         this.status = status;
+    }
+
+    public String getAddressId() {
+        return addressId;
+    }
+
+    public void setAddressId(String addressId) {
+        this.addressId = addressId;
+    }
+
+    public Date getSendDate() {
+        return sendDate;
+    }
+
+    public void setSendDate(Date sendDate) {
+        this.sendDate = sendDate;
+    }
+
+    public String getPayType() {
+        return payType;
+    }
+
+    public void setPayType(String payType) {
+        this.payType = payType;
     }
 }

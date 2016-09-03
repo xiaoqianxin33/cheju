@@ -208,7 +208,7 @@ public class OrderFragment extends Fragment implements AdapterView.OnItemClickLi
     @Override
     public void onItemClick(AdapterView<?> parent, View view, int position, long id) {
         mAvObject = mPolicys.get(position);
-        int status = mAvObject.getInt("statu");
+        int status = mAvObject.getInt("status");
         Intent intent = new Intent();
         Bundle bundle = new Bundle();
         setDtail();
@@ -295,7 +295,7 @@ public class OrderFragment extends Fragment implements AdapterView.OnItemClickLi
     public void setOrderDatails(final ViewHolder viewHolder, final int positon) {
         final AVObject avObject = mPolicys.get(positon);
         viewHolder.mTvDateOrder.setText(getTime(avObject.getDate("regDate")));
-        int statu = avObject.getInt("statu");
+        int statu = avObject.getInt("status");
         switch (statu) {
             case 0:
                 viewHolder.mTvStatuOrder.setText("待算价");
@@ -311,19 +311,7 @@ public class OrderFragment extends Fragment implements AdapterView.OnItemClickLi
                 break;
         }
 
-        String insuranceId = avObject.getString("insuranceId");
-        AVQuery<AVObject> query = new AVQuery<>("Insurance");
-        query.whereEqualTo("objectId", insuranceId);
-        query.findInBackground(new FindCallback<AVObject>() {
-            @Override
-            public void done(List<AVObject> list, AVException e) {
-                if (e == null) {
-                    AVObject avObject1 = list.get(positon);
-                    viewHolder.mTvCompanyOrder.setText(avObject.getString("name"));
-                }
-            }
-        });
-
+        viewHolder.mTvCompanyOrder.setText(avObject.getString("company"));
         Number price = avObject.getNumber("price");
         if (price == 0) {
             viewHolder.mTvPriceOrderListview.setText("算价中");
@@ -349,8 +337,8 @@ public class OrderFragment extends Fragment implements AdapterView.OnItemClickLi
     private void setDtail() {
         if (mAvObject != null) {
             mPolicy.setObjectId(mAvObject.getObjectId());
-            mPolicy.setPolicyDate(getTime(mAvObject.getDate("policyDate")));
-//            mPolicy.setCompany(mAvObject.getString("company"));
+//            mPolicy.setPolicyDate(getTime(mAvObject.getDate("re")));
+            mPolicy.setCompany(mAvObject.getString("company"));
             mPolicy.setStatus(mAvObject.getInt("status"));
             mPolicy.setPrice(mAvObject.getNumber("price") + "");
             mPolicy.setRegDate(mAvObject.getDate("regDate"));
@@ -400,7 +388,7 @@ public class OrderFragment extends Fragment implements AdapterView.OnItemClickLi
 
 
     public static String getTime(Date date) {
-        SimpleDateFormat format = new SimpleDateFormat("yyyy-MM-dd");
+        SimpleDateFormat format = new SimpleDateFormat("yyyy-MM-dd HH:mm");
         return format.format(date);
     }
 }

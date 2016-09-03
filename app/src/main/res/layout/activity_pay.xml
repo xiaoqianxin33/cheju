@@ -33,30 +33,23 @@
             android:textSize="18sp"/>
 
         <ImageView
-            android:id="@+id/iv_alipay"
-            android:layout_width="48dp"
-            android:layout_height="48dp"
-            android:layout_below="@+id/textView4"
-            android:layout_marginTop="40dp"
-            android:layout_toStartOf="@+id/textView4"
-            android:background="@drawable/white_yuanjiao"
-            android:src="@mipmap/alipay"/>
-
-        <ImageView
             android:id="@+id/iv_weipay"
             android:layout_width="48dp"
             android:layout_height="48dp"
-            android:layout_alignTop="@+id/iv_alipay"
-            android:layout_toEndOf="@+id/textView4"
+
+            android:layout_above="@+id/textView5"
+            android:layout_marginBottom="32dp"
+            android:layout_toEndOf="@+id/textView5"
             android:src="@mipmap/weipay"/>
+
 
         <TextView
             android:id="@+id/textView5"
             android:layout_width="wrap_content"
             android:layout_height="wrap_content"
-            android:layout_below="@+id/iv_weipay"
-            android:layout_marginTop="28dp"
-            android:layout_toStartOf="@+id/iv_weipay"
+            android:layout_above="@+id/tv_time"
+            android:layout_alignStart="@+id/textView4"
+            android:layout_marginBottom="46dp"
             android:text="送货时间"
             android:textColor="@android:color/white"
             android:textSize="18sp"/>
@@ -65,9 +58,9 @@
             android:id="@+id/tv_time"
             android:layout_width="wrap_content"
             android:layout_height="wrap_content"
-            android:layout_below="@+id/textView5"
-            android:layout_centerHorizontal="true"
-            android:layout_marginTop="29dp"
+            android:layout_above="@+id/tv_address"
+            android:layout_alignStart="@+id/textView5"
+            android:layout_marginBottom="35dp"
             android:text="点击选择"
             android:textColor="@android:color/white"
             android:textSize="16sp"/>
@@ -76,9 +69,9 @@
             android:id="@+id/tv_address"
             android:layout_width="match_parent"
             android:layout_height="wrap_content"
-            android:layout_below="@+id/tv_time"
-            android:layout_centerHorizontal="true"
-            android:layout_marginTop="43dp"
+            android:layout_above="@+id/iv_x"
+            android:layout_alignParentStart="true"
+            android:layout_marginBottom="58dp"
             android:gravity="center"
             android:text="New Text"
             android:textColor="@android:color/white"
@@ -92,5 +85,31 @@
             android:layout_centerHorizontal="true"
             android:layout_marginBottom="96dp"
             android:src="@mipmap/cha"/>
+
+        <FrameLayout
+            android:layout_width="50dp"
+            android:layout_height="50dp"
+            android:layout_alignBottom="@+id/iv_weipay"
+            android:layout_alignTop="@+id/iv_weipay"
+            android:layout_toStartOf="@+id/textView5">
+
+
+            <TextView
+                android:id="@+id/textView7"
+                android:layout_width="45.8dp"
+                android:layout_height="36dp"
+                android:layout_gravity="center"
+                android:background="@android:color/white"
+                />
+
+            <ImageView
+                android:id="@+id/iv_alipay"
+                android:layout_width="48dp"
+                android:layout_height="48dp"
+                android:layout_gravity="center"
+                android:src="@mipmap/alipay"/>
+        </FrameLayout>
+
+
     </RelativeLayout>
 </RelativeLayout>
