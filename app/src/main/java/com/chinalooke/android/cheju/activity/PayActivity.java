@@ -9,6 +9,7 @@ import android.view.View;
 import android.widget.ImageView;
 import android.widget.RelativeLayout;
 import android.widget.TextView;
+import android.widget.Toast;
 
 import com.bigkoo.pickerview.TimePickerView;
 import com.chinalooke.android.cheju.R;
@@ -45,12 +46,14 @@ public class PayActivity extends AppCompatActivity implements TimePickerView.OnT
 
         }
     };
+    private Toast mToast;
 
     @Override
     protected void onCreate(Bundle savedInstanceState) {
         super.onCreate(savedInstanceState);
         setContentView(R.layout.activity_pay);
         ButterKnife.bind(this);
+        mToast = Toast.makeText(this, "", Toast.LENGTH_SHORT);
         initData();
         initView();
     }
@@ -70,6 +73,7 @@ public class PayActivity extends AppCompatActivity implements TimePickerView.OnT
             case R.id.iv_alipay:
                 mRlPay.setVisibility(View.GONE);
                 mIvAli.setVisibility(View.VISIBLE);
+                saveOrder();
                 showPay();
                 break;
             case R.id.tv_time:
@@ -80,15 +84,31 @@ public class PayActivity extends AppCompatActivity implements TimePickerView.OnT
             case R.id.iv_weipay:
                 break;
             case R.id.iv_ali:
-                Intent intent = new Intent();
-                intent.putExtra("statu", true);
-                setResult(0, intent);
-                finish();
+                if (check()) {
+                    Intent intent = new Intent();
+                    intent.putExtra("statu", true);
+                    setResult(0, intent);
+                    finish();
+                }
                 break;
             case R.id.iv_x:
                 finish();
                 break;
         }
+    }
+
+    private void saveOrder() {
+
+    }
+
+    private boolean check() {
+        String time = mTvTime.getText().toString();
+        if ("点击选择".equals(time)) {
+            mToast.setText("请选择收货时间");
+            mToast.show();
+            return false;
+        }
+        return true;
     }
 
     private void showPay() {

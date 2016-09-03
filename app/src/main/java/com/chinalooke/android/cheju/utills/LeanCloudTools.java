@@ -5,6 +5,7 @@ import com.avos.avoscloud.AVFile;
 import com.avos.avoscloud.AVObject;
 import com.avos.avoscloud.AVQuery;
 import com.avos.avoscloud.FindCallback;
+import com.avos.avoscloud.SaveCallback;
 import com.chinalooke.android.cheju.config.MyLeanCloudApp;
 
 
@@ -17,11 +18,12 @@ import java.util.List;
 public class LeanCloudTools {
 
 
-    public static void addAttr(String objectId, String tableName, String rowName, String content) {
+    public static void addAttr(String objectId, String tableName, String rowName, String content,
+                               SaveCallback saveCallback) {
         AVObject todo = AVObject.createWithoutData(tableName, objectId);
         todo.put(rowName, content);
         // 保存到云端
-        todo.saveInBackground();
+        todo.saveInBackground(saveCallback);
     }
 
 
@@ -54,11 +56,10 @@ public class LeanCloudTools {
     }
 
 
-    public static void loadImage(){
+    public static void loadImage() {
 
 
-        AVFile avFile=new AVFile();
-
+        AVFile avFile = new AVFile();
 
 
     }

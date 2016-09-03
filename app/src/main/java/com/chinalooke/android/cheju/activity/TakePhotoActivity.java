@@ -11,6 +11,7 @@ import android.view.ViewGroup;
 import android.widget.BaseAdapter;
 import android.widget.LinearLayout;
 import android.widget.TextView;
+import android.widget.Toast;
 
 import com.avos.avoscloud.AVException;
 import com.avos.avoscloud.AVObject;
@@ -18,9 +19,11 @@ import com.avos.avoscloud.AVQuery;
 import com.avos.avoscloud.AVRelation;
 import com.avos.avoscloud.AVUser;
 import com.avos.avoscloud.FindCallback;
+import com.avos.avoscloud.SaveCallback;
 import com.chinalooke.android.cheju.R;
 import com.chinalooke.android.cheju.bean.Address;
 import com.chinalooke.android.cheju.bean.Policy;
+import com.chinalooke.android.cheju.utills.LeanCloudTools;
 import com.chinalooke.android.cheju.utills.MyUtills;
 import com.chinalooke.android.cheju.view.PayDialog;
 import com.chinalooke.android.cheju.view.XListView;
@@ -58,12 +61,14 @@ public class TakePhotoActivity extends AppCompatActivity {
     private MyAdapt mMyAdapt;
     private ArrayList<String> mPrices = new ArrayList<>();
     private String mAdress = "";
+    private Toast mToast;
 
     @Override
     protected void onCreate(Bundle savedInstanceState) {
         super.onCreate(savedInstanceState);
         setContentView(R.layout.activity_take_photo);
         ButterKnife.bind(this);
+        mToast = Toast.makeText(this, "", Toast.LENGTH_SHORT);
         initData();
         initView();
     }
@@ -139,11 +144,24 @@ public class TakePhotoActivity extends AppCompatActivity {
                 startActivity(intent);
                 break;
             case R.id.btn_pay:
-                Intent intent1 = new Intent(TakePhotoActivity.this, PayActivity.class);
-                intent1.putExtra("address", mAdress);
-                startActivityForResult(intent1, 0);
+                if (check()) {
+                    Intent intent1 = new Intent(TakePhotoActivity.this, PayActivity.class);
+                    intent1.putExtra("address", mAdress);
+                    startActivityForResult(intent1, 0);
+                }
                 break;
         }
+    }
+
+    private boolean check() {
+        CharSequence text = mTvAddress.getText();
+        if ("点击添加收货地址".equals(text)) {
+            mToast.setText("请选择或添加收货地址");
+            mToast.show();
+            return false;
+        }
+
+        return true;
     }
 
 
@@ -205,7 +223,13 @@ public class TakePhotoActivity extends AppCompatActivity {
                         @Override
                         public void onClick(DialogInterface dialog, int which) {
                             dialog.dismiss();
-                            startActivity(new Intent(TakePhotoActivity.this, OrderActivity.class));
+                            Intent intent = new Intent();
+                            intent.setClass(TakePhotoActivity.this, WriteMessgeActivity.class);
+                            Bundle bundle = new Bundle();
+                            bundle.putSerializable("dpolicy", mPolicy);
+                            intent.putExtras(bundle);
+                            startActivity(intent);
+                            saveCloud();
                         }
                     }, new DialogInterface.OnClickListener() {
                         @Override
@@ -224,5 +248,14 @@ public class TakePhotoActivity extends AppCompatActivity {
             mAdress = "收货地址：" + address.getAddress();
         }
 
+    }
+
+    private void saveCloud() {
+        LeanCloudTools.addAttr(mPolicy.getObjectId(), "Policy", "statu", "已支付", new SaveCallback() {
+            @Override
+            public void done(AVException e) {
+
+            }
+        });
     }
 }

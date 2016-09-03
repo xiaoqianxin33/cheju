@@ -1,5 +1,6 @@
 package com.chinalooke.android.cheju.activity;
 
+import android.content.Intent;
 import android.os.Bundle;
 import android.support.v7.app.AppCompatActivity;
 import android.view.View;
@@ -8,6 +9,7 @@ import android.widget.BaseAdapter;
 import android.widget.TextView;
 
 import com.chinalooke.android.cheju.R;
+import com.chinalooke.android.cheju.bean.Policy;
 import com.chinalooke.android.cheju.view.SyListView;
 
 import java.util.ArrayList;
@@ -23,6 +25,7 @@ public class OrderActivity extends AppCompatActivity {
     private ArrayList<String> mStrings = new ArrayList<>();
     private ArrayList<String> mPrices = new ArrayList<>();
     private MyAdapt mMyAdapt;
+    private Policy mPolicy;
 
     @Override
     protected void onCreate(Bundle savedInstanceState) {
@@ -51,6 +54,7 @@ public class OrderActivity extends AppCompatActivity {
         mPrices.add("2016-09-02 20:38");
         mPrices.add("2016-09-02 20:38");
         mPrices.add("2016-09-02 20:38");
+        mPolicy = (Policy) getIntent().getSerializableExtra("dpolicy");
     }
 
     class MyAdapt extends BaseAdapter {
@@ -103,9 +107,17 @@ public class OrderActivity extends AppCompatActivity {
     }
 
 
-    @OnClick({R.id.iv_wirte_back, R.id.tv_title2})
+    @OnClick({R.id.iv_wirte_back, R.id.tv_title2, R.id.tv_topolicy_order})
     public void onClick(View view) {
         switch (view.getId()) {
+            case R.id.tv_topolicy_order:
+                Intent intent = new Intent();
+                intent.setClass(OrderActivity.this, WriteMessgeActivity.class);
+                Bundle bundle = new Bundle();
+                bundle.putSerializable("dpolicy", mPolicy);
+                intent.putExtras(bundle);
+                startActivity(intent);
+                break;
             case R.id.iv_wirte_back:
                 finish();
                 break;
