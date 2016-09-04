@@ -28,20 +28,16 @@ public class MyLeanCloudApp extends Application {
         super.onCreate();
         AVOSCloud.initialize(this, "IXN9lU9PD8RGArnaNM08pX4s-gzGzoHsz", "g4Dt8awTrsnjbsYQpPu1dCMj");
         MultiDex.install(this);
-        try {
-            appContext = this;
-            int pid = android.os.Process.myPid();
-            String processAppName = getAppName(pid);
-            if (processAppName == null || !processAppName.equalsIgnoreCase(appContext.getPackageName())) {
-                return;
-            }
-            EMOptions options = new EMOptions();
-            EMClient.getInstance().init(getApplicationContext(), options);
-            EaseUI.getInstance().init(getApplicationContext(), options);
-            EMClient.getInstance().setDebugMode(true);
-        } catch (Exception e) {
-
+        appContext = this;
+        int pid = android.os.Process.myPid();
+        String processAppName = getAppName(pid);
+        if (processAppName == null || !processAppName.equalsIgnoreCase(appContext.getPackageName())) {
+            return;
         }
+        EMOptions options = new EMOptions();
+        EMClient.getInstance().init(getApplicationContext(), options);
+        EaseUI.getInstance().init(getApplicationContext(), options);
+        EMClient.getInstance().setDebugMode(true);
 
     }
 

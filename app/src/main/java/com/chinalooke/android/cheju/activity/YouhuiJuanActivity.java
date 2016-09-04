@@ -5,6 +5,7 @@ import android.os.Bundle;
 import android.os.Handler;
 import android.os.Message;
 import android.support.v7.app.AppCompatActivity;
+import android.text.TextUtils;
 import android.util.Log;
 import android.view.View;
 import android.view.ViewGroup;
@@ -29,6 +30,7 @@ import com.avos.avoscloud.FindCallback;
 import com.chinalooke.android.cheju.R;
 import com.chinalooke.android.cheju.bean.BusinessShop;
 import com.chinalooke.android.cheju.constant.Constant;
+import com.chinalooke.android.cheju.utills.PreferenceUtils;
 import com.chinalooke.android.cheju.view.XListView;
 
 import java.text.DecimalFormat;
@@ -85,7 +87,17 @@ public class YouhuiJuanActivity extends AppCompatActivity implements AMapLocatio
         mListView.setAdapter(mMyAdapt);
         mListView.setOnItemClickListener(YouhuiJuanActivity.this);
 
-        location();
+        String location = PreferenceUtils.getPrefString(getApplicationContext(), "location", "");
+
+        if (TextUtils.isEmpty(location)) {
+            location();
+        } else {
+            String[] split = location.split(":");
+            mLongitude = Double.parseDouble(split[0]);
+            mLatitude = Double.parseDouble(split[1]);
+            mHandler.sendEmptyMessage(1);
+        }
+
     }
 
 
@@ -125,8 +137,11 @@ public class YouhuiJuanActivity extends AppCompatActivity implements AMapLocatio
                 mTvLocationYouhui.setText("当前: " + aMapLocation.getCity());
                 mLongitude = aMapLocation.getLongitude();
                 mLatitude = aMapLocation.getLatitude();
-                if (mLatitude != 0 && mLongitude != 0)
+
+                if (mLatitude != 0 && mLongitude != 0) {
+                    PreferenceUtils.setPrefString(getApplicationContext(), "location", mLongitude + ":" + mLatitude);
                     mHandler.sendEmptyMessage(1);
+                }
             } else {
                 mToast.setText("无法获取位置信息");
                 mToast.show();

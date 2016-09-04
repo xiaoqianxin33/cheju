@@ -222,6 +222,7 @@ public class WriteCheliangFragment extends Fragment {
                 showDateDialog();
                 break;
             case R.id.write:
+                mWrite.setEnabled(false);
                 setPolicy();
                 boolean b = checkMessage();
                 if (b) {
@@ -233,6 +234,8 @@ public class WriteCheliangFragment extends Fragment {
                             saveCloud();
                         }
                     }, 500);
+                } else {
+                    mWrite.setEnabled(true);
                 }
                 break;
         }
@@ -246,7 +249,11 @@ public class WriteCheliangFragment extends Fragment {
         } else if ("强制险".equals(s)) {
             mPolicy.setType(0);
         }
-        mPolicy.setRegDate(mDate);
+        if (mDate != null) {
+            mPolicy.setRegDate(mDate);
+        } else {
+            mPolicy.setRegDate(new Date());
+        }
     }
 
     private void showOption(final int i) {
@@ -381,10 +388,6 @@ public class WriteCheliangFragment extends Fragment {
             case 3:
                 mPolicy.setBrand(s);
                 break;
-            case 4:
-                mPolicy.setPolicyDate(s);
-                break;
-
         }
 
     }
@@ -462,17 +465,17 @@ public class WriteCheliangFragment extends Fragment {
         policy.put("frameNo", mPolicy.getFrameNo());
         policy.put("engine", mPolicy.getEngine());
         policy.put("brand", mPolicy.getBrand());
-        policy.put("policyDate", mPolicy.getPolicyDate());
+        policy.put("policyDate", new Date());
         mCurrentUser = AVUser.getCurrentUser();
         policy.put("status", 0);
         policy.put("city", mPolicy.getCity());
         policy.put("phone", mPolicy.getPhone());
         policy.put("IDNo", mPolicy.getIdNo());
-        policy.put("CarNo", mPolicy.getCarNo());
+        policy.put("carNo", mPolicy.getCarNo());
         policy.put("company", mPolicy.getCompany());
         policy.put("type", mPolicy.getType());
         policy.put("regDate", mPolicy.getRegDate());
-        policy.put("userid", mCurrentUser.getObjectId());
+        policy.put("userId", mCurrentUser.getObjectId());
         policy.put("insuranceId", mInsurance.get(mPolicy.getCompany()));
 
         AVObject.saveAllInBackground(Arrays.asList(policy), new SaveCallback() {
@@ -490,12 +493,14 @@ public class WriteCheliangFragment extends Fragment {
                                 mWrite.setText("订单已提交");
                                 mWrite.setEnabled(false);
                             } else {
+                                mWrite.setEnabled(true);
                                 mToast.setText(e.getMessage());
                                 mToast.show();
                             }
                         }
                     });
                 } else {
+                    mWrite.setEnabled(true);
                     mProgressDialog.dismiss();
                     mToast.setText(e.getMessage());
                     mToast.show();

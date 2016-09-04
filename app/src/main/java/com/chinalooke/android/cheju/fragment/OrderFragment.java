@@ -8,8 +8,6 @@ import android.os.Handler;
 import android.os.Message;
 import android.support.v4.app.Fragment;
 import android.support.v4.widget.SwipeRefreshLayout;
-import android.text.TextUtils;
-import android.util.Log;
 import android.view.LayoutInflater;
 import android.view.View;
 import android.view.ViewGroup;
@@ -20,21 +18,17 @@ import android.widget.ImageView;
 import android.widget.ListView;
 import android.widget.TextView;
 
-import com.avos.avoscloud.AVCloudQueryResult;
 import com.avos.avoscloud.AVException;
 import com.avos.avoscloud.AVObject;
 import com.avos.avoscloud.AVQuery;
 import com.avos.avoscloud.AVRelation;
 import com.avos.avoscloud.AVUser;
-import com.avos.avoscloud.CloudQueryCallback;
 import com.avos.avoscloud.FindCallback;
 import com.chinalooke.android.cheju.R;
 import com.chinalooke.android.cheju.activity.MainActivity;
 import com.chinalooke.android.cheju.activity.TakePhotoActivity;
 import com.chinalooke.android.cheju.activity.WriteMessgeActivity;
 import com.chinalooke.android.cheju.bean.Policy;
-import com.chinalooke.android.cheju.constant.SQLwords;
-import com.chinalooke.android.cheju.utills.LeanCloudTools;
 
 import java.text.SimpleDateFormat;
 import java.util.ArrayList;
@@ -315,24 +309,11 @@ public class OrderFragment extends Fragment implements AdapterView.OnItemClickLi
 
         viewHolder.mTvCompanyOrder.setText(avObject.getString("company"));
         Number price = avObject.getNumber("price");
+
         if (price == 0) {
-            viewHolder.mTvPriceOrderListview.setText("算价中");
+            viewHolder.mTvPriceOrderListview.setText(0 + "");
         } else {
             viewHolder.mTvPriceOrderListview.setText(price + "");
-        }
-        switch (statu) {
-            case 0:
-                viewHolder.mIvOrderChexianListview.setBackgroundResource(R.mipmap.dd_sjz);
-                break;
-            case 1:
-                viewHolder.mIvOrderChexianListview.setBackgroundResource(R.mipmap.dd_ycj);
-                break;
-            case 2:
-                viewHolder.mIvOrderChexianListview.setBackgroundResource(R.mipmap.dd_yzf);
-                break;
-            case 3:
-                viewHolder.mIvOrderChexianListview.setBackgroundResource(R.mipmap.dd_ywc);
-                break;
         }
     }
 
@@ -345,7 +326,7 @@ public class OrderFragment extends Fragment implements AdapterView.OnItemClickLi
             mPolicy.setRegDate(mAvObject.getDate("regDate"));
             mPolicy.setDetail(mAvObject.getString("detail"));
             mPolicy.setDiscountPrice(mAvObject.getNumber("discountPrice") + "");
-            mPolicy.setCarNo(mAvObject.getString("CarNo"));
+            mPolicy.setCarNo(mAvObject.getString("carNo"));
             mPolicy.setCity(mAvObject.getString("city"));
             mPolicy.setBrand(mAvObject.getString("brand"));
             mPolicy.setIdNo(mAvObject.getString("IDNo"));

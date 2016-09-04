@@ -58,7 +58,7 @@ public class FindPasswordActivity extends AppCompatActivity {
     public void onClick(View view) {
         switch (view.getId()) {
             case R.id.btn_find_getsms:
-                mFindPhone = mEtFindPwd.getText().toString();
+                mFindPhone = mEtFindpwd.getText().toString();
                 if (MyUtills.CheckPhoneNumer(mFindPhone)) {
                     initDialog("正在发送短信");
                     mHandler.postDelayed(new Runnable() {
@@ -185,7 +185,7 @@ public class FindPasswordActivity extends AppCompatActivity {
     }
 
     private boolean checkFind() {
-        mFindPhone = mEtFindPwd.getText().toString();
+        mFindPhone = mEtFindpwd.getText().toString();
         if (!MyUtills.CheckPhoneNumer(mFindPhone)) {
             mToast.setText("请填写正确的手机号码");
             mToast.show();
@@ -200,7 +200,7 @@ public class FindPasswordActivity extends AppCompatActivity {
             return false;
         }
 
-        mNewPwd = mEtFindpwd.getText().toString();
+        mNewPwd = mEtFindPwd.getText().toString();
         if (!MyUtills.password(mNewPwd)) {
             mToast.setText("请填写六位新密码");
             mToast.show();

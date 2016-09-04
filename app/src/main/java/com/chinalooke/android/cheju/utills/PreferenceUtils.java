@@ -23,6 +23,7 @@ public class PreferenceUtils {
         settings.edit().putString(key, value).apply();
     }
 
+
     public static boolean getPrefBoolean(Context context, final String key,
                                          final boolean defaultValue) {
         final SharedPreferences settings = PreferenceManager
