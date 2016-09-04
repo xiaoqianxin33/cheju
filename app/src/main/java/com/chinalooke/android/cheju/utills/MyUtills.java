@@ -133,12 +133,8 @@ public class MyUtills {
 
 
     public static String getDate() {
-
         Date now = new Date();
-
-        DateFormat d1 = DateFormat.getDateInstance();
-        String date = d1.format(now);
-
+        String date = new SimpleDateFormat("yyyy-MM-dd").format(now);
         return date;
     }
 
@@ -158,6 +154,7 @@ public class MyUtills {
         builder.setNegativeButton("取消", NonClickListener);
         builder.show();
     }
+
     public static void showPayDialog(final Activity context, String title, String message, DialogInterface.OnClickListener PonClickListener, DialogInterface.OnClickListener NonClickListener) {
 
         android.support.v7.app.AlertDialog.Builder builder = new android.support.v7.app.AlertDialog.Builder(context);

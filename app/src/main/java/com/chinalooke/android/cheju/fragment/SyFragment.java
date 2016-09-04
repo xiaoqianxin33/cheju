@@ -123,7 +123,6 @@ public class SyFragment extends Fragment {
                             Intent intent = new Intent();
                             intent.setClass(getActivity(), LoginActivity.class);
                             startActivity(intent);
-                            getActivity().finish();
                         }
                         break;
 
@@ -132,7 +131,9 @@ public class SyFragment extends Fragment {
                         break;
 
                     case 2:
-                        startActivity(new Intent(getActivity(), YouhuiJuanActivity.class));
+                        AVUser currentUser = AVUser.getCurrentUser();
+                        if (currentUser != null)
+                            startActivity(new Intent(getActivity(), YouhuiJuanActivity.class));
                         break;
                     case 7:
                         if (mCurrentUser == null) {

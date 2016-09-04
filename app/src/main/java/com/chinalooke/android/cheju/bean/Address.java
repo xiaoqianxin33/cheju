@@ -10,7 +10,15 @@ public class Address implements Serializable {
     private String name;
     private String address;
     private String phone;
+    private String objectId;
 
+    public String getObjectId() {
+        return objectId;
+    }
+
+    public void setObjectId(String objectId) {
+        this.objectId = objectId;
+    }
 
     public String getName() {
         return name;

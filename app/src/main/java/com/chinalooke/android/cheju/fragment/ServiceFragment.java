@@ -1,6 +1,7 @@
 package com.chinalooke.android.cheju.fragment;
 
 import android.content.Intent;
+import android.net.Uri;
 import android.os.Bundle;
 import android.os.Handler;
 import android.os.Message;
@@ -118,6 +119,8 @@ public class ServiceFragment extends Fragment {
                 }
                 break;
             case R.id.btn_phone_service:
+                Intent intentPhone = new Intent(Intent.ACTION_CALL, Uri.parse("tel:" + 400));
+                startActivity(intentPhone);
                 break;
         }
     }

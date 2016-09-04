@@ -4,10 +4,12 @@ import android.content.DialogInterface;
 import android.content.Intent;
 import android.graphics.Paint;
 import android.os.Bundle;
+import android.os.Parcelable;
 import android.support.v7.app.AppCompatActivity;
 import android.util.Log;
 import android.view.View;
 import android.view.ViewGroup;
+import android.widget.AdapterView;
 import android.widget.BaseAdapter;
 import android.widget.LinearLayout;
 import android.widget.TextView;
@@ -22,6 +24,7 @@ import com.avos.avoscloud.FindCallback;
 import com.avos.avoscloud.SaveCallback;
 import com.chinalooke.android.cheju.R;
 import com.chinalooke.android.cheju.bean.Address;
+import com.chinalooke.android.cheju.bean.Order;
 import com.chinalooke.android.cheju.bean.Policy;
 import com.chinalooke.android.cheju.utills.LeanCloudTools;
 import com.chinalooke.android.cheju.utills.MyUtills;
@@ -62,6 +65,7 @@ public class TakePhotoActivity extends AppCompatActivity {
     private ArrayList<String> mPrices = new ArrayList<>();
     private String mAdress = "";
     private Toast mToast;
+    private Address mAddress;
 
     @Override
     protected void onCreate(Bundle savedInstanceState) {
@@ -69,8 +73,19 @@ public class TakePhotoActivity extends AppCompatActivity {
         setContentView(R.layout.activity_take_photo);
         ButterKnife.bind(this);
         mToast = Toast.makeText(this, "", Toast.LENGTH_SHORT);
+        mAddress = new Address();
         initData();
         initView();
+        initEvent();
+    }
+
+    private void initEvent() {
+        mXlvDetail.setOnItemClickListener(new AdapterView.OnItemClickListener() {
+            @Override
+            public void onItemClick(AdapterView<?> parent, View view, int position, long id) {
+//                MyUtills.showDialog();
+            }
+        });
     }
 
     private void initView() {
@@ -110,13 +125,17 @@ public class TakePhotoActivity extends AppCompatActivity {
             mTvPhone.setText(avObject.getString("phone"));
             mTvAddress.setText("收货地址：" + avObject.getString("address"));
             mAdress = "收货地址：" + avObject.getString("address");
+            mAddress.setName(avObject.getString("name"));
+            mAddress.setPhone(avObject.getString("phone"));
+            mAddress.setAddress(avObject.getString("address"));
+            mAddress.setObjectId(avObject.getObjectId());
         } else {
             mTvAddress.setText("点击添加收货地址");
         }
     }
 
 
-    @OnClick({R.id.iv_check_back, R.id.fl_takes, R.id.tv_topolicy, R.id.btn_pay, R.id.ll_address})
+    @OnClick({R.id.iv_wirte_back, R.id.tv_topolicy, R.id.btn_pay, R.id.ll_address})
     public void onClick(View view) {
         switch (view.getId()) {
             case R.id.ll_address:
@@ -129,10 +148,7 @@ public class TakePhotoActivity extends AppCompatActivity {
                 address.setClass(TakePhotoActivity.this, SelectAddressActivity.class);
                 startActivityForResult(address, REQUST_ADDRESS);
                 break;
-            case R.id.iv_check_back:
-                finish();
-                break;
-            case R.id.fl_takes:
+            case R.id.iv_wirte_back:
                 finish();
                 break;
             case R.id.tv_topolicy:
@@ -146,7 +162,11 @@ public class TakePhotoActivity extends AppCompatActivity {
             case R.id.btn_pay:
                 if (check()) {
                     Intent intent1 = new Intent(TakePhotoActivity.this, PayActivity.class);
-                    intent1.putExtra("address", mAdress);
+//                    intent1.putExtra("address", mAdress);
+                    Bundle bundle1 = new Bundle();
+                    bundle1.putSerializable("dpolicy", mPolicy);
+                    bundle1.putSerializable("address", mAddress);
+                    intent1.putExtras(bundle1);
                     startActivityForResult(intent1, 0);
                 }
                 break;
@@ -213,7 +233,7 @@ public class TakePhotoActivity extends AppCompatActivity {
     }
 
     @Override
-    protected void onActivityResult(int requestCode, int resultCode, Intent data) {
+    protected void onActivityResult(int requestCode, int resultCode, final Intent data) {
         super.onActivityResult(requestCode, resultCode, data);
         if (resultCode == 0 && requestCode == 0) {
             if (data != null) {
@@ -223,10 +243,12 @@ public class TakePhotoActivity extends AppCompatActivity {
                         @Override
                         public void onClick(DialogInterface dialog, int which) {
                             dialog.dismiss();
+                            AVObject order = data.getParcelableExtra("order");
                             Intent intent = new Intent();
                             intent.setClass(TakePhotoActivity.this, OrderActivity.class);
                             Bundle bundle = new Bundle();
                             bundle.putSerializable("dpolicy", mPolicy);
+                            bundle.putParcelable("order", order);
                             intent.putExtras(bundle);
                             startActivity(intent);
                             saveCloud();
@@ -245,7 +267,7 @@ public class TakePhotoActivity extends AppCompatActivity {
             mTvAddress.setText(address.getAddress());
             mTvName.setText(address.getName());
             mTvPhone.setText(address.getPhone());
-            mAdress = "收货地址：" + address.getAddress();
+            mAddress = address;
         }
 
     }

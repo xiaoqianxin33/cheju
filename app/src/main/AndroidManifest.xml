@@ -207,6 +207,10 @@
         </activity>
         <activity android:name=".activity.ScoreActivity">
         </activity>
+        <activity android:name=".activity.RegisterActivity">
+        </activity>
+        <activity android:name=".activity.FindPasswordActivity">
+        </activity>
     </application>
 
 </manifest>

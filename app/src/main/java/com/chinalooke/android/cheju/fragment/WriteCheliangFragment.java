@@ -402,56 +402,46 @@ public class WriteCheliangFragment extends Fragment {
 
 
     private boolean checkMessage() {
-        if (TextUtils.isEmpty(mPolicy.getPhone())) {
-            mToast.setText("请输入手机号码");
-            mToast.show();
-            return false;
-        }
-
-        if (!MyUtills.CheckPhoneNumer(mPolicy.getPhone())) {
-            mToast.setText("请输入正确的手机号码");
-            mToast.show();
-            return false;
-        }
-
-        if (TextUtils.isEmpty(mPolicy.getIdNo())) {
-            mToast.setText("请输入身份证号码");
-            mToast.show();
-            return false;
-        }
-
-
-        if (!IDCardUtil.IDCardValidate(mPolicy.getIdNo())) {
-            mToast.setText("请输入正确的身份证号码");
-            mToast.show();
-            return false;
-        }
-
-        if (TextUtils.isEmpty(mPolicy.getCarNo())) {
-            mToast.setText("请输入车牌号码");
-            mToast.show();
-            return false;
-        }
-
-        if (!MyUtills.checkCarNumer(mPolicy.getCarNo())) {
-            mToast.setText("请输入正确的车牌号码");
-            mToast.show();
-            return false;
-        }
-
-//        String s = mTvLocation.getText().toString();
-
-        if ("正在定位...".equals(mPolicy.getCity())) {
-            mToast.setText("请选择城市");
-            mToast.show();
-            return false;
-        }
 
         if (TextUtils.isEmpty(mPolicy.getUserName())) {
             mToast.setText("车主姓名不能为空");
             mToast.show();
+            EditText editText = (EditText) mLvWrite.getChildAt(0).findViewById(R.id.et_item_write_listview);
+            editText.setFocusable(true);
+            editText.setFocusableInTouchMode(true);
+            editText.requestFocus();
             return false;
         }
+
+        if (TextUtils.isEmpty(mPolicy.getFrameNo())) {
+            mToast.setText("车架号不能为空");
+            mToast.show();
+            EditText editText = (EditText) mLvWrite.getChildAt(1).findViewById(R.id.et_item_write_listview);
+            editText.setFocusable(true);
+            editText.setFocusableInTouchMode(true);
+            editText.requestFocus();
+            return false;
+        }
+        if (TextUtils.isEmpty(mPolicy.getEngine())) {
+            mToast.setText("发动机号不能为空");
+            mToast.show();
+            EditText editText = (EditText) mLvWrite.getChildAt(2).findViewById(R.id.et_item_write_listview);
+            editText.setFocusable(true);
+            editText.setFocusableInTouchMode(true);
+            editText.requestFocus();
+            return false;
+        }
+        if (TextUtils.isEmpty(mPolicy.getBrand())) {
+            mToast.setText("品牌型号不能为空");
+            mToast.show();
+            EditText editText = (EditText) mLvWrite.getChildAt(3).findViewById(R.id.et_item_write_listview);
+            editText.setFocusable(true);
+            editText.setFocusableInTouchMode(true);
+            editText.requestFocus();
+            return false;
+        }
+
+
         if (TextUtils.isEmpty(mPolicy.getCompany()) || "点击选择".equals(mPolicy.getCompany())) {
             mToast.setText("请选择保险公司");
             mToast.show();
@@ -459,21 +449,6 @@ public class WriteCheliangFragment extends Fragment {
         }
         if ("点击选择".equals(mTvType.getText())) {
             mToast.setText("请选择险种");
-            mToast.show();
-            return false;
-        }
-        if (TextUtils.isEmpty(mPolicy.getFrameNo())) {
-            mToast.setText("车架号不能为空");
-            mToast.show();
-            return false;
-        }
-        if (TextUtils.isEmpty(mPolicy.getEngine())) {
-            mToast.setText("发动机号不能为空");
-            mToast.show();
-            return false;
-        }
-        if (TextUtils.isEmpty(mPolicy.getBrand())) {
-            mToast.setText("品牌型号不能为空");
             mToast.show();
             return false;
         }

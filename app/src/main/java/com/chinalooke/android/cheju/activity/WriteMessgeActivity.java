@@ -64,13 +64,9 @@ public class WriteMessgeActivity extends FragmentActivity {
         ButterKnife.bind(this);
 
         mFragmentManager = getFragmentManager();
-
         mPolicy = new Policy();
-
-
         initData();
         initView();
-
 
     }
 
@@ -121,9 +117,12 @@ public class WriteMessgeActivity extends FragmentActivity {
                 switchContent(mWriteCheliangFragment, mWriteChezhuFragment);
                 break;
             case R.id.tv_write_cheliang:
-                mTvWriteCheliang.setTextColor(getResources().getColor(R.color.selectcolor));
-                mTvWriteChezhu.setTextColor(getResources().getColor(R.color.unselectcolor));
-                switchContent(mWriteChezhuFragment, mWriteCheliangFragment);
+                mWriteChezhuFragment.writeNumer();
+                if (mWriteChezhuFragment.checkWrite()) {
+                    mTvWriteCheliang.setTextColor(getResources().getColor(R.color.selectcolor));
+                    mTvWriteChezhu.setTextColor(getResources().getColor(R.color.unselectcolor));
+                    switchContent(mWriteChezhuFragment, mWriteCheliangFragment);
+                }
                 break;
         }
     }

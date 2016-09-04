@@ -3,16 +3,20 @@ package com.chinalooke.android.cheju.activity;
 import android.content.Intent;
 import android.os.Bundle;
 import android.support.v7.app.AppCompatActivity;
+import android.text.TextUtils;
 import android.view.View;
 import android.view.ViewGroup;
 import android.widget.BaseAdapter;
 import android.widget.TextView;
 
+import com.avos.avoscloud.AVObject;
 import com.chinalooke.android.cheju.R;
 import com.chinalooke.android.cheju.bean.Policy;
 import com.chinalooke.android.cheju.view.SyListView;
 
+import java.text.SimpleDateFormat;
 import java.util.ArrayList;
+import java.util.Date;
 
 import butterknife.Bind;
 import butterknife.ButterKnife;
@@ -26,6 +30,7 @@ public class OrderActivity extends AppCompatActivity {
     private ArrayList<String> mPrices = new ArrayList<>();
     private MyAdapt mMyAdapt;
     private Policy mPolicy;
+    private AVObject mOrder;
 
     @Override
     protected void onCreate(Bundle savedInstanceState) {
@@ -42,19 +47,45 @@ public class OrderActivity extends AppCompatActivity {
     }
 
     private void initData() {
+        mOrder = getIntent().getParcelableExtra("order");
+        mPolicy = (Policy) getIntent().getSerializableExtra("dpolicy");
         mStrings.add("订单编号：");
         mStrings.add("支付方式：");
         mStrings.add("付款金额：");
         mStrings.add("订单创建时间：");
-        mStrings.add("付款时间：");
         mStrings.add("送货时间：");
-        mPrices.add("9282764458");
-        mPrices.add("支付宝");
-        mPrices.add("¥1300");
-        mPrices.add("2016-09-02 20:38");
-        mPrices.add("2016-09-02 20:38");
-        mPrices.add("2016-09-02 20:38");
-        mPolicy = (Policy) getIntent().getSerializableExtra("dpolicy");
+        mStrings.add("运费：");
+        mPrices.add(mOrder.getObjectId());
+        String payType = mOrder.getString("payType");
+        if (!TextUtils.isEmpty(payType)) {
+            if ("weixin".equals(payType)) {
+                mPrices.add("微信支付");
+            } else if ("alipay".equals(payType)) {
+                mPrices.add("支付宝");
+            }
+        } else {
+            mPrices.add("");
+        }
+        mPrices.add(mOrder.getNumber("price") + "");
+        mPrices.add(getTime(mOrder.getDate("addDate")));
+        Date sendDate = mOrder.getDate("sendDate");
+        if (sendDate != null) {
+            mPrices.add(getTime(sendDate));
+        } else {
+            mPrices.add("");
+        }
+
+        Number carriage = mOrder.getNumber("carriage");
+        if (carriage != null) {
+            mPrices.add(carriage + "");
+        } else {
+            mPrices.add("");
+        }
+    }
+
+    public static String getTime(Date date) {
+        SimpleDateFormat format = new SimpleDateFormat("yyyy-MM-dd HH:mm");
+        return format.format(date);
     }
 
     class MyAdapt extends BaseAdapter {

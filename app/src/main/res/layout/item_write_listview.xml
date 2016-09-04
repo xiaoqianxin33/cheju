@@ -25,10 +25,5 @@
             android:hint="请填写"/>
     </LinearLayout>
 
-    <TextView
-        android:layout_width="match_parent"
-        android:layout_height="1dp"
-        android:background="#ADA9A4"/>
-
 
 </LinearLayout>

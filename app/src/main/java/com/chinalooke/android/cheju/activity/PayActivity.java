@@ -1,5 +1,6 @@
 package com.chinalooke.android.cheju.activity;
 
+import android.app.ProgressDialog;
 import android.content.Intent;
 import android.os.Bundle;
 import android.os.Handler;
@@ -11,9 +12,17 @@ import android.widget.RelativeLayout;
 import android.widget.TextView;
 import android.widget.Toast;
 
+import com.avos.avoscloud.AVException;
+import com.avos.avoscloud.AVObject;
+import com.avos.avoscloud.AVUser;
+import com.avos.avoscloud.SaveCallback;
 import com.bigkoo.pickerview.TimePickerView;
 import com.chinalooke.android.cheju.R;
+import com.chinalooke.android.cheju.bean.Address;
+import com.chinalooke.android.cheju.bean.Order;
+import com.chinalooke.android.cheju.bean.Policy;
 
+import java.io.Serializable;
 import java.text.SimpleDateFormat;
 import java.util.Date;
 
@@ -31,7 +40,6 @@ public class PayActivity extends AppCompatActivity implements TimePickerView.OnT
     ImageView mIvAli;
     @Bind(R.id.rl_pay)
     RelativeLayout mRlPay;
-    private String mAddress;
     private TimePickerView pvTime;
 
     Handler mHandler = new Handler() {
@@ -47,6 +55,10 @@ public class PayActivity extends AppCompatActivity implements TimePickerView.OnT
         }
     };
     private Toast mToast;
+    private Policy mDpolicy;
+    private Address mAddress;
+    private ProgressDialog mProgressDialog;
+    private AVObject mOrder;
 
     @Override
     protected void onCreate(Bundle savedInstanceState) {
@@ -59,12 +71,12 @@ public class PayActivity extends AppCompatActivity implements TimePickerView.OnT
     }
 
     private void initData() {
-        mAddress = getIntent().getStringExtra("address");
+        mDpolicy = (Policy) getIntent().getSerializableExtra("dpolicy");
+        mAddress = (Address) getIntent().getSerializableExtra("address");
     }
 
     private void initView() {
-        mTvAddress.setText(mAddress);
-
+        mTvAddress.setText(mAddress.getAddress());
     }
 
     @OnClick({R.id.iv_alipay, R.id.iv_weipay, R.id.iv_x, R.id.tv_time, R.id.iv_ali})
@@ -74,8 +86,9 @@ public class PayActivity extends AppCompatActivity implements TimePickerView.OnT
                 if (check()) {
                     mRlPay.setVisibility(View.GONE);
                     mIvAli.setVisibility(View.VISIBLE);
+                    initDialog("订单创建中");
                     saveOrder();
-                    showPay();
+
                 }
                 break;
             case R.id.tv_time:
@@ -88,6 +101,10 @@ public class PayActivity extends AppCompatActivity implements TimePickerView.OnT
             case R.id.iv_ali:
                 Intent intent = new Intent();
                 intent.putExtra("statu", true);
+                Bundle bundle = new Bundle();
+                if (mOrder != null)
+                    bundle.putParcelable("order", mOrder);
+                intent.putExtras(bundle);
                 setResult(0, intent);
                 finish();
                 break;
@@ -97,9 +114,40 @@ public class PayActivity extends AppCompatActivity implements TimePickerView.OnT
         }
     }
 
+    private void initDialog(String message) {
+        mProgressDialog = new ProgressDialog(this);
+        mProgressDialog.setProgressStyle(ProgressDialog.STYLE_SPINNER);
+        mProgressDialog.setMessage(message);
+        mProgressDialog.setCancelable(true);
+        mProgressDialog.show();
+    }
+
     private void saveOrder() {
+        final AVObject order = new AVObject("Order");
+        order.put("userId", AVUser.getCurrentUser().getObjectId());
+        Date date = new Date();
+        order.put("addDate", date);
+        order.put("policyId", mDpolicy.getObjectId());
+        order.put("price", Integer.parseInt(mDpolicy.getDiscountPrice()));
+        order.put("status", 1);
+        order.put("addressId", mAddress.getObjectId());
+        order.put("payType", "alipay");
+        order.saveInBackground(new SaveCallback() {
+            @Override
+            public void done(AVException e) {
+                mProgressDialog.dismiss();
+                if (e == null) {
+                    mOrder = order;
+                    showPay();
+                } else {
+                    mToast.setText(e.getMessage());
+                    mToast.show();
+                }
+            }
+        });
 
     }
+
 
     private boolean check() {
         String time = mTvTime.getText().toString();

@@ -2,17 +2,19 @@ package com.chinalooke.android.cheju.fragment;
 
 
 import android.app.Fragment;
+import android.content.DialogInterface;
 import android.os.Bundle;
 import android.support.annotation.Nullable;
 import android.view.LayoutInflater;
 import android.view.View;
 import android.view.ViewGroup;
-import android.widget.AdapterView;
 import android.widget.BaseAdapter;
 import android.widget.CheckBox;
 import android.widget.CompoundButton;
+import android.widget.ImageView;
 import android.widget.ListView;
 import android.widget.TextView;
+import android.widget.Toast;
 
 import com.avos.avoscloud.AVException;
 import com.avos.avoscloud.AVObject;
@@ -20,8 +22,10 @@ import com.avos.avoscloud.AVQuery;
 import com.avos.avoscloud.AVRelation;
 import com.avos.avoscloud.AVUser;
 import com.avos.avoscloud.FindCallback;
+import com.avos.avoscloud.SaveCallback;
 import com.chinalooke.android.cheju.R;
 import com.chinalooke.android.cheju.activity.AddressActivity;
+import com.chinalooke.android.cheju.utills.MyUtills;
 
 import java.util.ArrayList;
 import java.util.HashMap;
@@ -43,12 +47,14 @@ public class ShowAddressFragment extends Fragment {
     private List beSelectedData = new ArrayList();
     private MyAdapt mMyAdapt;
     private AVUser mCurrentUser;
+    private Toast mToast;
 
     @Override
     public View onCreateView(LayoutInflater inflater, ViewGroup container,
                              Bundle savedInstanceState) {
         View view = inflater.inflate(R.layout.fragment_add_adress, container, false);
         ButterKnife.bind(this, view);
+        mToast = Toast.makeText(getActivity(), "", Toast.LENGTH_SHORT);
         return view;
     }
 
@@ -58,7 +64,6 @@ public class ShowAddressFragment extends Fragment {
         mAddressActivity = (AddressActivity) getActivity();
         mCurrentUser = AVUser.getCurrentUser();
         initData();
-//        mAdresse = mAddressActivity.getAddresses();
 
     }
 
@@ -79,14 +84,13 @@ public class ShowAddressFragment extends Fragment {
                         mMyAdapt.notifyDataSetChanged();
                     initView();
                 } else {
-
+                    mToast.setText(e.getMessage());
+                    mToast.show();
                 }
             }
         });
 
     }
-
-
 
 
     @Override
@@ -172,11 +176,47 @@ public class ShowAddressFragment extends Fragment {
     }
 
     private void setDetail(ViewHolder viewHolder, int position) {
-        AVObject avObject = mAdresse.get(position);
+        final AVObject avObject = mAdresse.get(position);
         viewHolder.mTvAddress.setText(avObject.getString("address"));
         viewHolder.mTvName.setText(avObject.getString("name"));
         viewHolder.mTvPhone.setText(avObject.getString("phone"));
         viewHolder.mCbCheck.setChecked(avObject.getBoolean("default"));
+        View.OnClickListener onClickListener = new View.OnClickListener() {
+            @Override
+            public void onClick(View v) {
+                MyUtills.showSingerDialog(getActivity(), "提示", "确定删除此地址吗？", new DialogInterface.OnClickListener() {
+                    @Override
+                    public void onClick(DialogInterface dialog, int which) {
+                        dialog.dismiss();
+                        try {
+                            avObject.delete();
+                            avObject.saveInBackground(new SaveCallback() {
+                                @Override
+                                public void done(AVException e) {
+                                    if (e == null) {
+                                        initData();
+                                    } else {
+                                        mToast.setText(e.getMessage());
+                                        mToast.show();
+                                    }
+                                }
+                            });
+                        } catch (AVException e) {
+                            e.printStackTrace();
+                        }
+                    }
+                }, new DialogInterface.OnClickListener() {
+                    @Override
+                    public void onClick(DialogInterface dialog, int which) {
+                        dialog.dismiss();
+                    }
+                });
+            }
+        };
+
+        viewHolder.mTvDelete.setOnClickListener(onClickListener);
+        viewHolder.mIvDelete.setOnClickListener(onClickListener);
+
         viewHolder.mCbCheck.setOnCheckedChangeListener(new CompoundButton.OnCheckedChangeListener() {
             @Override
             public void onCheckedChanged(CompoundButton buttonView, boolean isChecked) {
@@ -196,6 +236,10 @@ public class ShowAddressFragment extends Fragment {
         TextView mTvPhone;
         @Bind(R.id.tv_address)
         TextView mTvAddress;
+        @Bind(R.id.tv_delete)
+        TextView mTvDelete;
+        @Bind(R.id.iv_delete)
+        ImageView mIvDelete;
         @Bind(R.id.cb_check)
         CheckBox mCbCheck;
 

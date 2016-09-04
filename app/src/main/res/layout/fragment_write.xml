@@ -61,9 +61,9 @@
             android:id="@+id/tv_xian"
             android:layout_width="match_parent"
             android:layout_height="1dp"
-            android:layout_marginEnd="16dp"
-            android:layout_marginStart="16dp"
-            android:background="#ADA9A4"/>
+            android:layout_marginEnd="8dp"
+            android:layout_marginStart="8dp"
+            android:background="@color/divid"/>
 
 
         <LinearLayout
@@ -83,7 +83,8 @@
                 android:id="@+id/et_phone_writechezhu"
                 style="@style/rowstyle"
                 android:background="@null"
-                android:hint="请填写"/>
+                android:hint="请填写"
+                android:inputType="phone"/>
         </LinearLayout>
 
         <TextView
@@ -91,7 +92,7 @@
             android:layout_height="1dp"
             android:layout_marginEnd="8dp"
             android:layout_marginStart="8dp"
-            android:background="#ADA9A4"/>
+            android:background="@color/divid"/>
 
 
         <LinearLayout
@@ -120,7 +121,7 @@
             android:layout_height="1dp"
             android:layout_marginEnd="8dp"
             android:layout_marginStart="8dp"
-            android:background="#ADA9A4"/>
+            android:background="@color/divid"/>
 
 
         <LinearLayout
@@ -151,8 +152,16 @@
         android:layout_width="match_parent"
         android:layout_height="wrap_content"
         android:layout_marginLeft="8dp"
-        android:layout_marginRight="8dp">
+        android:layout_marginRight="8dp"
+        android:divider="@color/divid"
+        android:dividerHeight="1dp">
     </ListView>
+
+    <TextView
+        android:id="@+id/tv_line4"
+        style="@style/linestyle"
+        android:layout_marginLeft="8dp"
+        android:layout_marginRight="8dp"/>
 
     <LinearLayout
         android:id="@+id/ll_time"
@@ -164,7 +173,9 @@
 
         <TextView
             style="@style/rowstyle"
+            android:layout_marginTop="0dp"
             android:layout_weight="4"
+            android:gravity="center_vertical"
             android:paddingLeft="8dp"
             android:text="注册登记时间"
             />
@@ -198,7 +209,7 @@
         android:layout_height="1dp"
         android:layout_marginEnd="8dp"
         android:layout_marginStart="8dp"
-        android:background="#ADA9A4"/>
+        android:background="@color/divid"/>
 
     <LinearLayout
         android:id="@+id/ll_company"
@@ -210,7 +221,10 @@
 
         <TextView
             style="@style/rowstyle"
+            android:layout_marginTop="0dp"
             android:layout_weight="4"
+
+            android:gravity="center_vertical"
             android:paddingLeft="8dp"
             android:text="选择保险公司"
             />
@@ -241,11 +255,12 @@
     </LinearLayout>
 
     <TextView
+        android:id="@+id/tv_xian2"
         android:layout_width="match_parent"
         android:layout_height="1dp"
         android:layout_marginEnd="8dp"
         android:layout_marginStart="8dp"
-        android:background="#ADA9A4"/>
+        android:background="@color/divid"/>
 
     <LinearLayout
         android:id="@+id/ll_type"
@@ -257,7 +272,9 @@
 
         <TextView
             style="@style/rowstyle"
+            android:layout_marginTop="0dp"
             android:layout_weight="4"
+            android:gravity="center_vertical"
             android:paddingLeft="8dp"
             android:text="选择险种"
             />

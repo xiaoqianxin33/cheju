@@ -96,8 +96,8 @@
 
             <TextView
                 android:id="@+id/textView7"
-                android:layout_width="45.8dp"
-                android:layout_height="36dp"
+                android:layout_width="46.5dp"
+                android:layout_height="35.5dp"
                 android:layout_gravity="center"
                 android:background="@android:color/white"
                 />

@@ -4,6 +4,7 @@ package com.chinalooke.android.cheju.fragment;
 import android.annotation.SuppressLint;
 import android.app.Fragment;
 import android.app.FragmentManager;
+import android.content.Context;
 import android.content.res.AssetManager;
 import android.graphics.Color;
 import android.os.Bundle;
@@ -16,6 +17,7 @@ import android.util.Log;
 import android.view.LayoutInflater;
 import android.view.View;
 import android.view.ViewGroup;
+import android.view.inputmethod.InputMethodManager;
 import android.widget.Button;
 import android.widget.EditText;
 import android.widget.ImageView;
@@ -75,6 +77,10 @@ public class WriteChezhuFragment extends Fragment implements AMapLocationListene
     LinearLayout mLlTime;
     @Bind(R.id.tv_line)
     TextView mTvLine;
+    @Bind(R.id.tv_xian2)
+    TextView mTvLine2;
+    @Bind(R.id.tv_line4)
+    TextView mTvLine4;
     @Bind(R.id.ll_company)
     LinearLayout mLlCompany;
     @Bind(R.id.ll_type)
@@ -315,9 +321,11 @@ public class WriteChezhuFragment extends Fragment implements AMapLocationListene
         mLlCompany.setVisibility(View.GONE);
         mLlType.setVisibility(View.GONE);
         mTvLine.setVisibility(View.GONE);
+        mTvLine2.setVisibility(View.GONE);
         mTvWrite.setVisibility(View.GONE);
         mLvWrite.setVisibility(View.GONE);
         mLlTime.setVisibility(View.GONE);
+        mTvLine4.setVisibility(View.GONE);
         mEtPhoneWritechezhu.setText(AVUser.getCurrentUser().getMobilePhoneNumber());
         mPolicy.setPhone(AVUser.getCurrentUser().getMobilePhoneNumber());
     }
@@ -331,10 +339,13 @@ public class WriteChezhuFragment extends Fragment implements AMapLocationListene
     }
 
 
-    private boolean checkWrite() {
+    public boolean checkWrite() {
         boolean boo;
         if (TextUtils.isEmpty(mPolicy.getPhone())) {
             mToast.setText("请输入手机号码");
+            mEtPhoneWritechezhu.setFocusable(true);
+            mEtPhoneWritechezhu.setFocusableInTouchMode(true);
+            mEtPhoneWritechezhu.requestFocus();
             mToast.show();
             return false;
         }
@@ -342,6 +353,9 @@ public class WriteChezhuFragment extends Fragment implements AMapLocationListene
         boo = MyUtills.CheckPhoneNumer(mPolicy.getPhone());
         if (!boo) {
             mToast.setText("请输入正确的手机号码");
+            mEtPhoneWritechezhu.setFocusable(true);
+            mEtPhoneWritechezhu.setFocusableInTouchMode(true);
+            mEtPhoneWritechezhu.requestFocus();
             mToast.show();
             return boo;
         }
@@ -349,6 +363,9 @@ public class WriteChezhuFragment extends Fragment implements AMapLocationListene
         if (TextUtils.isEmpty(mPolicy.getIdNo())) {
             mToast.setText("请输入身份证号码");
             mToast.show();
+            mEtIdWritechezhu.setFocusable(true);
+            mEtIdWritechezhu.setFocusableInTouchMode(true);
+            mEtIdWritechezhu.requestFocus();
             return false;
         }
 
@@ -357,18 +374,27 @@ public class WriteChezhuFragment extends Fragment implements AMapLocationListene
         if (!boo) {
             mToast.setText("请输入正确的身份证号码");
             mToast.show();
+            mEtIdWritechezhu.setFocusable(true);
+            mEtIdWritechezhu.setFocusableInTouchMode(true);
+            mEtIdWritechezhu.requestFocus();
             return boo;
         }
 
         if (TextUtils.isEmpty(mPolicy.getCarNo())) {
             mToast.setText("请输入车牌号码");
             mToast.show();
+            mEtCarnumWritechezhu.setFocusable(true);
+            mEtCarnumWritechezhu.setFocusableInTouchMode(true);
+            mEtCarnumWritechezhu.requestFocus();
             return false;
         }
 
         boo = MyUtills.checkCarNumer(mPolicy.getCarNo());
         if (!boo) {
             mToast.setText("请输入正确的车牌号码");
+            mEtCarnumWritechezhu.setFocusable(true);
+            mEtCarnumWritechezhu.setFocusableInTouchMode(true);
+            mEtCarnumWritechezhu.requestFocus();
             mToast.show();
             return boo;
         }
@@ -389,9 +415,13 @@ public class WriteChezhuFragment extends Fragment implements AMapLocationListene
     public void onClick(View view) {
         switch (view.getId()) {
             case R.id.tv_location:
+                InputMethodManager imm = (InputMethodManager) getActivity().getSystemService(Context.INPUT_METHOD_SERVICE);
+                imm.hideSoftInputFromWindow(view.getWindowToken(), 0);
                 selectLocation();
                 break;
             case R.id.iv_location:
+                InputMethodManager imm2 = (InputMethodManager) getActivity().getSystemService(Context.INPUT_METHOD_SERVICE);
+                imm2.hideSoftInputFromWindow(view.getWindowToken(), 0);
                 selectLocation();
                 break;
             case R.id.write:
@@ -405,6 +435,7 @@ public class WriteChezhuFragment extends Fragment implements AMapLocationListene
                 }
         }
     }
+
 
     private void selectLocation() {
         CityPickerView cityPickerView = new CityPickerView(getActivity());
@@ -441,7 +472,7 @@ public class WriteChezhuFragment extends Fragment implements AMapLocationListene
         }
     }
 
-    private void writeNumer() {
+    public void writeNumer() {
         mPolicy.setPhone(mEtPhoneWritechezhu.getText().toString());
         mPolicy.setIdNo(mEtIdWritechezhu.getText().toString());
         mPolicy.setCarNo(mEtCarnumWritechezhu.getText().toString());

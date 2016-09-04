@@ -164,7 +164,8 @@ public class OrderFragment extends Fragment implements AdapterView.OnItemClickLi
             query.findInBackground(new FindCallback<AVObject>() {
                 @Override
                 public void done(List<AVObject> list, AVException e) {
-                    mProgressDialog.dismiss();
+                    if (mProgressDialog != null)
+                        mProgressDialog.dismiss();
                     if (e == null) {
                         if (list == null || list.size() == 0) {
                             mTvNopolicy.setVisibility(View.VISIBLE);
@@ -178,9 +179,10 @@ public class OrderFragment extends Fragment implements AdapterView.OnItemClickLi
                     }
                 }
             });
-
         } else {
-            mProgressDialog.dismiss();
+            if (mProgressDialog != null)
+                mProgressDialog.dismiss();
+            mTvNopolicy.setText("请登录");
             mTvNopolicy.setVisibility(View.VISIBLE);
         }
     }
@@ -337,7 +339,6 @@ public class OrderFragment extends Fragment implements AdapterView.OnItemClickLi
     private void setDtail() {
         if (mAvObject != null) {
             mPolicy.setObjectId(mAvObject.getObjectId());
-//            mPolicy.setPolicyDate(getTime(mAvObject.getDate("re")));
             mPolicy.setCompany(mAvObject.getString("company"));
             mPolicy.setStatus(mAvObject.getInt("status"));
             mPolicy.setPrice(mAvObject.getNumber("price") + "");

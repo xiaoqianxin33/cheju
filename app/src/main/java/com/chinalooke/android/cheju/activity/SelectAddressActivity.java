@@ -54,6 +54,7 @@ public class SelectAddressActivity extends AppCompatActivity {
                 mAddress.setAddress(avObject.getString("address"));
                 mAddress.setName(avObject.getString("name"));
                 mAddress.setPhone(avObject.getString("phone"));
+                mAddress.setObjectId(avObject.getObjectId());
                 Bundle bundle = new Bundle();
                 bundle.putSerializable("select", mAddress);
                 Intent intent = new Intent();

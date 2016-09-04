@@ -1,9 +1,35 @@
 <?xml version="1.0" encoding="utf-8"?>
 <LinearLayout xmlns:android="http://schemas.android.com/apk/res/android"
-              android:id="@+id/ll_register"
               android:layout_width="match_parent"
               android:layout_height="match_parent"
+              android:background="@android:color/white"
               android:orientation="vertical">
+
+    <RelativeLayout
+        android:layout_width="match_parent"
+        android:layout_height="wrap_content"
+        android:background="#3D96F8"
+        >
+
+        <ImageView
+            android:id="@+id/iv_login_back"
+            android:layout_width="24dp"
+            android:layout_height="24dp"
+            android:layout_centerVertical="true"
+            android:layout_marginStart="8dp"
+            android:src="@mipmap/icon_back"/>
+
+        <TextView
+            android:layout_width="match_parent"
+            android:layout_height="@dimen/edit_height"
+            android:gravity="center"
+            android:paddingLeft="16dp"
+            android:text="注册"
+            android:textColor="#FFFFFF"
+            android:textSize="18dp"
+            android:textStyle="bold"
+            />
+    </RelativeLayout>
 
     <LinearLayout
         android:layout_width="match_parent"
@@ -75,7 +101,7 @@
         </LinearLayout>
 
         <Button
-            android:id="@+id/btn_login_getsms"
+            android:id="@+id/btn_login_getsms_r"
             android:layout_width="100dp"
             android:layout_height="40dp"
             android:layout_alignParentEnd="true"

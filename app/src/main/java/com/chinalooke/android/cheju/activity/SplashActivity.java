@@ -23,23 +23,13 @@ public class SplashActivity extends AppCompatActivity {
     private static final int sleepTime = 2000;
 
 
-//    static {
-//        System.loadLibrary("libhyphenate_av");
-//    }
-
-
     Handler mHandler = new Handler() {
         @Override
         public void handleMessage(Message msg) {
             super.handleMessage(msg);
             if (msg.what == 1) {
-//                if (mCurrentUser != null) {
                 startActivity(new Intent(SplashActivity.this, MainActivity.class));
                 finish();
-//                } else {
-//                    startActivity(new Intent(SplashActivity.this, LoginActivity.class));
-//                    finish();
-//                }
             }
         }
     };
