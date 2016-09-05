@@ -13,13 +13,16 @@ import android.widget.EditText;
 import android.widget.Toast;
 
 import com.avos.avoscloud.AVException;
+import com.avos.avoscloud.AVInstallation;
 import com.avos.avoscloud.AVOSCloud;
 import com.avos.avoscloud.AVUser;
 import com.avos.avoscloud.LogInCallback;
+import com.avos.avoscloud.PushService;
 import com.avos.avoscloud.RequestMobileCodeCallback;
 import com.avos.avoscloud.SaveCallback;
 import com.chinalooke.android.cheju.R;
 import com.chinalooke.android.cheju.utills.MyUtills;
+import com.chinalooke.android.cheju.utills.NetUtil;
 
 import butterknife.Bind;
 import butterknife.ButterKnife;
@@ -65,13 +68,18 @@ public class RegisterActivity extends AppCompatActivity {
             case R.id.btn_login_getsms_r:
                 phoneNumer = mEtRegisterPhone.getText().toString();
                 if (MyUtills.CheckPhoneNumer(phoneNumer)) {
-                    initDialog("正在发送中...");
-                    mHandler.postDelayed(new Runnable() {
-                        @Override
-                        public void run() {
-                            sendSms(phoneNumer);
-                        }
-                    }, 500);
+                    if (NetUtil.is_Network_Available(getApplicationContext())) {
+                        initDialog("正在发送中...");
+                        mHandler.postDelayed(new Runnable() {
+                            @Override
+                            public void run() {
+                                sendSms(phoneNumer);
+                            }
+                        }, 500);
+                    } else {
+                        mToast.setText("网络不给力,请检查网络");
+                        mToast.show();
+                    }
                 } else {
                     mToast.setText("请输入正确的手机号码");
                     mToast.show();
@@ -80,14 +88,19 @@ public class RegisterActivity extends AppCompatActivity {
 
             case R.id.btn_complete:
                 if (checkRegister()) {
-                    initDialog("注册中");
-                    final String smsNumer = mEtLoginSms.getText().toString();
-                    mHandler.postDelayed(new Runnable() {
-                        @Override
-                        public void run() {
-                            checkSms(smsNumer);
-                        }
-                    }, 500);
+                    if (NetUtil.is_Network_Available(getApplicationContext())) {
+                        initDialog("注册中");
+                        final String smsNumer = mEtLoginSms.getText().toString();
+                        mHandler.postDelayed(new Runnable() {
+                            @Override
+                            public void run() {
+                                checkSms(smsNumer);
+                            }
+                        }, 500);
+                    } else {
+                        mToast.setText("网络不给力,请检查网络");
+                        mToast.show();
+                    }
                 }
                 break;
             case R.id.iv_login_back:
@@ -113,11 +126,10 @@ public class RegisterActivity extends AppCompatActivity {
                     avUser.saveInBackground(new SaveCallback() {
                         @Override
                         public void done(AVException e) {
-                            mProgressDialog.dismiss();
                             if (e == null) {
-                                startActivity(new Intent(RegisterActivity.this, MainActivity.class));
-                                finish();
+                                login();
                             } else {
+                                mProgressDialog.dismiss();
                                 mToast.setText("登录失败，请检查网络情况");
                                 mToast.show();
                             }
@@ -126,6 +138,32 @@ public class RegisterActivity extends AppCompatActivity {
                 } else {
                     mToast.setText("验证码错误，请重新填写");
                     mToast.show();
+                }
+            }
+        });
+    }
+
+    private void login() {
+        AVInstallation.getCurrentInstallation().saveInBackground(new SaveCallback() {
+            public void done(AVException e) {
+                if (e == null) {
+                    String mInstallationId = AVInstallation.getCurrentInstallation().getInstallationId();
+                    AVUser currentUser = AVUser.getCurrentUser();
+                    currentUser.put("installationId", mInstallationId);
+                    currentUser.saveInBackground(new SaveCallback() {
+                        @Override
+                        public void done(AVException e) {
+                            mProgressDialog.dismiss();
+                            if (e == null) {
+                                PushService.setDefaultPushCallback(getApplicationContext(), TakePhotoActivity.class);
+                                startActivity(new Intent(RegisterActivity.this, MainActivity.class));
+                                finish();
+                            } else {
+                                mToast.setText("登录失败");
+                                mToast.show();
+                            }
+                        }
+                    });
                 }
             }
         });

@@ -2,6 +2,7 @@ package com.chinalooke.android.cheju.fragment;
 
 
 import android.app.Fragment;
+import android.app.ProgressDialog;
 import android.content.DialogInterface;
 import android.os.Bundle;
 import android.support.annotation.Nullable;
@@ -21,11 +22,14 @@ import com.avos.avoscloud.AVObject;
 import com.avos.avoscloud.AVQuery;
 import com.avos.avoscloud.AVRelation;
 import com.avos.avoscloud.AVUser;
+import com.avos.avoscloud.DeleteCallback;
 import com.avos.avoscloud.FindCallback;
+import com.avos.avoscloud.GetCallback;
 import com.avos.avoscloud.SaveCallback;
 import com.chinalooke.android.cheju.R;
 import com.chinalooke.android.cheju.activity.AddressActivity;
 import com.chinalooke.android.cheju.utills.MyUtills;
+import com.chinalooke.android.cheju.utills.NetUtil;
 
 import java.util.ArrayList;
 import java.util.HashMap;
@@ -48,6 +52,7 @@ public class ShowAddressFragment extends Fragment {
     private MyAdapt mMyAdapt;
     private AVUser mCurrentUser;
     private Toast mToast;
+    private ProgressDialog mProgressDialog;
 
     @Override
     public View onCreateView(LayoutInflater inflater, ViewGroup container,
@@ -188,22 +193,41 @@ public class ShowAddressFragment extends Fragment {
                     @Override
                     public void onClick(DialogInterface dialog, int which) {
                         dialog.dismiss();
-                        try {
-                            avObject.delete();
-                            avObject.saveInBackground(new SaveCallback() {
+                        if (NetUtil.is_Network_Available(getActivity())) {
+
+                            initDialog("删除中");
+                            AVQuery<AVObject> avQuery = new AVQuery<>("Address");
+                            avQuery.getInBackground(avObject.getObjectId(), new GetCallback<AVObject>() {
                                 @Override
-                                public void done(AVException e) {
+                                public void done(AVObject avObject, AVException e) {
                                     if (e == null) {
-                                        initData();
+                                        avObject.deleteInBackground(new DeleteCallback() {
+                                            @Override
+                                            public void done(AVException e) {
+                                                mProgressDialog.dismiss();
+                                                if (e == null) {
+                                                    mToast.setText("删除成功");
+                                                    mToast.show();
+                                                    initData();
+                                                } else {
+                                                    mToast.setText(e.getMessage());
+                                                    mToast.show();
+                                                }
+                                            }
+                                        });
                                     } else {
-                                        mToast.setText(e.getMessage());
+                                        mProgressDialog.dismiss();
+                                        mToast.setText("删除错误");
                                         mToast.show();
                                     }
                                 }
                             });
-                        } catch (AVException e) {
-                            e.printStackTrace();
+                        } else {
+                            mToast.setText("网络不可用，请检查网络连接");
+                            mToast.show();
                         }
+
+
                     }
                 }, new DialogInterface.OnClickListener() {
                     @Override
@@ -216,6 +240,17 @@ public class ShowAddressFragment extends Fragment {
 
         viewHolder.mTvDelete.setOnClickListener(onClickListener);
         viewHolder.mIvDelete.setOnClickListener(onClickListener);
+
+        View.OnClickListener onClickListener1 = new View.OnClickListener() {
+            @Override
+            public void onClick(View v) {
+                mAddressActivity.switchContent(mAddressActivity.getShowAddressFragment(), mAddressActivity.getAddAdressFragment());
+                mAddressActivity.getBtnAddress().setVisibility(View.GONE);
+                mAddressActivity.setBianAvobject(avObject);
+            }
+        };
+        viewHolder.mTvBianji.setOnClickListener(onClickListener1);
+        viewHolder.mTvBianji.setOnClickListener(onClickListener1);
 
         viewHolder.mCbCheck.setOnCheckedChangeListener(new CompoundButton.OnCheckedChangeListener() {
             @Override
@@ -240,11 +275,23 @@ public class ShowAddressFragment extends Fragment {
         TextView mTvDelete;
         @Bind(R.id.iv_delete)
         ImageView mIvDelete;
+        @Bind(R.id.tv_bianji)
+        TextView mTvBianji;
+        @Bind(R.id.iv_bianji)
+        ImageView mIvBianji;
         @Bind(R.id.cb_check)
         CheckBox mCbCheck;
 
         ViewHolder(View view) {
             ButterKnife.bind(this, view);
         }
+    }
+
+    private void initDialog(String message) {
+        mProgressDialog = new ProgressDialog(getActivity());
+        mProgressDialog.setProgressStyle(ProgressDialog.STYLE_SPINNER);
+        mProgressDialog.setMessage(message);
+        mProgressDialog.setCancelable(true);
+        mProgressDialog.show();
     }
 }

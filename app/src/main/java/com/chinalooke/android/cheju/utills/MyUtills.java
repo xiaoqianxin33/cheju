@@ -1,6 +1,8 @@
 package com.chinalooke.android.cheju.utills;
 
 import android.app.Activity;
+import android.app.Dialog;
+import android.app.ProgressDialog;
 import android.content.Context;
 import android.content.DialogInterface;
 import android.text.TextUtils;
@@ -23,6 +25,15 @@ public class MyUtills {
         Pattern p = Pattern.compile("^1(3|4|5|7|8)\\d{9}$");
         Matcher m = p.matcher(str);
         return m.matches();
+    }
+
+
+    public static ProgressDialog initDialog(String message, Activity context) {
+        ProgressDialog mProgressDialog = new ProgressDialog(context);
+        mProgressDialog.setProgressStyle(ProgressDialog.STYLE_SPINNER);
+        mProgressDialog.setMessage(message);
+        mProgressDialog.setCancelable(true);
+        return mProgressDialog;
     }
 
     public static boolean password(String str)

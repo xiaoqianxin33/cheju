@@ -17,6 +17,7 @@ import com.chinalooke.android.cheju.R;
 import com.chinalooke.android.cheju.activity.LoginActivity;
 import com.chinalooke.android.cheju.activity.MainActivity;
 import com.chinalooke.android.cheju.activity.ServiceActivity;
+import com.chinalooke.android.cheju.utills.NetUtil;
 import com.chinalooke.android.cheju.utills.PreferenceUtils;
 import com.hyphenate.EMCallBack;
 import com.hyphenate.chat.EMClient;
@@ -75,29 +76,38 @@ public class ServiceFragment extends Fragment {
         return view;
     }
 
+    @Override
+    public void onResume() {
+        super.onResume();
+        mCurrentUser = AVUser.getCurrentUser();
+    }
+
     private void initData() {
         if (mCurrentUser != null) {
-            mName = "a" + AVUser.getCurrentUser().getMobilePhoneNumber();
-            mPsd = AVUser.getCurrentUser().getMobilePhoneNumber();
-            String hx = PreferenceUtils.getPrefString(getActivity(), "hx", "");
-            if (TextUtils.isEmpty(hx)) {
-                new Thread(new Runnable() {
-                    @Override
-                    public void run() {
-                        try {
-                            EMClient.getInstance().createAccount(mName, mPsd);
-                            PreferenceUtils.setPrefString(getActivity(), "hx", "a" + AVUser.getCurrentUser().getMobilePhoneNumber());
-                            mHandler.sendEmptyMessage(1);
-                        } catch (HyphenateException e) {
-                            login();
-                            e.printStackTrace();
-                        }
-                    }
-                }) {
+            if (NetUtil.is_Network_Available(getActivity())) {
 
-                }.start();
-            } else {
-                login();
+                mName = "a" + AVUser.getCurrentUser().getMobilePhoneNumber();
+                mPsd = AVUser.getCurrentUser().getMobilePhoneNumber();
+                String hx = PreferenceUtils.getPrefString(getActivity(), "hx", "");
+                if (TextUtils.isEmpty(hx)) {
+                    new Thread(new Runnable() {
+                        @Override
+                        public void run() {
+                            try {
+                                EMClient.getInstance().createAccount(mName, mPsd);
+                                PreferenceUtils.setPrefString(getActivity(), "hx", "a" + AVUser.getCurrentUser().getMobilePhoneNumber());
+                                mHandler.sendEmptyMessage(1);
+                            } catch (HyphenateException e) {
+                                login();
+                                e.printStackTrace();
+                            }
+                        }
+                    }) {
+
+                    }.start();
+                } else {
+                    login();
+                }
             }
         }
     }

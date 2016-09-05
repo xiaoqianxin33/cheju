@@ -14,14 +14,16 @@
 
         <ImageView
             android:id="@+id/iv_order_chexian_listview"
-            android:layout_width="64dp"
-            android:layout_height="64dp"
+            android:layout_width="36dp"
+            android:layout_height="36dp"
+            android:layout_gravity="center"
+            android:layout_marginLeft="8dp"
             android:background="@mipmap/baodan"/>
 
         <LinearLayout
             android:layout_width="0dp"
             android:layout_height="match_parent"
-            android:layout_marginStart="6dp"
+            android:layout_marginLeft="6dp"
             android:layout_weight="1"
             android:orientation="vertical">
 
@@ -43,7 +45,7 @@
                     android:id="@+id/tv_company_order"
                     android:layout_width="0dp"
                     android:layout_height="match_parent"
-                    android:layout_weight="1.5"
+                    android:layout_weight="2"
                     android:gravity="center_vertical"
                     android:paddingLeft="16dp"
                     android:text="保险公司:"
@@ -70,7 +72,7 @@
                     android:id="@+id/tv_date_order"
                     android:layout_width="0dp"
                     android:layout_height="match_parent"
-                    android:layout_weight="1.5"
+                    android:layout_weight="2"
                     android:gravity="center_vertical"
                     android:paddingLeft="16dp"
                     android:text="时间:"
@@ -96,7 +98,7 @@
                     android:id="@+id/tv_statu_order"
                     android:layout_width="0dp"
                     android:layout_height="match_parent"
-                    android:layout_weight="1.5"
+                    android:layout_weight="2"
                     android:gravity="center_vertical"
                     android:paddingLeft="16dp"
                     android:text="中关村"

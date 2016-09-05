@@ -122,6 +122,7 @@ public class WriteChezhuFragment extends Fragment implements AMapLocationListene
         }
     };
     private boolean mDone;
+    private AVUser mCurrentUser;
 
     @Override
     public View onCreateView(LayoutInflater inflater, ViewGroup container, Bundle savedInstanceState) {
@@ -130,6 +131,7 @@ public class WriteChezhuFragment extends Fragment implements AMapLocationListene
         mPolicy = ((WriteMessgeActivity) getActivity()).getPolicy();
         mFragmentManager = getFragmentManager();
         mToast = Toast.makeText(getActivity(), "", Toast.LENGTH_SHORT);
+        mCurrentUser = AVUser.getCurrentUser();
         initView();
         initData();
         location();
@@ -326,8 +328,10 @@ public class WriteChezhuFragment extends Fragment implements AMapLocationListene
         mLvWrite.setVisibility(View.GONE);
         mLlTime.setVisibility(View.GONE);
         mTvLine4.setVisibility(View.GONE);
-        mEtPhoneWritechezhu.setText(AVUser.getCurrentUser().getMobilePhoneNumber());
-        mPolicy.setPhone(AVUser.getCurrentUser().getMobilePhoneNumber());
+        if (mCurrentUser != null) {
+            mEtPhoneWritechezhu.setText(AVUser.getCurrentUser().getMobilePhoneNumber());
+            mPolicy.setPhone(AVUser.getCurrentUser().getMobilePhoneNumber());
+        }
     }
 
     @Override

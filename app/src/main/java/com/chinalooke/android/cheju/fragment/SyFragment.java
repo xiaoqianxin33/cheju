@@ -74,6 +74,11 @@ public class SyFragment extends Fragment {
         return mView;
     }
 
+    @Override
+    public void onResume() {
+        super.onResume();
+        mCurrentUser = AVUser.getCurrentUser();
+    }
 
     @Override
     public void onActivityCreated(Bundle savedInstanceState) {

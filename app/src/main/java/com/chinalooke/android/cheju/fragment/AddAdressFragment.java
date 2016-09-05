@@ -27,6 +27,7 @@ import com.avos.avoscloud.SaveCallback;
 import com.chinalooke.android.cheju.R;
 import com.chinalooke.android.cheju.activity.AddressActivity;
 import com.chinalooke.android.cheju.utills.MyUtills;
+import com.chinalooke.android.cheju.utills.NetUtil;
 import com.lljjcoder.citypickerview.widget.CityPickerView;
 
 import java.util.Arrays;
@@ -60,6 +61,7 @@ public class AddAdressFragment extends Fragment implements AMapLocationListener 
     private String aMapLocationAddress;
     private String mLocation;
     private Button mBtnAddress;
+    private AVObject mBianAvobject;
 
     @Override
     public View onCreateView(LayoutInflater inflater, ViewGroup container,
@@ -76,6 +78,15 @@ public class AddAdressFragment extends Fragment implements AMapLocationListener 
         mAddressActivity = (AddressActivity) getActivity();
         mBtnAddress = mAddressActivity.getBtnAddress();
         location();
+        initData();
+    }
+
+    private void initData() {
+        mBianAvobject = mAddressActivity.getBianAvobject();
+        if (mBianAvobject != null) {
+            mEtAdrressName.setText(mBianAvobject.getString("name"));
+            mEtPhoneAddress.setText(mBianAvobject.getString("phone"));
+        }
     }
 
     @Override
@@ -96,8 +107,13 @@ public class AddAdressFragment extends Fragment implements AMapLocationListener 
             case R.id.btn_address_ok:
                 boolean checkInput = checkInput();
                 if (checkInput) {
-                    initDialog("正在保存中");
-                    saveAddress();
+                    if (NetUtil.is_Network_Available(getActivity())) {
+                        initDialog("正在保存中");
+                        saveAddress();
+                    } else {
+                        mToast.setText("网络不可用，请检查网络连接");
+                        mToast.show();
+                    }
                 }
                 break;
             case R.id.tv_location_address:
@@ -109,41 +125,65 @@ public class AddAdressFragment extends Fragment implements AMapLocationListener 
     private void saveAddress() {
 
         mCurrentUser = AVUser.getCurrentUser();
-        final AVObject tag2 = new AVObject("Address");// 构建对象
-        tag2.put("name", mName);
-        tag2.put("phone", mPhone);
-        tag2.put("address", mLocation + mAddress);
-
-        AVObject.saveAllInBackground(Arrays.asList(tag2), new SaveCallback() {
-            @Override
-            public void done(AVException e) {
-                if (e == null) {
-                    AVRelation<AVObject> relation = mCurrentUser.getRelation("address");
-                    relation.add(tag2);
-                    mCurrentUser.saveInBackground(new SaveCallback() {
-                        @Override
-                        public void done(AVException e) {
-                            mProgressDialog.dismiss();
-                            if (e == null) {
-                                mToast.setText("地址保存成功！");
-                                mToast.show();
-                                mAddressActivity.switchContent(mAddressActivity.getAddAdressFragment(), mAddressActivity.getShowAddressFragment());
-                                mBtnAddress.setVisibility(View.VISIBLE);
-                                ShowAddressFragment showAddressFragment = mAddressActivity.getShowAddressFragment();
-                                showAddressFragment.refreshData();
-                            } else {
-                                mToast.setText(e.getMessage());
-                                mToast.show();
-                            }
-                        }
-                    });
-                } else {
+        if (mBianAvobject != null) {
+            mBianAvobject.put("name", mName);
+            mBianAvobject.put("phone", mPhone);
+            mBianAvobject.put("address", mLocation + mAddress);
+            mBianAvobject.saveInBackground(new SaveCallback() {
+                @Override
+                public void done(AVException e) {
                     mProgressDialog.dismiss();
-                    mToast.setText(e.getMessage());
-                    mToast.show();
+                    if (e == null) {
+                        mToast.setText("地址修改成功！");
+                        mToast.show();
+                        mAddressActivity.switchContent(mAddressActivity.getAddAdressFragment(), mAddressActivity.getShowAddressFragment());
+                        mBtnAddress.setVisibility(View.VISIBLE);
+                        ShowAddressFragment showAddressFragment = mAddressActivity.getShowAddressFragment();
+                        showAddressFragment.refreshData();
+                    } else {
+                        mToast.setText("地址修改失败");
+                        mToast.show();
+                    }
                 }
-            }
-        });
+            });
+
+        } else {
+            final AVObject tag2 = new AVObject("Address");// 构建对象
+            tag2.put("name", mName);
+            tag2.put("phone", mPhone);
+            tag2.put("address", mLocation + mAddress);
+
+            AVObject.saveAllInBackground(Arrays.asList(tag2), new SaveCallback() {
+                @Override
+                public void done(AVException e) {
+                    if (e == null) {
+                        AVRelation<AVObject> relation = mCurrentUser.getRelation("address");
+                        relation.add(tag2);
+                        mCurrentUser.saveInBackground(new SaveCallback() {
+                            @Override
+                            public void done(AVException e) {
+                                mProgressDialog.dismiss();
+                                if (e == null) {
+                                    mToast.setText("地址保存成功！");
+                                    mToast.show();
+                                    mAddressActivity.switchContent(mAddressActivity.getAddAdressFragment(), mAddressActivity.getShowAddressFragment());
+                                    mBtnAddress.setVisibility(View.VISIBLE);
+                                    ShowAddressFragment showAddressFragment = mAddressActivity.getShowAddressFragment();
+                                    showAddressFragment.refreshData();
+                                } else {
+                                    mToast.setText("地址保存失败");
+                                    mToast.show();
+                                }
+                            }
+                        });
+                    } else {
+                        mProgressDialog.dismiss();
+                        mToast.setText("地址保存失败");
+                        mToast.show();
+                    }
+                }
+            });
+        }
 
     }
 

@@ -1,5 +1,7 @@
 package com.chinalooke.android.cheju.activity;
 
+import android.app.ProgressDialog;
+import android.content.DialogInterface;
 import android.content.Intent;
 import android.os.Bundle;
 import android.support.v7.app.AppCompatActivity;
@@ -7,16 +9,29 @@ import android.text.TextUtils;
 import android.view.View;
 import android.view.ViewGroup;
 import android.widget.BaseAdapter;
+import android.widget.Button;
 import android.widget.TextView;
+import android.widget.Toast;
 
+import com.avos.avoscloud.AVException;
+import com.avos.avoscloud.AVInstallation;
 import com.avos.avoscloud.AVObject;
+import com.avos.avoscloud.AVPush;
+import com.avos.avoscloud.AVQuery;
+import com.avos.avoscloud.AVUser;
+import com.avos.avoscloud.FindCallback;
+import com.avos.avoscloud.SaveCallback;
+import com.avos.avoscloud.SendCallback;
 import com.chinalooke.android.cheju.R;
 import com.chinalooke.android.cheju.bean.Policy;
+import com.chinalooke.android.cheju.utills.MyUtills;
+import com.chinalooke.android.cheju.utills.NetUtil;
 import com.chinalooke.android.cheju.view.SyListView;
 
 import java.text.SimpleDateFormat;
 import java.util.ArrayList;
 import java.util.Date;
+import java.util.List;
 
 import butterknife.Bind;
 import butterknife.ButterKnife;
@@ -26,17 +41,24 @@ public class OrderActivity extends AppCompatActivity {
 
     @Bind(R.id.lv_order)
     SyListView mLvOrder;
+    @Bind(R.id.btn_take_goods)
+    Button mBtnTakeGoods;
     private ArrayList<String> mStrings = new ArrayList<>();
     private ArrayList<String> mPrices = new ArrayList<>();
     private MyAdapt mMyAdapt;
-    private Policy mPolicy;
+    private AVObject mPolicy;
     private AVObject mOrder;
+    private Policy mPolicy1;
+    private Toast mToast;
+    private ProgressDialog mProgressDialog;
+    private AVUser mCurrentUser;
 
     @Override
     protected void onCreate(Bundle savedInstanceState) {
         super.onCreate(savedInstanceState);
         setContentView(R.layout.activity_order);
         ButterKnife.bind(this);
+        mToast = Toast.makeText(getApplicationContext(), "", Toast.LENGTH_SHORT);
         initData();
         initView();
     }
@@ -48,7 +70,8 @@ public class OrderActivity extends AppCompatActivity {
 
     private void initData() {
         mOrder = getIntent().getParcelableExtra("order");
-        mPolicy = (Policy) getIntent().getSerializableExtra("dpolicy");
+        mPolicy = getIntent().getParcelableExtra("dpolicy");
+        mPolicy1 = (Policy) getIntent().getSerializableExtra("policy");
         mStrings.add("订单编号：");
         mStrings.add("支付方式：");
         mStrings.add("付款金额：");
@@ -64,7 +87,7 @@ public class OrderActivity extends AppCompatActivity {
                 mPrices.add("支付宝");
             }
         } else {
-            mPrices.add("");
+            mPrices.add(" ");
         }
         mPrices.add(mOrder.getNumber("price") + "");
         mPrices.add(getTime(mOrder.getDate("addDate")));
@@ -72,14 +95,14 @@ public class OrderActivity extends AppCompatActivity {
         if (sendDate != null) {
             mPrices.add(getTime(sendDate));
         } else {
-            mPrices.add("");
+            mPrices.add(" ");
         }
 
         Number carriage = mOrder.getNumber("carriage");
         if (carriage != null) {
             mPrices.add(carriage + "");
         } else {
-            mPrices.add("");
+            mPrices.add(" ");
         }
     }
 
@@ -138,23 +161,99 @@ public class OrderActivity extends AppCompatActivity {
     }
 
 
-    @OnClick({R.id.iv_wirte_back, R.id.tv_title2, R.id.tv_topolicy_order})
+    @OnClick({R.id.iv_wirte_back, R.id.tv_title2, R.id.tv_topolicy_order, R.id.btn_take_goods})
     public void onClick(View view) {
         switch (view.getId()) {
             case R.id.tv_topolicy_order:
                 Intent intent = new Intent();
                 intent.setClass(OrderActivity.this, WriteMessgeActivity.class);
                 Bundle bundle = new Bundle();
-                bundle.putSerializable("dpolicy", mPolicy);
+                bundle.putSerializable("dpolicy", mPolicy1);
                 intent.putExtras(bundle);
                 startActivity(intent);
                 break;
             case R.id.iv_wirte_back:
                 finish();
                 break;
-            case R.id.tv_title2:
-                finish();
+            case R.id.btn_take_goods:
+                MyUtills.showSingerDialog(this, "提示", "确定收货吗?", new DialogInterface.OnClickListener() {
+                    @Override
+                    public void onClick(DialogInterface dialog, int which) {
+                        dialog.dismiss();
+                        if (NetUtil.is_Network_Available(getApplicationContext())) {
+                            mProgressDialog = MyUtills.initDialog("正在提交请求", OrderActivity.this);
+                            mProgressDialog.show();
+                            saveLeanCloud();
+                        } else {
+                            mToast.setText("网络不可用，请检查网络连接");
+                            mToast.show();
+                        }
+                    }
+                }, new DialogInterface.OnClickListener() {
+                    @Override
+                    public void onClick(DialogInterface dialog, int which) {
+                        dialog.dismiss();
+                    }
+                });
                 break;
+
+
         }
+    }
+
+    private void saveLeanCloud() {
+        mOrder.put("status", 3);
+        mPolicy.put("status", 3);
+        mPolicy.saveInBackground();
+        mOrder.saveInBackground(new SaveCallback() {
+            @Override
+            public void done(AVException e) {
+                if (e == null) {
+                    pushMessage();
+                } else {
+                    mProgressDialog.dismiss();
+                    mToast.setText("提交失败");
+                    mToast.show();
+                }
+            }
+        });
+    }
+
+    private void pushMessage() {
+        mCurrentUser = AVUser.getCurrentUser();
+        String referrer = mCurrentUser.getString("referrer");
+        AVQuery<AVObject> query = new AVQuery<>("_User");
+        query.whereEqualTo("mobilePhoneNumber", referrer);
+        query.findInBackground(new FindCallback<AVObject>() {
+            @Override
+            public void done(List<AVObject> list, AVException e) {
+                if (e == null) {
+                    AVObject avObject = list.get(0);
+                    String installationId = avObject.getString("installationId");
+                    AVQuery pushQuery = AVInstallation.getQuery();
+                    pushQuery.whereEqualTo("installationId", installationId);
+                    AVPush.sendMessageInBackground("message to installation", pushQuery, new SendCallback() {
+                        @Override
+                        public void done(AVException e) {
+                            mProgressDialog.dismiss();
+                            if (e == null) {
+                                mToast.setText("提交成功");
+                                mToast.show();
+                                mBtnTakeGoods.setText("已收货");
+                                mBtnTakeGoods.setEnabled(false);
+                            } else {
+                                mToast.setText("提交失败");
+                                mToast.show();
+                            }
+                        }
+                    });
+                } else {
+                    mProgressDialog.dismiss();
+                    mToast.setText("提交失败");
+                    mToast.show();
+                }
+            }
+        });
+
     }
 }

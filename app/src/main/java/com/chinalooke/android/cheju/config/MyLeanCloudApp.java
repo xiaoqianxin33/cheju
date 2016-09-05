@@ -3,14 +3,15 @@ package com.chinalooke.android.cheju.config;
 import android.app.ActivityManager;
 import android.app.Application;
 import android.content.pm.PackageManager;
+import android.os.Environment;
 import android.support.multidex.MultiDex;
-import android.util.Log;
 
 import com.avos.avoscloud.AVOSCloud;
 import com.hyphenate.chat.EMClient;
 import com.hyphenate.chat.EMOptions;
 import com.hyphenate.easeui.controller.EaseUI;
 
+import java.io.File;
 import java.util.Iterator;
 import java.util.List;
 
@@ -22,6 +23,9 @@ public class MyLeanCloudApp extends Application {
 
 
     private MyLeanCloudApp appContext;
+    public static String sdcardCacheDir;
+    private String picPath = "pic.jpg";
+
 
     @Override
     public void onCreate() {
@@ -38,6 +42,21 @@ public class MyLeanCloudApp extends Application {
         EMClient.getInstance().init(getApplicationContext(), options);
         EaseUI.getInstance().init(getApplicationContext(), options);
         EMClient.getInstance().setDebugMode(true);
+
+
+
+        if (Environment.getExternalStorageState().equals(
+                Environment.MEDIA_MOUNTED)) {
+            File file = new File(Environment.getExternalStorageDirectory()
+                    + File.separator + picPath);
+            if (!file.exists()) {
+                if (file.mkdirs()) {
+                    sdcardCacheDir = file.getAbsolutePath();
+                }
+            } else {
+                sdcardCacheDir = file.getAbsolutePath();
+            }
+        }
 
     }
 

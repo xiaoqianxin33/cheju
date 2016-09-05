@@ -39,7 +39,7 @@
 
             android:layout_above="@+id/textView5"
             android:layout_marginBottom="32dp"
-            android:layout_toEndOf="@+id/textView5"
+            android:layout_toRightOf="@+id/textView5"
             android:src="@mipmap/weipay"/>
 
 
@@ -48,7 +48,7 @@
             android:layout_width="wrap_content"
             android:layout_height="wrap_content"
             android:layout_above="@+id/tv_time"
-            android:layout_alignStart="@+id/textView4"
+            android:layout_alignLeft="@+id/textView4"
             android:layout_marginBottom="46dp"
             android:text="送货时间"
             android:textColor="@android:color/white"
@@ -59,7 +59,7 @@
             android:layout_width="wrap_content"
             android:layout_height="wrap_content"
             android:layout_above="@+id/tv_address"
-            android:layout_alignStart="@+id/textView5"
+            android:layout_alignLeft="@+id/textView5"
             android:layout_marginBottom="35dp"
             android:text="点击选择"
             android:textColor="@android:color/white"
@@ -70,7 +70,7 @@
             android:layout_width="match_parent"
             android:layout_height="wrap_content"
             android:layout_above="@+id/iv_x"
-            android:layout_alignParentStart="true"
+            android:layout_alignParentLeft="true"
             android:layout_marginBottom="58dp"
             android:gravity="center"
             android:text="New Text"
@@ -91,7 +91,7 @@
             android:layout_height="50dp"
             android:layout_alignBottom="@+id/iv_weipay"
             android:layout_alignTop="@+id/iv_weipay"
-            android:layout_toStartOf="@+id/textView5">
+            android:layout_toLeftOf="@+id/textView5">
 
 
             <TextView

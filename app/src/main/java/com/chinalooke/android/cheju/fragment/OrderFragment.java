@@ -29,6 +29,7 @@ import com.chinalooke.android.cheju.activity.MainActivity;
 import com.chinalooke.android.cheju.activity.TakePhotoActivity;
 import com.chinalooke.android.cheju.activity.WriteMessgeActivity;
 import com.chinalooke.android.cheju.bean.Policy;
+import com.chinalooke.android.cheju.utills.NetUtil;
 
 import java.text.SimpleDateFormat;
 import java.util.ArrayList;
@@ -82,6 +83,7 @@ public class OrderFragment extends Fragment implements AdapterView.OnItemClickLi
     };
     private boolean isVisible;
     private AVUser mCurrentUser;
+    private JuanAdapt mJuanAdapt;
 
     @Override
     public View onCreateView(LayoutInflater inflater, ViewGroup container, Bundle savedInstanceState) {
@@ -153,26 +155,34 @@ public class OrderFragment extends Fragment implements AdapterView.OnItemClickLi
 
     private void initChexianData() {
         if (mCurrentUser != null) {
-            AVRelation<AVObject> relation = mCurrentUser.getRelation("policy");
-            AVQuery<AVObject> query = relation.getQuery();
-            query.findInBackground(new FindCallback<AVObject>() {
-                @Override
-                public void done(List<AVObject> list, AVException e) {
-                    if (mProgressDialog != null)
-                        mProgressDialog.dismiss();
-                    if (e == null) {
-                        if (list == null || list.size() == 0) {
-                            mTvNopolicy.setVisibility(View.VISIBLE);
+            if (NetUtil.is_Network_Available(getActivity())) {
+
+                AVRelation<AVObject> relation = mCurrentUser.getRelation("policy");
+                AVQuery<AVObject> query = relation.getQuery();
+                query.findInBackground(new FindCallback<AVObject>() {
+                    @Override
+                    public void done(List<AVObject> list, AVException e) {
+                        if (mProgressDialog != null)
+                            mProgressDialog.dismiss();
+                        if (e == null) {
+                            if (list == null || list.size() == 0) {
+                                mTvNopolicy.setVisibility(View.VISIBLE);
+                            } else {
+                                mPolicys = list;
+                                mTvNopolicy.setVisibility(View.GONE);
+                                mHandler.sendEmptyMessage(1);
+                            }
                         } else {
-                            mPolicys = list;
-                            mTvNopolicy.setVisibility(View.GONE);
-                            mHandler.sendEmptyMessage(1);
+                            mTvNopolicy.setVisibility(View.VISIBLE);
                         }
-                    } else {
-                        mTvNopolicy.setVisibility(View.VISIBLE);
                     }
-                }
-            });
+                });
+            } else {
+                if (mProgressDialog != null)
+                    mProgressDialog.dismiss();
+                mTvNopolicy.setText("网络未连接");
+                mTvNopolicy.setVisibility(View.VISIBLE);
+            }
         } else {
             if (mProgressDialog != null)
                 mProgressDialog.dismiss();
@@ -214,8 +224,10 @@ public class OrderFragment extends Fragment implements AdapterView.OnItemClickLi
                 bundle.putSerializable("dpolicy", mPolicy);
         } else {
             intent.setClass(getActivity(), TakePhotoActivity.class);
-            if (currentFragment == 0)
+            if (currentFragment == 0) {
                 bundle.putSerializable("policy", mPolicy);
+                bundle.putParcelable("avobject", mAvObject);
+            }
         }
         intent.putExtras(bundle);
         startActivity(intent);
@@ -232,7 +244,33 @@ public class OrderFragment extends Fragment implements AdapterView.OnItemClickLi
             case R.id.tv_order_youhuijua:
                 mTvOrderChexian.setTextColor(getResources().getColor(R.color.unselectcolor));
                 mTvOrderYouhuijua.setTextColor(getResources().getColor(R.color.selectcolor));
+                mJuanAdapt = new JuanAdapt();
+                mLvChexianOrder.setAdapter(mJuanAdapt);
                 break;
+        }
+    }
+
+
+    class JuanAdapt extends BaseAdapter {
+
+        @Override
+        public int getCount() {
+            return 0;
+        }
+
+        @Override
+        public Object getItem(int position) {
+            return null;
+        }
+
+        @Override
+        public long getItemId(int position) {
+            return 0;
+        }
+
+        @Override
+        public View getView(int position, View convertView, ViewGroup parent) {
+            return null;
         }
     }
 
@@ -311,10 +349,16 @@ public class OrderFragment extends Fragment implements AdapterView.OnItemClickLi
         Number price = avObject.getNumber("price");
 
         if (price == 0) {
-            viewHolder.mTvPriceOrderListview.setText(0 + "");
+            viewHolder.mTvPriceOrderListview.setText("");
         } else {
             viewHolder.mTvPriceOrderListview.setText(price + "");
         }
+    }
+
+    @Override
+    public void onResume() {
+        super.onResume();
+        mCurrentUser = AVUser.getCurrentUser();
     }
 
     private void setDtail() {

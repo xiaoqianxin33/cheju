@@ -14,12 +14,16 @@ import android.widget.EditText;
 import android.widget.Toast;
 
 import com.avos.avoscloud.AVException;
+import com.avos.avoscloud.AVInstallation;
 import com.avos.avoscloud.AVUser;
 import com.avos.avoscloud.LogInCallback;
+import com.avos.avoscloud.PushService;
 import com.avos.avoscloud.RequestMobileCodeCallback;
+import com.avos.avoscloud.SaveCallback;
 import com.avos.avoscloud.UpdatePasswordCallback;
 import com.chinalooke.android.cheju.R;
 import com.chinalooke.android.cheju.utills.MyUtills;
+import com.chinalooke.android.cheju.utills.NetUtil;
 
 import butterknife.Bind;
 import butterknife.ButterKnife;
@@ -54,19 +58,25 @@ public class FindPasswordActivity extends AppCompatActivity {
         mToast = Toast.makeText(this, "", Toast.LENGTH_SHORT);
     }
 
-    @OnClick({R.id.btn_find_getsms, R.id.btn_find, R.id.iv_login_back})
+    @OnClick({R.id.btn_find_getsms, R.id.btn_find, R.id.iv_wirte_back})
     public void onClick(View view) {
         switch (view.getId()) {
             case R.id.btn_find_getsms:
                 mFindPhone = mEtFindpwd.getText().toString();
                 if (MyUtills.CheckPhoneNumer(mFindPhone)) {
-                    initDialog("正在发送短信");
-                    mHandler.postDelayed(new Runnable() {
-                        @Override
-                        public void run() {
-                            findSms();
-                        }
-                    }, 500);
+                    if (NetUtil.is_Network_Available(getApplicationContext())) {
+
+                        initDialog("正在发送短信");
+                        mHandler.postDelayed(new Runnable() {
+                            @Override
+                            public void run() {
+                                findSms();
+                            }
+                        }, 500);
+                    } else {
+                        mToast.setText("网络不给力,请检查网络");
+                        mToast.show();
+                    }
                 } else {
                     mToast.setText("请输入正确的手机号码");
                     mToast.show();
@@ -77,8 +87,13 @@ public class FindPasswordActivity extends AppCompatActivity {
                     MyUtills.showSingerDialog(this, "提示", "确定找回密码吗", new DialogInterface.OnClickListener() {
                         @Override
                         public void onClick(DialogInterface dialog, int which) {
-                            initDialog("请求发送中");
-                            findPwd();
+                            if (NetUtil.is_Network_Available(getApplicationContext())) {
+                                initDialog("请求发送中");
+                                findPwd();
+                            } else {
+                                mToast.setText("网络不给力,请检查网络");
+                                mToast.show();
+                            }
                         }
                     }, new DialogInterface.OnClickListener() {
                         @Override
@@ -88,7 +103,7 @@ public class FindPasswordActivity extends AppCompatActivity {
                     });
                 }
                 break;
-            case R.id.iv_login_back:
+            case R.id.iv_wirte_back:
                 finish();
                 break;
         }
@@ -164,11 +179,32 @@ public class FindPasswordActivity extends AppCompatActivity {
         AVUser.logInInBackground(phone, password, new LogInCallback<AVUser>() {
             @Override
             public void done(AVUser avUser, AVException e) {
-                mProgressDialog.dismiss();
                 if (e == null) {
-                    startActivity(new Intent(FindPasswordActivity.this, MainActivity.class));
-                    finish();
+                    AVInstallation.getCurrentInstallation().saveInBackground(new SaveCallback() {
+                        public void done(AVException e) {
+                            if (e == null) {
+                                String mInstallationId = AVInstallation.getCurrentInstallation().getInstallationId();
+                                AVUser currentUser = AVUser.getCurrentUser();
+                                currentUser.put("installationId", mInstallationId);
+                                currentUser.saveInBackground(new SaveCallback() {
+                                    @Override
+                                    public void done(AVException e) {
+                                        mProgressDialog.dismiss();
+                                        if (e == null) {
+                                            PushService.setDefaultPushCallback(getApplicationContext(), TakePhotoActivity.class);
+                                            startActivity(new Intent(FindPasswordActivity.this, MainActivity.class));
+                                            finish();
+                                        } else {
+                                            mToast.setText("登录失败");
+                                            mToast.show();
+                                        }
+                                    }
+                                });
+                            }
+                        }
+                    });
                 } else {
+                    mProgressDialog.dismiss();
                     mToast.setText(e.getMessage());
                     mToast.show();
                 }

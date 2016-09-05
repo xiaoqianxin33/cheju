@@ -12,6 +12,7 @@ import android.view.View;
 import android.widget.Button;
 import android.widget.ProgressBar;
 import android.widget.TextView;
+import android.widget.Toast;
 
 import com.avos.avoscloud.AVException;
 import com.avos.avoscloud.AVObject;
@@ -23,6 +24,7 @@ import com.chinalooke.android.cheju.R;
 import com.chinalooke.android.cheju.adapter.MyListViewAdapt;
 import com.chinalooke.android.cheju.fragment.AddAdressFragment;
 import com.chinalooke.android.cheju.fragment.ShowAddressFragment;
+import com.chinalooke.android.cheju.utills.NetUtil;
 
 import org.json.JSONArray;
 import org.json.JSONException;
@@ -48,6 +50,8 @@ public class AddressActivity extends FragmentActivity {
     private AddAdressFragment mAddAdressFragment;
     private List<AVObject> mAddresses = new ArrayList<>();
     private AVUser mCurrentUser;
+    private Toast mToast;
+    private AVObject bianAvobject;
 
     public ShowAddressFragment getShowAddressFragment() {
         return mShowAddressFragment;
@@ -61,11 +65,21 @@ public class AddressActivity extends FragmentActivity {
         return mBtnAddress;
     }
 
+    public AVObject getBianAvobject() {
+        return bianAvobject;
+    }
+
+    public void setBianAvobject(AVObject bianAvobject) {
+        this.bianAvobject = bianAvobject;
+    }
+
     @Override
     protected void onCreate(Bundle savedInstanceState) {
+
         super.onCreate(savedInstanceState);
         setContentView(R.layout.activity_address);
         ButterKnife.bind(this);
+        mToast = Toast.makeText(getApplicationContext(), "", Toast.LENGTH_SHORT);
         mFragmentManager = getFragmentManager();
         mCurrentUser = AVUser.getCurrentUser();
         initData();
@@ -76,34 +90,41 @@ public class AddressActivity extends FragmentActivity {
     private void initData() {
         mShowAddressFragment = new ShowAddressFragment();
         mAddAdressFragment = new AddAdressFragment();
-        AVObject todoFolder = AVObject.createWithoutData("_User", mCurrentUser.getObjectId());
-        AVRelation<AVObject> relation = todoFolder.getRelation("address");
-        AVQuery<AVObject> query = relation.getQuery();
-        query.findInBackground(new FindCallback<AVObject>() {
-            @Override
-            public void done(List<AVObject> list, AVException e) {
-                if (e == null && list.size() != 0) {
-                    mAddresses = list;
-                    mTvNoaddress.setVisibility(View.GONE);
+
+        if (NetUtil.is_Network_Available(getApplicationContext())) {
+
+            AVObject todoFolder = AVObject.createWithoutData("_User", mCurrentUser.getObjectId());
+            AVRelation<AVObject> relation = todoFolder.getRelation("address");
+            AVQuery<AVObject> query = relation.getQuery();
+            query.findInBackground(new FindCallback<AVObject>() {
+                @Override
+                public void done(List<AVObject> list, AVException e) {
+                    if (e == null && list.size() != 0) {
+                        mAddresses = list;
+                        mTvNoaddress.setVisibility(View.GONE);
 //                    changeFragment(0);
-                    FragmentTransaction transaction = mFragmentManager.beginTransaction();
-                    transaction.add(R.id.fl_address, mShowAddressFragment).commit();
-                } else {
-                    mTvNoaddress.setVisibility(View.VISIBLE);
+                        FragmentTransaction transaction = mFragmentManager.beginTransaction();
+                        transaction.add(R.id.fl_address, mShowAddressFragment).commit();
+                    } else {
+                        mTvNoaddress.setVisibility(View.VISIBLE);
+                    }
                 }
-            }
-        });
+            });
+        } else {
+            mToast.setText("网络不可用，请检查网络连接");
+            mToast.show();
+            mTvNoaddress.setText("网络错误");
+            mTvNoaddress.setVisibility(View.VISIBLE);
+        }
+
 
     }
 
 
-    @OnClick({R.id.iv_address_back, R.id.fl_address_back, R.id.btn_address})
+    @OnClick({R.id.iv_wirte_back, R.id.btn_address})
     public void onClick(View view) {
         switch (view.getId()) {
-            case R.id.iv_address_back:
-                finish();
-                break;
-            case R.id.fl_address_back:
+            case R.id.iv_wirte_back:
                 finish();
                 break;
             case R.id.btn_address:

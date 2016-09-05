@@ -29,7 +29,7 @@
                 android:layout_height="24dp"
                 android:layout_centerVertical="true"
                 android:layout_gravity="center"
-                android:layout_marginStart="8dp"
+                android:layout_marginLeft="8dp"
                 android:background="@mipmap/icon_back"
                 android:clickable="false"/>
 

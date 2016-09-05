@@ -1,5 +1,6 @@
 package com.chinalooke.android.cheju.activity;
 
+import android.app.ProgressDialog;
 import android.content.DialogInterface;
 import android.content.Intent;
 import android.graphics.Paint;
@@ -28,6 +29,7 @@ import com.chinalooke.android.cheju.bean.Order;
 import com.chinalooke.android.cheju.bean.Policy;
 import com.chinalooke.android.cheju.utills.LeanCloudTools;
 import com.chinalooke.android.cheju.utills.MyUtills;
+import com.chinalooke.android.cheju.utills.NetUtil;
 import com.chinalooke.android.cheju.view.PayDialog;
 import com.chinalooke.android.cheju.view.XListView;
 
@@ -66,6 +68,8 @@ public class TakePhotoActivity extends AppCompatActivity {
     private String mAdress = "";
     private Toast mToast;
     private Address mAddress;
+    private ProgressDialog mProgressDialog;
+    private AVObject mPolicyObject;
 
     @Override
     protected void onCreate(Bundle savedInstanceState) {
@@ -99,23 +103,29 @@ public class TakePhotoActivity extends AppCompatActivity {
     }
 
     private void initData() {
+        mPolicyObject = getIntent().getParcelableExtra("avobject");
         mStrings.add("商业险");
         mStrings.add("交强险");
         mPrices.add("1900");
         mPrices.add("800");
         mPolicy = (Policy) getIntent().getSerializableExtra("policy");
         mCurrentUser = AVUser.getCurrentUser();
-        AVRelation<AVObject> relation = mCurrentUser.getRelation("address");
-        AVQuery<AVObject> query = relation.getQuery();
-        query.findInBackground(new FindCallback<AVObject>() {
-            @Override
-            public void done(List<AVObject> list, AVException e) {
-                if (e == null) {
-                    mAddresses = list;
-                    initAddress();
+        if (NetUtil.is_Network_Available(this)) {
+
+            AVRelation<AVObject> relation = mCurrentUser.getRelation("address");
+            AVQuery<AVObject> query = relation.getQuery();
+            query.findInBackground(new FindCallback<AVObject>() {
+                @Override
+                public void done(List<AVObject> list, AVException e) {
+                    if (e == null) {
+                        mAddresses = list;
+                        initAddress();
+                    }
                 }
-            }
-        });
+            });
+        } else {
+            mTvAddress.setText("网络错误");
+        }
     }
 
     private void initAddress() {
@@ -243,15 +253,14 @@ public class TakePhotoActivity extends AppCompatActivity {
                         @Override
                         public void onClick(DialogInterface dialog, int which) {
                             dialog.dismiss();
-                            AVObject order = data.getParcelableExtra("order");
-                            Intent intent = new Intent();
-                            intent.setClass(TakePhotoActivity.this, OrderActivity.class);
-                            Bundle bundle = new Bundle();
-                            bundle.putSerializable("dpolicy", mPolicy);
-                            bundle.putParcelable("order", order);
-                            intent.putExtras(bundle);
-                            startActivity(intent);
-                            saveCloud();
+                            mProgressDialog = MyUtills.initDialog("正在审查订单状态", TakePhotoActivity.this);
+                            mProgressDialog.show();
+                            if (NetUtil.is_Network_Available(getApplicationContext())) {
+                                saveLeanCloud(data);
+                            } else {
+                                mToast.setText("网络不可用,请检查网络连接");
+                                mToast.show();
+                            }
                         }
                     }, new DialogInterface.OnClickListener() {
                         @Override
@@ -272,12 +281,41 @@ public class TakePhotoActivity extends AppCompatActivity {
 
     }
 
-    private void saveCloud() {
-        LeanCloudTools.addAttr(mPolicy.getObjectId(), "Policy", "statu", "已支付", new SaveCallback() {
+    private void saveLeanCloud(Intent data) {
+        final AVObject order = data.getParcelableExtra("order");
+        order.put("status", 2);
+        mPolicyObject.put("status", 2);
+        order.saveInBackground(new SaveCallback() {
             @Override
             public void done(AVException e) {
-
+                if (e == null) {
+                    mPolicyObject.saveInBackground(new SaveCallback() {
+                        @Override
+                        public void done(AVException e) {
+                            mProgressDialog.dismiss();
+                            if (e == null) {
+                                Intent intent = new Intent();
+                                intent.setClass(TakePhotoActivity.this, OrderActivity.class);
+                                Bundle bundle = new Bundle();
+                                bundle.putParcelable("dpolicy", mPolicyObject);
+                                bundle.putParcelable("order", order);
+                                bundle.putSerializable("policy", mPolicy);
+                                intent.putExtras(bundle);
+                                startActivity(intent);
+                            } else {
+                                mToast.setText("订单查询失败");
+                                mToast.show();
+                            }
+                        }
+                    });
+                } else {
+                    mProgressDialog.dismiss();
+                    mToast.setText("订单查询失败");
+                    mToast.show();
+                }
             }
         });
     }
+
+
 }

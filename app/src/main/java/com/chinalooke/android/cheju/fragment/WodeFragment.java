@@ -45,6 +45,7 @@ import com.chinalooke.android.cheju.activity.LoginActivity;
 import com.chinalooke.android.cheju.activity.MainActivity;
 import com.chinalooke.android.cheju.activity.PersonActivity;
 import com.chinalooke.android.cheju.activity.ScoreActivity;
+import com.chinalooke.android.cheju.activity.YouhuiJuanActivity;
 import com.chinalooke.android.cheju.constant.Constant;
 import com.chinalooke.android.cheju.utills.ImageTools;
 import com.chinalooke.android.cheju.utills.MyUtills;
@@ -109,6 +110,31 @@ public class WodeFragment extends Fragment {
         ButterKnife.bind(this, mView);
         mMainActivity = (MainActivity) getActivity();
         return mView;
+
+    }
+
+    @Override
+    public void onResume() {
+        super.onResume();
+        mCurrentUser = AVUser.getCurrentUser();
+        if (mCurrentUser != null) {
+            isLogin = true;
+            createQRcard();
+            initData();
+            initEvent();
+            initView();
+            mTvBlank.setVisibility(View.GONE);
+            mLvWode.setVisibility(View.VISIBLE);
+            mLlWode.setVisibility(View.VISIBLE);
+            mButtonLogin.setVisibility(View.GONE);
+            mRlWode.setVisibility(View.GONE);
+        } else {
+            mTvBlank.setVisibility(View.VISIBLE);
+            mRlWode.setVisibility(View.VISIBLE);
+            mLvWode.setVisibility(View.GONE);
+            mLlWode.setVisibility(View.GONE);
+            mButtonLogin.setVisibility(View.VISIBLE);
+        }
 
     }
 
@@ -201,8 +227,9 @@ public class WodeFragment extends Fragment {
                     case 1:
                         startActivity(new Intent(getActivity(), ScoreActivity.class));
                         break;
-
-
+                    case 2:
+                        startActivity(new Intent(getActivity(), YouhuiJuanActivity.class));
+                        break;
                 }
             }
         });
@@ -499,25 +526,32 @@ public class WodeFragment extends Fragment {
     }
 
     private void initCustomerData() {
-        AVQuery<AVUser> userQuery = new AVQuery<>("_User");
+        if (NetUtil.is_Network_Available(getActivity())) {
 
-        userQuery.whereEqualTo("referrer", AVUser.getCurrentUser().getMobilePhoneNumber());
+            AVQuery<AVUser> userQuery = new AVQuery<>("_User");
 
-        userQuery.findInBackground(new FindCallback<AVUser>() {
-            @Override
-            public void done(List<AVUser> list, AVException e) {
-                mProgressDialog.dismiss();
-                if (e == null) {
-                    Intent intent = new Intent(getActivity(), CustomerActivity.class);
-                    Bundle bundle = new Bundle();
-                    bundle.putSerializable("customers", (Serializable) list);
-                    intent.putExtras(bundle);
-                    startActivity(intent);
-                } else {
-                    MyUtills.showGodDialog(getActivity(), "提示", "快去分享下载 好友打折买保险 积分返点全归你");
+            userQuery.whereEqualTo("referrer", AVUser.getCurrentUser().getMobilePhoneNumber());
+
+            userQuery.findInBackground(new FindCallback<AVUser>() {
+                @Override
+                public void done(List<AVUser> list, AVException e) {
+                    mProgressDialog.dismiss();
+                    if (e == null) {
+                        Intent intent = new Intent(getActivity(), CustomerActivity.class);
+                        Bundle bundle = new Bundle();
+                        bundle.putSerializable("customers", (Serializable) list);
+                        intent.putExtras(bundle);
+                        startActivity(intent);
+                    } else {
+                        MyUtills.showGodDialog(getActivity(), "提示", "快去分享下载 好友打折买保险 积分返点全归你");
+                    }
+
                 }
-
-            }
-        });
+            });
+        } else {
+            mProgressDialog.dismiss();
+            mToast.setText("网络不可用,请检查网络连接");
+            mToast.show();
+        }
     }
 }

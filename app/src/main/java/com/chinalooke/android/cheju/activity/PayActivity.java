@@ -14,17 +14,21 @@ import android.widget.Toast;
 
 import com.avos.avoscloud.AVException;
 import com.avos.avoscloud.AVObject;
+import com.avos.avoscloud.AVQuery;
 import com.avos.avoscloud.AVUser;
+import com.avos.avoscloud.FindCallback;
 import com.avos.avoscloud.SaveCallback;
 import com.bigkoo.pickerview.TimePickerView;
 import com.chinalooke.android.cheju.R;
 import com.chinalooke.android.cheju.bean.Address;
 import com.chinalooke.android.cheju.bean.Order;
 import com.chinalooke.android.cheju.bean.Policy;
+import com.chinalooke.android.cheju.utills.NetUtil;
 
 import java.io.Serializable;
 import java.text.SimpleDateFormat;
 import java.util.Date;
+import java.util.List;
 
 import butterknife.Bind;
 import butterknife.ButterKnife;
@@ -41,6 +45,11 @@ public class PayActivity extends AppCompatActivity implements TimePickerView.OnT
     @Bind(R.id.rl_pay)
     RelativeLayout mRlPay;
     private TimePickerView pvTime;
+    private Toast mToast;
+    private Policy mDpolicy;
+    private Address mAddress;
+    private ProgressDialog mProgressDialog;
+    private AVObject mOrder1;
 
     Handler mHandler = new Handler() {
         @Override
@@ -54,11 +63,8 @@ public class PayActivity extends AppCompatActivity implements TimePickerView.OnT
 
         }
     };
-    private Toast mToast;
-    private Policy mDpolicy;
-    private Address mAddress;
-    private ProgressDialog mProgressDialog;
-    private AVObject mOrder;
+    private Date mDate;
+
 
     @Override
     protected void onCreate(Bundle savedInstanceState) {
@@ -73,6 +79,22 @@ public class PayActivity extends AppCompatActivity implements TimePickerView.OnT
     private void initData() {
         mDpolicy = (Policy) getIntent().getSerializableExtra("dpolicy");
         mAddress = (Address) getIntent().getSerializableExtra("address");
+        String objectId = mDpolicy.getObjectId();
+        if (NetUtil.is_Network_Available(getApplicationContext())) {
+            AVQuery<AVObject> query = new AVQuery("Order");
+            query.whereEqualTo("policyId", objectId);
+            query.findInBackground(new FindCallback<AVObject>() {
+                @Override
+                public void done(List<AVObject> list, AVException e) {
+                    if (e == null) {
+                        mOrder1 = list.get(0);
+                    }
+                }
+            });
+        } else {
+            mToast.setText("网络不可用，请检查网络连接");
+            mToast.show();
+        }
     }
 
     private void initView() {
@@ -84,11 +106,8 @@ public class PayActivity extends AppCompatActivity implements TimePickerView.OnT
         switch (view.getId()) {
             case R.id.iv_alipay:
                 if (check()) {
-                    mRlPay.setVisibility(View.GONE);
-                    mIvAli.setVisibility(View.VISIBLE);
                     initDialog("订单创建中");
-                    saveOrder();
-
+                    saveOrder(0);
                 }
                 break;
             case R.id.tv_time:
@@ -97,13 +116,17 @@ public class PayActivity extends AppCompatActivity implements TimePickerView.OnT
                 pvTime.show();
                 break;
             case R.id.iv_weipay:
+                if (check()) {
+                    initDialog("订单创建中");
+                    saveOrder(1);
+                }
                 break;
             case R.id.iv_ali:
                 Intent intent = new Intent();
                 intent.putExtra("statu", true);
                 Bundle bundle = new Bundle();
-                if (mOrder != null)
-                    bundle.putParcelable("order", mOrder);
+                if (mOrder1 != null)
+                    bundle.putParcelable("order", mOrder1);
                 intent.putExtras(bundle);
                 setResult(0, intent);
                 finish();
@@ -122,29 +145,39 @@ public class PayActivity extends AppCompatActivity implements TimePickerView.OnT
         mProgressDialog.show();
     }
 
-    private void saveOrder() {
-        final AVObject order = new AVObject("Order");
-        order.put("userId", AVUser.getCurrentUser().getObjectId());
-        Date date = new Date();
-        order.put("addDate", date);
-        order.put("policyId", mDpolicy.getObjectId());
-        order.put("price", Integer.parseInt(mDpolicy.getDiscountPrice()));
-        order.put("status", 1);
-        order.put("addressId", mAddress.getObjectId());
-        order.put("payType", "alipay");
-        order.saveInBackground(new SaveCallback() {
-            @Override
-            public void done(AVException e) {
-                mProgressDialog.dismiss();
-                if (e == null) {
-                    mOrder = order;
-                    showPay();
-                } else {
-                    mToast.setText(e.getMessage());
-                    mToast.show();
-                }
+    private void saveOrder(int i) {
+        if (NetUtil.is_Network_Available(getApplicationContext())) {
+            if (i == 0) {
+                mOrder1.put("payType", "alipay");
+            } else if (i == 1) {
+                mOrder1.put("payType", "weixin");
             }
-        });
+
+            mOrder1.put("addressId", mAddress.getObjectId());
+            mOrder1.put("sendDate", mDate);
+            mOrder1.put("price", Integer.parseInt(mDpolicy.getDiscountPrice()));
+            mOrder1.saveInBackground(new SaveCallback() {
+                @Override
+                public void done(AVException e) {
+                    mProgressDialog.dismiss();
+                    if (e == null) {
+                        mRlPay.setVisibility(View.GONE);
+                        mIvAli.setVisibility(View.VISIBLE);
+                        showPay();
+                    } else {
+                        mToast.setText("订单创建失败");
+                        mToast.show();
+                    }
+                }
+            });
+
+
+        } else {
+            mProgressDialog.dismiss();
+            mToast.setText("网络不可用，请检查网络连接");
+            mToast.show();
+        }
+
 
     }
 
@@ -176,6 +209,7 @@ public class PayActivity extends AppCompatActivity implements TimePickerView.OnT
 
     @Override
     public void onTimeSelect(Date date) {
+        mDate = date;
         mTvTime.setText(getTime(date));
     }
 

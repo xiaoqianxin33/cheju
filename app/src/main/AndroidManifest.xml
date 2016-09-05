@@ -85,7 +85,7 @@
         </activity>
         <activity
             android:name=".activity.MainActivity"
-            android:launchMode="singleTop">
+            android:launchMode="singleTask">
         </activity>
         <activity
             android:name=".activity.WriteMessgeActivity"
@@ -107,14 +107,6 @@
 
         <service android:name="com.amap.api.location.APSService"/>
 
-        <activity
-            android:name=".activity.salesman.MainSalesActivity"
-            android:launchMode="singleTask">
-        </activity>
-        <activity android:name=".activity.salesman.PolicyCalculateActivity">
-        </activity>
-        <activity android:name=".activity.salesman.PolicyCheckActivity">
-        </activity>
         <activity android:name=".activity.ServiceActivity">
         </activity>
         <activity android:name="com.hyphenate.easeui.ui.EaseBaiduMapActivity"/>

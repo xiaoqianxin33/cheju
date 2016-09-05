@@ -14,13 +14,16 @@ import com.avos.avoscloud.AVObject;
 import com.avos.avoscloud.AVUser;
 import com.avos.avoscloud.GetCallback;
 import com.avos.avoscloud.PushService;
+import com.avos.avoscloud.SaveCallback;
 import com.chinalooke.android.cheju.R;
+import com.chinalooke.android.cheju.utills.PreferenceUtils;
 import com.hyphenate.EMCallBack;
 import com.hyphenate.chat.EMClient;
 
 public class SplashActivity extends AppCompatActivity {
 
     private static final int sleepTime = 2000;
+    private AVUser mCurrentUser;
 
 
     Handler mHandler = new Handler() {
@@ -33,14 +36,11 @@ public class SplashActivity extends AppCompatActivity {
             }
         }
     };
-    private AVUser mCurrentUser;
 
     @Override
     protected void onCreate(Bundle savedInstanceState) {
         super.onCreate(savedInstanceState);
         setContentView(R.layout.activity_splash);
-        AVInstallation.getCurrentInstallation().saveInBackground();
-        PushService.setDefaultPushCallback(this, TakePhotoActivity.class);
         mCurrentUser = AVUser.getCurrentUser();
         mHandler.sendEmptyMessageDelayed(1, 2000);
     }

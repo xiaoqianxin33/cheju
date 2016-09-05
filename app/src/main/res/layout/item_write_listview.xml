@@ -15,12 +15,14 @@
         <TextView
             android:id="@+id/tv_item_write_listview"
             style="@style/rowstyle"
+            android:layout_marginTop="0dp"
             android:text="车主姓名"
             />
 
         <EditText
             android:id="@+id/et_item_write_listview"
             style="@style/rowstyle"
+            android:layout_marginTop="0dp"
             android:background="@null"
             android:hint="请填写"/>
     </LinearLayout>

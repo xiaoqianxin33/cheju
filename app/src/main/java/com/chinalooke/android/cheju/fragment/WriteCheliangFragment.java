@@ -37,6 +37,7 @@ import com.chinalooke.android.cheju.bean.Policy;
 import com.chinalooke.android.cheju.constant.Constant;
 import com.chinalooke.android.cheju.utills.IDCardUtil;
 import com.chinalooke.android.cheju.utills.MyUtills;
+import com.chinalooke.android.cheju.utills.NetUtil;
 import com.chinalooke.android.cheju.utills.PreferenceUtils;
 
 import java.sql.Array;
@@ -231,7 +232,13 @@ public class WriteCheliangFragment extends Fragment {
                     mHandler.postDelayed(new Runnable() {
                         @Override
                         public void run() {
-                            saveCloud();
+                            if (NetUtil.is_Network_Available(getActivity())) {
+                                saveCloud();
+                            } else {
+                                mProgressDialog.dismiss();
+                                mToast.setText("网络错误，请检查网络");
+                                mToast.show();
+                            }
                         }
                     }, 500);
                 } else {
@@ -487,14 +494,12 @@ public class WriteCheliangFragment extends Fragment {
                     mCurrentUser.saveInBackground(new SaveCallback() {
                         @Override
                         public void done(AVException e) {
-                            mProgressDialog.dismiss();
                             if (e == null) {
-                                MyUtills.showNorDialog(getActivity(), "提交成功！", "正在算价中，请在订单中查看详情");
-                                mWrite.setText("订单已提交");
-                                mWrite.setEnabled(false);
+                                creatOrder(policy);
                             } else {
                                 mWrite.setEnabled(true);
-                                mToast.setText(e.getMessage());
+                                mProgressDialog.dismiss();
+                                mToast.setText("订单提交失败");
                                 mToast.show();
                             }
                         }
@@ -503,6 +508,30 @@ public class WriteCheliangFragment extends Fragment {
                     mWrite.setEnabled(true);
                     mProgressDialog.dismiss();
                     mToast.setText(e.getMessage());
+                    mToast.show();
+                }
+            }
+        });
+    }
+
+    private void creatOrder(AVObject policy) {
+        AVObject order = new AVObject("Order");
+        order.put("policyId", policy.getObjectId());
+        order.put("userId", mCurrentUser.getObjectId());
+        order.put("addDate", new Date());
+        order.put("statu", 0);
+        order.saveInBackground(new SaveCallback() {
+            @Override
+            public void done(AVException e) {
+                mProgressDialog.dismiss();
+                if (e == null) {
+                    MyUtills.showNorDialog(getActivity(), "提交成功！", "正在算价中，请在订单中查看详情");
+                    mWrite.setText("订单已提交");
+                    mWrite.setEnabled(false);
+                } else {
+                    mWrite.setEnabled(true);
+                    mProgressDialog.dismiss();
+                    mToast.setText("订单提交失败");
                     mToast.show();
                 }
             }

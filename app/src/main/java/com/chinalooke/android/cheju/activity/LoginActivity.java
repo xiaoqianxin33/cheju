@@ -13,11 +13,16 @@ import android.widget.LinearLayout;
 import android.widget.Toast;
 
 import com.avos.avoscloud.AVException;
+import com.avos.avoscloud.AVInstallation;
 import com.avos.avoscloud.AVUser;
 import com.avos.avoscloud.LogInCallback;
+import com.avos.avoscloud.PushService;
+import com.avos.avoscloud.SaveCallback;
 import com.chinalooke.android.cheju.R;
 import com.chinalooke.android.cheju.bean.User;
 import com.chinalooke.android.cheju.utills.MyUtills;
+import com.chinalooke.android.cheju.utills.NetUtil;
+import com.chinalooke.android.cheju.utills.PreferenceUtils;
 
 import butterknife.Bind;
 import butterknife.ButterKnife;
@@ -82,13 +87,19 @@ public class LoginActivity extends Activity {
                         mToast.setText("请输入密码");
                         mToast.show();
                     } else {
-                        initDialog("登录中");
-                        mHandler.postDelayed(new Runnable() {
-                            @Override
-                            public void run() {
-                                login(mPhone, mPassword1);
-                            }
-                        }, 500);
+                        if (NetUtil.is_Network_Available(getApplicationContext())) {
+
+                            initDialog("登录中");
+                            mHandler.postDelayed(new Runnable() {
+                                @Override
+                                public void run() {
+                                    login(mPhone, mPassword1);
+                                }
+                            }, 500);
+                        } else {
+                            mToast.setText("网络不给力,请检查网络");
+                            mToast.show();
+                        }
                     }
                 } else {
                     mToast.setText("请输入正确的手机号码");
@@ -103,16 +114,38 @@ public class LoginActivity extends Activity {
         AVUser.logInInBackground(phone, password, new LogInCallback<AVUser>() {
             @Override
             public void done(AVUser avUser, AVException e) {
-                mProgressDialog.dismiss();
                 if (e == null) {
-                    startActivity(new Intent(LoginActivity.this, MainActivity.class));
-                    finish();
+                    AVInstallation.getCurrentInstallation().saveInBackground(new SaveCallback() {
+                        public void done(AVException e) {
+                            if (e == null) {
+                                String mInstallationId = AVInstallation.getCurrentInstallation().getInstallationId();
+                                AVUser currentUser = AVUser.getCurrentUser();
+                                currentUser.put("installationId", mInstallationId);
+                                currentUser.saveInBackground(new SaveCallback() {
+                                    @Override
+                                    public void done(AVException e) {
+                                        mProgressDialog.dismiss();
+                                        if (e == null) {
+                                            PushService.setDefaultPushCallback(getApplicationContext(), TakePhotoActivity.class);
+                                            startActivity(new Intent(LoginActivity.this, MainActivity.class));
+                                            finish();
+                                        } else {
+                                            mToast.setText("登录失败");
+                                            mToast.show();
+                                        }
+                                    }
+                                });
+                            }
+                        }
+                    });
                 } else {
-                    mToast.setText(e.getMessage());
+                    mProgressDialog.dismiss();
+                    mToast.setText("登录失败");
                     mToast.show();
                 }
             }
         });
+
     }
 
 
