@@ -12,6 +12,7 @@
         android:paddingTop="8dp">
 
         <ImageView
+            android:id="@+id/iv_shop"
             android:layout_width="64dp"
             android:layout_height="64dp"
             android:background="@mipmap/appcan_s"/>

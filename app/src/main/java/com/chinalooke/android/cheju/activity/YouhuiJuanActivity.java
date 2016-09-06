@@ -20,6 +20,7 @@ import com.amap.api.location.AMapLocationClient;
 import com.amap.api.location.AMapLocationClientOption;
 import com.amap.api.location.AMapLocationListener;
 import com.avos.avoscloud.AVException;
+import com.avos.avoscloud.AVFile;
 import com.avos.avoscloud.AVGeoPoint;
 import com.avos.avoscloud.AVObject;
 import com.avos.avoscloud.AVQuery;
@@ -27,9 +28,11 @@ import com.avos.avoscloud.FindCallback;
 import com.chinalooke.android.cheju.R;
 import com.chinalooke.android.cheju.bean.BusinessShop;
 import com.chinalooke.android.cheju.constant.Constant;
+import com.chinalooke.android.cheju.utills.MyUtills;
 import com.chinalooke.android.cheju.utills.NetUtil;
 import com.chinalooke.android.cheju.utills.PreferenceUtils;
 import com.chinalooke.android.cheju.view.XListView;
+import com.squareup.picasso.Picasso;
 
 import java.text.DecimalFormat;
 import java.text.SimpleDateFormat;
@@ -73,6 +76,7 @@ public class YouhuiJuanActivity extends AppCompatActivity implements AMapLocatio
     private Toast mToast;
     private MyAdapt mMyAdapt;
     private long t1 = 0;
+    private int mType;
 
 
     @Override
@@ -80,6 +84,9 @@ public class YouhuiJuanActivity extends AppCompatActivity implements AMapLocatio
         super.onCreate(savedInstanceState);
         setContentView(R.layout.activity_youhui_juan);
         ButterKnife.bind(this);
+
+        mType = getIntent().getIntExtra("type", 0);
+
         mDecimalFormat = new DecimalFormat("0.0");
         mToast = Toast.makeText(getApplicationContext(), "", Toast.LENGTH_SHORT);
         mListView.setPullRefreshEnable(true);
@@ -113,6 +120,20 @@ public class YouhuiJuanActivity extends AppCompatActivity implements AMapLocatio
             mPoint = new AVGeoPoint(mLatitude, mLongitude);
             query.limit(10);
             query.whereNear("location", mPoint);
+            switch (mType) {
+                case 1:
+                    query.whereEqualTo("type", 1);
+                    break;
+                case 2:
+                    query.whereEqualTo("type", 2);
+                    break;
+                case 3:
+                    query.whereEqualTo("type", 3);
+                    break;
+                case 4:
+                    query.whereEqualTo("type", 4);
+                    break;
+            }
             query.findInBackground(new FindCallback<AVObject>() {
                 @Override
                 public void done(List<AVObject> list, AVException e) {
@@ -268,7 +289,9 @@ public class YouhuiJuanActivity extends AppCompatActivity implements AMapLocatio
 
     private void setDetail(ViewHolder viewHolder, int position) {
         AVObject avObject = mNearbyShops.get(position);
-
+        AVFile images = avObject.getAVFile("images");
+        Picasso.with(getApplicationContext()).load(images.getUrl()).resize(MyUtills.Dp2Px(getApplicationContext(), 64),
+                MyUtills.Dp2Px(getApplicationContext(), 64)).centerCrop().into(viewHolder.mIvShop);
         viewHolder.mTvShopnameYouhui.setText(avObject.getString("ShopName"));
         viewHolder.mTvDiscountYouhui.setText("<" + mDecimalFormat.format(avObject.getAVGeoPoint("location").distanceInMilesTo(mPoint)) + "m");
         viewHolder.mTvLocationYouhuiListview.setText(avObject.getString("ShopAddress"));
@@ -286,6 +309,8 @@ public class YouhuiJuanActivity extends AppCompatActivity implements AMapLocatio
         TextView mTvDianshuYouhui;
         @Bind(R.id.tv_discount_youhui)
         TextView mTvDiscountYouhui;
+        @Bind(R.id.iv_shop)
+        ImageView mIvShop;
 
         ViewHolder(View view) {
             ButterKnife.bind(this, view);
@@ -298,6 +323,9 @@ public class YouhuiJuanActivity extends AppCompatActivity implements AMapLocatio
         if (mLocationClient != null) {
             mLocationClient.stopLocation();
             mLocationClient.onDestroy();
+        }
+        if (mNearbyShops != null) {
+            mNearbyShops.clear();
         }
     }
 

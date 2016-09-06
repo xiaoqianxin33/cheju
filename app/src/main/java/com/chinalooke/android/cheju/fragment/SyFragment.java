@@ -6,7 +6,6 @@ import android.graphics.drawable.Drawable;
 import android.os.Bundle;
 import android.os.Environment;
 import android.support.v4.app.Fragment;
-import android.util.Log;
 import android.view.LayoutInflater;
 import android.view.View;
 import android.view.ViewGroup;
@@ -146,6 +145,28 @@ public class SyFragment extends Fragment {
                         } else {
                             showShare();
                         }
+                        break;
+                    case 3:
+                        Intent intent = new Intent(getActivity(), YouhuiJuanActivity.class);
+                        intent.putExtra("type", 1);
+                        startActivity(intent);
+                        break;
+                    case 4:
+                        Intent intent4 = new Intent(getActivity(), YouhuiJuanActivity.class);
+                        intent4.putExtra("type", 2);
+                        startActivity(intent4);
+                        break;
+                    case 5:
+                        Intent intent5 = new Intent(getActivity(), YouhuiJuanActivity.class);
+                        intent5.putExtra("type", 3);
+                        startActivity(intent5);
+                        break;
+                    case 6:
+                        Intent intent6 = new Intent(getActivity(), YouhuiJuanActivity.class);
+                        intent6.putExtra("type", 4);
+                        startActivity(intent6);
+                        break;
+
                 }
             }
         });

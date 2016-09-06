@@ -1,1 +1,1 @@
-include ':app', ':kanner', ':easeui-release_3.1.5'
+include ':app', ':easeui-release_3.1.5'
