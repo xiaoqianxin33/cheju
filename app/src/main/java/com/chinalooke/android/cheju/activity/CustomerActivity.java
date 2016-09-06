@@ -14,8 +14,15 @@ import android.widget.ImageView;
 import android.widget.TextView;
 import android.widget.Toast;
 
+import com.avos.avoscloud.AVException;
+import com.avos.avoscloud.AVObject;
+import com.avos.avoscloud.AVQuery;
 import com.avos.avoscloud.AVUser;
+import com.avos.avoscloud.FindCallback;
 import com.chinalooke.android.cheju.R;
+import com.chinalooke.android.cheju.utills.NetUtil;
+import com.chinalooke.android.cheju.utills.StringUtils;
+import com.chinalooke.android.cheju.utills.UIutils;
 import com.chinalooke.android.cheju.view.XListView;
 import com.squareup.picasso.Picasso;
 
@@ -44,6 +51,7 @@ public class CustomerActivity extends AppCompatActivity implements XListView.IXL
     private Toast mToast;
     private List<String> mTimes = new ArrayList<>();
     private List<String> mMessage = new ArrayList<>();
+    private List<AVObject> mMessageList = new ArrayList<>();
 
     @Override
     protected void onCreate(Bundle savedInstanceState) {
@@ -51,8 +59,8 @@ public class CustomerActivity extends AppCompatActivity implements XListView.IXL
         mToast = Toast.makeText(getApplicationContext(), "", Toast.LENGTH_SHORT);
         setContentView(R.layout.activity_customer);
         ButterKnife.bind(this);
-        initData();
         initView();
+        initData();
 
     }
 
@@ -66,8 +74,35 @@ public class CustomerActivity extends AppCompatActivity implements XListView.IXL
         mMessage.add("客户157********购买了强制险");
         mMessage.add("客户156********购买了商业险");
         mMessage.add("客户155********购买了商业险");
-
         mCustomers = (List<AVUser>) getIntent().getSerializableExtra("customers");
+        if (NetUtil.is_Network_Available(getApplicationContext())) {
+            for (int i = 0; i < mCustomers.size(); i++) {
+                AVUser avUser = mCustomers.get(i);
+                String objectId = avUser.getObjectId();
+                AVQuery<AVObject> query = new AVQuery<>("Statistics");
+                query.whereEqualTo("userId", objectId);
+                final int finalI = i;
+                query.findInBackground(new FindCallback<AVObject>() {
+                    @Override
+                    public void done(List<AVObject> list, AVException e) {
+                        if (e == null) {
+                            if (list != null && list.size() != 0)
+                                mMessageList.addAll(list);
+                            if (finalI == mCustomers.size() - 1) {
+                                mMyAdapt.notifyDataSetChanged();
+                            }
+                        } else {
+                            mToast.setText("暂无客户消费情况");
+                            mToast.show();
+                        }
+                    }
+                });
+
+            }
+        } else {
+            mToast.setText("网络不可用，请检查网络连接");
+            mToast.show();
+        }
         getItems();
     }
 
@@ -157,7 +192,11 @@ public class CustomerActivity extends AppCompatActivity implements XListView.IXL
 
         @Override
         public int getCount() {
-            return mTimes.size();
+            if (mMessageList != null) {
+                return mMessageList.size();
+            } else {
+                return 0;
+            }
         }
 
         @Override
@@ -212,7 +251,10 @@ public class CustomerActivity extends AppCompatActivity implements XListView.IXL
     }
 
     private void setDtails(ViewHolder viewHolder, int positon) {
-        viewHolder.mTvTime.setText(mTimes.get(positon));
-        viewHolder.mTvMessage.setText(mMessage.get(positon));
+        AVObject avObject = mMessageList.get(positon);
+        Date date = avObject.getDate("date");
+        String userId = avObject.getString("userId");
+        viewHolder.mTvTime.setText(StringUtils.getTime(date));
+        viewHolder.mTvMessage.setText("客户" + userId.substring(0, 5) + "********消费了" + avObject.getNumber("price"));
     }
 }

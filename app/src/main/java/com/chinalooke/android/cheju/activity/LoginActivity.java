@@ -118,6 +118,7 @@ public class LoginActivity extends Activity {
                     AVInstallation.getCurrentInstallation().saveInBackground(new SaveCallback() {
                         public void done(AVException e) {
                             if (e == null) {
+                                PushService.subscribe(LoginActivity.this, "private", CustomerActivity.class);
                                 String mInstallationId = AVInstallation.getCurrentInstallation().getInstallationId();
                                 AVUser currentUser = AVUser.getCurrentUser();
                                 currentUser.put("installationId", mInstallationId);

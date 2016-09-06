@@ -1,6 +1,9 @@
 package com.chinalooke.android.cheju.utills;
 
+import java.text.SimpleDateFormat;
 import java.util.Calendar;
+import java.util.Date;
+import java.util.Locale;
 
 import android.text.TextUtils;
 
@@ -130,5 +133,10 @@ public class StringUtils {
                     .replaceAll("[.:/,%?&=]", "+").replaceAll("[+]+", "+");
         }
         return null;
+    }
+
+    public static String getTime(Date date) {
+        SimpleDateFormat format = new SimpleDateFormat("yyyy-MM-dd HH:mm");
+        return format.format(date);
     }
 }

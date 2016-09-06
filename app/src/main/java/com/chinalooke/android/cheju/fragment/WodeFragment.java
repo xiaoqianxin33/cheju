@@ -12,6 +12,7 @@ import android.graphics.drawable.Drawable;
 import android.net.Uri;
 import android.os.Bundle;
 import android.os.Environment;
+import android.os.Parcelable;
 import android.provider.MediaStore;
 import android.support.v4.app.Fragment;
 import android.support.v7.app.AlertDialog;
@@ -34,6 +35,7 @@ import android.widget.Toast;
 
 import com.avos.avoscloud.AVException;
 import com.avos.avoscloud.AVFile;
+import com.avos.avoscloud.AVObject;
 import com.avos.avoscloud.AVQuery;
 import com.avos.avoscloud.AVUser;
 import com.avos.avoscloud.FindCallback;
@@ -56,6 +58,7 @@ import com.squareup.picasso.Picasso;
 
 import java.io.File;
 import java.io.Serializable;
+import java.util.ArrayList;
 import java.util.List;
 
 import butterknife.Bind;
@@ -103,6 +106,7 @@ public class WodeFragment extends Fragment {
     private MainActivity mMainActivity;
     private AVUser mCurrentUser;
     private boolean isLogin = false;
+    private List<AVUser> mArrayList = new ArrayList<>();
 
     @Override
     public View onCreateView(LayoutInflater inflater, ViewGroup container, Bundle savedInstanceState) {
@@ -539,7 +543,8 @@ public class WodeFragment extends Fragment {
                     if (e == null) {
                         Intent intent = new Intent(getActivity(), CustomerActivity.class);
                         Bundle bundle = new Bundle();
-                        bundle.putSerializable("customers", (Serializable) list);
+                        mArrayList = list;
+                        bundle.putSerializable("customers", (Serializable) mArrayList);
                         intent.putExtras(bundle);
                         startActivity(intent);
                     } else {

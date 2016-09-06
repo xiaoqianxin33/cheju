@@ -282,6 +282,7 @@ public class OrderActivity extends AppCompatActivity {
                     String installationId = avObject.getString("installationId");
                     AVQuery pushQuery = AVInstallation.getQuery();
                     pushQuery.whereEqualTo("installationId", installationId);
+                    pushQuery.whereEqualTo("channels", "private");
                     AVPush.sendMessageInBackground("message to installation", pushQuery, new SendCallback() {
                         @Override
                         public void done(AVException e) {
@@ -292,7 +293,6 @@ public class OrderActivity extends AppCompatActivity {
                                 statics.put("date", new Date());
                                 statics.put("type", "user");
                                 statics.put("price", mOrder.getNumber("price"));
-
                                 mToast.setText("提交成功");
                                 mToast.show();
                                 mBtnTakeGoods.setText("已收货");
