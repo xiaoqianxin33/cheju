@@ -79,14 +79,7 @@
         android:textSize="16sp"
         android:visibility="gone"/>
 
-    <TextView
-        android:layout_marginTop="16dp"
-        android:layout_width="match_parent"
-        android:layout_height="1dp"
-        android:background="@color/divid"/>
-
-
-    <ScrollView
+    <android.support.v4.widget.SwipeRefreshLayout
         android:id="@+id/scrollview"
         android:layout_width="match_parent"
         android:layout_height="wrap_content"
@@ -94,7 +87,7 @@
         android:layout_marginStart="8dp"
         android:layout_marginTop="8dp">
 
-        <com.chinalooke.android.cheju.view.XListView
+        <ListView
             android:id="@+id/lv_youhui"
             android:layout_width="match_parent"
             android:layout_height="wrap_content"
@@ -102,7 +95,11 @@
             android:divider="@color/divid"
             />
 
-    </ScrollView>
+        <ProgressBar
+            android:layout_width="80dp"
+            android:layout_height="80dp"/>
+
+    </android.support.v4.widget.SwipeRefreshLayout>
 </LinearLayout>
 
 

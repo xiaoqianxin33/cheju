@@ -44,6 +44,7 @@ android {
 
 repositories {
     jcenter()
+    mavenCentral()
 }
 
 dependencies {
@@ -87,4 +88,5 @@ dependencies {
     compile files('libs/MiPush_SDK_Client_2_2_19.jar')
     compile files('libs/org.apache.http.legacy.jar')
     compile project(':easeui-release_3.1.5')
+    compile 'com.makeramen:roundedimageview:2.2.1'
 }

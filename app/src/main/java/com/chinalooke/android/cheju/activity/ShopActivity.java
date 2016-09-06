@@ -29,8 +29,10 @@ import android.widget.RelativeLayout;
 import android.widget.TextView;
 
 import com.avos.avoscloud.AVException;
+import com.avos.avoscloud.AVFile;
 import com.avos.avoscloud.AVObject;
 import com.avos.avoscloud.AVQuery;
+import com.avos.avoscloud.AVRelation;
 import com.avos.avoscloud.FindCallback;
 import com.chinalooke.android.cheju.R;
 import com.chinalooke.android.cheju.bean.BusinessShop;
@@ -77,9 +79,9 @@ public class ShopActivity extends AppCompatActivity implements RevealBackgroundV
     @Bind(R.id.rl_phone)
     RelativeLayout mRlPhone;
     private HashMap<AVObject, String> mAVObjectStringHashMap = new HashMap<>();
+    private List<AVObject> mGood = new ArrayList<>();
     private JSONArray mJsonArray;
     private List<AVObject> mGod = new ArrayList<>();
-    private List<JSONObject> mGods = new ArrayList<>();
     private BusinessShop mShop;
     private ArrayList<String> mStrings = new ArrayList<>();
     Handler mHandler = new Handler() {
@@ -100,6 +102,7 @@ public class ShopActivity extends AppCompatActivity implements RevealBackgroundV
     private Dialog mDialog;
     private Goods mGoods;
     private AVObject mAvObject;
+    private AVObject mShop1;
 
     private void initProDialog() {
         mDialog = new Dialog(this, R.style.LodingDialog);
@@ -155,30 +158,17 @@ public class ShopActivity extends AppCompatActivity implements RevealBackgroundV
         mCollapsingToolbarLayout.setTitle(mShop.getShopName());
         mLvGods.setAdapter(new MyAdapt());
         mLvGods.setOnItemClickListener(this);
-        String[] strings = new String[mStrings.size()];
-        for (int i = 0; i < mStrings.size(); i++) {
-            strings[i] = mStrings.get(i);
-        }
 
-        Picasso.with(this).load(strings[0])
+        Picasso.with(this).load(mShop1.getAVFile("images").getUrl())
                 .resize(MyUtills.Dp2Px(this, 200), MyUtills.Dp2Px(this, 200)).centerCrop().into(mIv);
     }
 
     @Override
     public void onItemClick(AdapterView<?> parent, View view, int position, long id) {
-        mAvObject = mGod.get(position);
-        mGoods.setCurrentPrice(mAvObject.getString("currentPrice"));
-        mGoods.setDescript(mAvObject.getString("descript"));
-        mGoods.setGrade(mAvObject.getString("grade"));
-        mGoods.setMark(mAvObject.getString("mark"));
-        mGoods.setTitle(mAvObject.getString("name"));
-        mGoods.setSales(mAvObject.getString("sales"));
-        mGoods.setScore(mAvObject.getString("score"));
-        mGoods.setImages(mAvObject.getString("images"));
-        mGoods.setPrice(mAvObject.getString("price"));
+        mAvObject = mGood.get(position);
         Intent intent = new Intent(this, GodsActivity.class);
         Bundle bundle = new Bundle();
-        bundle.putSerializable("goods", mGoods);
+        bundle.putParcelable("goods", mAvObject);
         intent.putExtras(bundle);
         startActivity(intent);
     }
@@ -217,20 +207,31 @@ public class ShopActivity extends AppCompatActivity implements RevealBackgroundV
 
             return convertView;
         }
-
-
     }
 
-    private void setDetails(ViewHolder viewHolder, int positon) {
-        AVObject avObject = mGod.get(positon);
-        String s = mAVObjectStringHashMap.get(avObject);
+    private void setDetails(final ViewHolder viewHolder, int positon) {
+        final AVObject avObject = mGood.get(positon);
+        final String s = mAVObjectStringHashMap.get(avObject);
+        AVRelation<AVObject> images = avObject.getRelation("images");
+        AVQuery<AVObject> query = images.getQuery();
+        query.findInBackground(new FindCallback<AVObject>() {
+            @Override
+            public void done(List<AVObject> list, AVException e) {
+                if (e == null) {
+                    AVObject avObject1 = list.get(0);
+                    String url = avObject1.getString("url");
+                    Picasso.with(ShopActivity.this).load(url).resize(
+                            MyUtills.Dp2Px(getApplicationContext(), 100), MyUtills.Dp2Px(getApplicationContext(), 100)
+                    ).centerCrop().into(viewHolder.mIvGods);
+                }
+            }
+        });
         viewHolder.mTvCurrent.setText("¥" + avObject.getString("currentPrice"));
         viewHolder.mTvGodsTitle.setText(avObject.getString("name"));
         viewHolder.mTvGodsScore.setText("点劵:" + avObject.getString("score"));
         viewHolder.mTvPrice.setText("¥" + avObject.getString("price"));
         viewHolder.mTvSales.setText("已售" + avObject.getString("sales"));
         viewHolder.mTvPrice.getPaint().setFlags(Paint.STRIKE_THRU_TEXT_FLAG);
-        Picasso.with(this).load(s).resize(MyUtills.Dp2Px(this, 80), MyUtills.Dp2Px(this, 80)).centerCrop().into(viewHolder.mIvGods);
         if (positon == mGod.size() - 1) {
             mHandler.sendEmptyMessage(2);
         }
@@ -257,71 +258,10 @@ public class ShopActivity extends AppCompatActivity implements RevealBackgroundV
     }
 
     private void initData() {
-        String shopGoods = getIntent().getExtras().getString("shopGoods");
-
-
+        mGood = getIntent().getParcelableArrayListExtra("goods");
         mShop = (BusinessShop) getIntent().getSerializableExtra("shop");
+        mShop1 = getIntent().getParcelableExtra("Shop");
 
-
-        if (shopGoods != null) {
-            try {
-                mJsonArray = new JSONArray(shopGoods);
-                for (int i = 0; i < mJsonArray.length(); i++) {
-                    JSONObject jsonObject = mJsonArray.getJSONObject(i);
-
-                    mGods.add(jsonObject);
-                }
-            } catch (JSONException e) {
-                e.printStackTrace();
-            }
-
-        } else {
-            mDialog.dismiss();
-        }
-
-
-        for (int i = 0; i < mGods.size(); i++) {
-            JSONObject jsonObject = mGods.get(i);
-            try {
-                String id = jsonObject.getString("id");
-                AVQuery<AVObject> query = new AVQuery<>("Goods");
-                query.whereEqualTo("objectId", id);
-                final int finalI = i;
-                query.findInBackground(new FindCallback<AVObject>() {
-                    @Override
-                    public void done(List<AVObject> list, AVException e) {
-                        if (list != null && list.size() > 0) {
-                            AVObject avObject = list.get(0);
-
-                            mGod.add(avObject);
-                            String images = avObject.getString("images");
-
-                            if (!TextUtils.isEmpty(images)) {
-                                try {
-                                    JSONArray jsonArray = new JSONArray(images);
-                                    for (int y = 0; y < jsonArray.length(); y++) {
-                                        JSONObject o = jsonArray.getJSONObject(y);
-                                        String image = o.getString("id");
-                                        mStrings.add(image);
-
-                                        mAVObjectStringHashMap.put(avObject, image);
-                                        if (finalI == mGods.size() - 1)
-                                            mHandler.sendEmptyMessage(1);
-                                    }
-                                } catch (JSONException e1) {
-                                    e1.printStackTrace();
-                                }
-                            }
-
-                        }
-                    }
-                });
-
-            } catch (JSONException e) {
-                e.printStackTrace();
-            }
-
-        }
     }
 
 

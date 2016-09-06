@@ -1,17 +1,20 @@
 package com.chinalooke.android.cheju.activity;
 
+import android.app.ProgressDialog;
 import android.content.Intent;
 import android.os.Bundle;
 import android.os.Handler;
 import android.os.Message;
+import android.os.Parcelable;
+import android.support.v4.widget.SwipeRefreshLayout;
 import android.support.v7.app.AppCompatActivity;
 import android.text.TextUtils;
 import android.view.View;
 import android.view.ViewGroup;
+import android.widget.AbsListView;
 import android.widget.AdapterView;
 import android.widget.BaseAdapter;
-import android.widget.ImageView;
-import android.widget.ScrollView;
+import android.widget.ListView;
 import android.widget.TextView;
 import android.widget.Toast;
 
@@ -24,6 +27,7 @@ import com.avos.avoscloud.AVFile;
 import com.avos.avoscloud.AVGeoPoint;
 import com.avos.avoscloud.AVObject;
 import com.avos.avoscloud.AVQuery;
+import com.avos.avoscloud.AVRelation;
 import com.avos.avoscloud.FindCallback;
 import com.chinalooke.android.cheju.R;
 import com.chinalooke.android.cheju.bean.BusinessShop;
@@ -31,30 +35,29 @@ import com.chinalooke.android.cheju.constant.Constant;
 import com.chinalooke.android.cheju.utills.MyUtills;
 import com.chinalooke.android.cheju.utills.NetUtil;
 import com.chinalooke.android.cheju.utills.PreferenceUtils;
-import com.chinalooke.android.cheju.view.XListView;
+import com.makeramen.roundedimageview.RoundedImageView;
 import com.squareup.picasso.Picasso;
 
+import java.io.Serializable;
 import java.text.DecimalFormat;
-import java.text.SimpleDateFormat;
 import java.util.ArrayList;
 import java.util.Date;
 import java.util.List;
-import java.util.Locale;
 
 import butterknife.Bind;
 import butterknife.ButterKnife;
 import butterknife.OnClick;
 
-public class YouhuiJuanActivity extends AppCompatActivity implements AMapLocationListener, AdapterView.OnItemClickListener, XListView.IXListViewListener {
+public class YouhuiJuanActivity extends AppCompatActivity implements AMapLocationListener, AdapterView.OnItemClickListener {
 
     @Bind(R.id.tv_location_youhui)
     TextView mTvLocationYouhui;
     @Bind(R.id.lv_youhui)
-    XListView mListView;
+    ListView mListView;
     public AMapLocationClient mLocationClient = null;
     public AMapLocationClientOption mLocationOption = null;
     @Bind(R.id.scrollview)
-    ScrollView mScrollview;
+    SwipeRefreshLayout mScrollview;
     @Bind(R.id.tv_none)
     TextView mTvNone;
     private double mLongitude;
@@ -62,6 +65,8 @@ public class YouhuiJuanActivity extends AppCompatActivity implements AMapLocatio
     private List<AVObject> mNearbyShops = new ArrayList<>();
     private AVGeoPoint mPoint;
     private DecimalFormat mDecimalFormat;
+    private int mSkip;
+
 
     Handler mHandler = new Handler() {
         @Override
@@ -69,7 +74,7 @@ public class YouhuiJuanActivity extends AppCompatActivity implements AMapLocatio
             super.handleMessage(msg);
             if (msg.what == 1) {
                 mNearbyShops.clear();
-                initData();
+
             }
         }
     };
@@ -77,6 +82,9 @@ public class YouhuiJuanActivity extends AppCompatActivity implements AMapLocatio
     private MyAdapt mMyAdapt;
     private long t1 = 0;
     private int mType;
+    private boolean isLoading = false;
+    private ProgressDialog mProgressDialog;
+    private List<AVObject> good = new ArrayList<>();
 
 
     @Override
@@ -89,11 +97,7 @@ public class YouhuiJuanActivity extends AppCompatActivity implements AMapLocatio
 
         mDecimalFormat = new DecimalFormat("0.0");
         mToast = Toast.makeText(getApplicationContext(), "", Toast.LENGTH_SHORT);
-        mListView.setPullRefreshEnable(true);
-        mListView.setPullLoadEnable(true);
-//        mListView.setAutoLoadEnable(true);
-        mListView.setXListViewListener(this);
-        mListView.setRefreshTime(getTime());
+
         mMyAdapt = new MyAdapt();
         mListView.setAdapter(mMyAdapt);
         mListView.setOnItemClickListener(YouhuiJuanActivity.this);
@@ -110,6 +114,49 @@ public class YouhuiJuanActivity extends AppCompatActivity implements AMapLocatio
             mHandler.sendEmptyMessage(1);
         }
 
+        initEvent();
+
+    }
+
+    private void initEvent() {
+        mScrollview.setColorSchemeResources(android.R.color.holo_blue_bright,
+                android.R.color.holo_green_light,
+                android.R.color.holo_orange_light,
+                android.R.color.holo_red_light);
+
+        mScrollview.setOnRefreshListener(new SwipeRefreshLayout.OnRefreshListener() {
+            @Override
+            public void onRefresh() {
+                mSkip = 0;
+                mNearbyShops.clear();
+                initData();
+                mScrollview.setRefreshing(false);
+            }
+        });
+
+        mListView.setOnScrollListener(new AbsListView.OnScrollListener() {
+            @Override
+            public void onScrollStateChanged(AbsListView view, int scrollState) {
+
+            }
+
+            @Override
+            public void onScroll(AbsListView view, int firstVisibleItem, int visibleItemCount, int totalItemCount) {
+                if (mListView != null && mListView.getChildCount() > 0) {
+                    boolean enable = (firstVisibleItem == 0) && (view.getChildAt(firstVisibleItem).getTop() == 0);
+                    mScrollview.setEnabled(enable);
+                }
+
+                if (firstVisibleItem + visibleItemCount == totalItemCount && !isLoading) {
+                    loadMore();
+                }
+            }
+        });
+    }
+
+    private void loadMore() {
+        isLoading = true;
+        initData();
     }
 
 
@@ -118,7 +165,10 @@ public class YouhuiJuanActivity extends AppCompatActivity implements AMapLocatio
 
             AVQuery<AVObject> query = new AVQuery<>("BusinessShop");
             mPoint = new AVGeoPoint(mLatitude, mLongitude);
-            query.limit(10);
+            Date now = new Date();
+            query.whereLessThanOrEqualTo("createdAt", now);
+            query.limit(8);
+            query.skip(mSkip);
             query.whereNear("location", mPoint);
             switch (mType) {
                 case 1:
@@ -143,13 +193,14 @@ public class YouhuiJuanActivity extends AppCompatActivity implements AMapLocatio
                             mTvNone.setVisibility(View.GONE);
                             mNearbyShops.addAll(list);
                             mMyAdapt.notifyDataSetChanged();
-                        } else {
+                            isLoading = false;
+                            mSkip += 8;
+                        }
+                    } else {
+                        if (mSkip == 0) {
                             mScrollview.setVisibility(View.GONE);
                             mTvNone.setVisibility(View.VISIBLE);
                         }
-                    } else {
-                        mScrollview.setVisibility(View.GONE);
-                        mTvNone.setVisibility(View.VISIBLE);
                     }
                 }
             });
@@ -191,6 +242,9 @@ public class YouhuiJuanActivity extends AppCompatActivity implements AMapLocatio
     @Override
     public void onItemClick(AdapterView<?> parent, View view, int position, long id) {
 
+        mProgressDialog = MyUtills.initDialog("加载中", YouhuiJuanActivity.this);
+        mProgressDialog.show();
+
         AVObject avObject = mNearbyShops.get(position);
 
         Intent intent = new Intent();
@@ -201,17 +255,30 @@ public class YouhuiJuanActivity extends AppCompatActivity implements AMapLocatio
 
         intent.putExtra(Constant.START_LOCATION, startingLocation);
 
+        AVRelation<AVObject> goods = avObject.getRelation("goods");
+        AVQuery<AVObject> query = goods.getQuery();
+        query.findInBackground(new FindCallback<AVObject>() {
+            @Override
+            public void done(List<AVObject> list, AVException e) {
+                mProgressDialog.dismiss();
+                if (e == null) {
+                    good = list;
+                } else {
+                    mToast.setText("该商家暂未上架产品");
+                    mToast.show();
+                }
+            }
+        });
         String shopGoods = avObject.getString("ShopGoods");
-
-
         BusinessShop businessShop = new BusinessShop();
-
         businessShop.setShopName(avObject.getString("ShopName"));
         businessShop.setShopPhone(avObject.getString("ShopPhone"));
         businessShop.setExpire(avObject.getDate("expire").toString());
         businessShop.setShopAddress(avObject.getString("ShopAddress"));
         Bundle bundle = new Bundle();
         bundle.putSerializable("shop", businessShop);
+        bundle.putParcelableArrayList("goods", (ArrayList<? extends Parcelable>) good);
+        bundle.putParcelable("Shop", avObject);
         intent.putExtras(bundle);
         intent.putExtra("shopGoods", shopGoods);
 
@@ -230,29 +297,11 @@ public class YouhuiJuanActivity extends AppCompatActivity implements AMapLocatio
         }
     }
 
-    @Override
-    public void onRefresh() {
-        mHandler.postDelayed(new Runnable() {
-            @Override
-            public void run() {
-                mNearbyShops.clear();
-                initData();
-                onLoad();
-            }
-        }, 200);
-    }
-
-    @Override
-    public void onLoadMore() {
-        mListView.dropFooter();
-    }
 
     private class MyAdapt extends BaseAdapter {
         @Override
         public int getCount() {
-
             if (mNearbyShops != null && mNearbyShops.size() != 0) {
-
                 return mNearbyShops.size();
             } else {
                 return 0;
@@ -290,12 +339,13 @@ public class YouhuiJuanActivity extends AppCompatActivity implements AMapLocatio
     private void setDetail(ViewHolder viewHolder, int position) {
         AVObject avObject = mNearbyShops.get(position);
         AVFile images = avObject.getAVFile("images");
-        Picasso.with(getApplicationContext()).load(images.getUrl()).resize(MyUtills.Dp2Px(getApplicationContext(), 64),
-                MyUtills.Dp2Px(getApplicationContext(), 64)).centerCrop().into(viewHolder.mIvShop);
+        if (images != null)
+            Picasso.with(getApplicationContext()).load(images.getUrl()).resize(MyUtills.Dp2Px(getApplicationContext(), 54),
+                    MyUtills.Dp2Px(getApplicationContext(), 54)).centerCrop().into(viewHolder.mIvShop);
         viewHolder.mTvShopnameYouhui.setText(avObject.getString("ShopName"));
         viewHolder.mTvDiscountYouhui.setText("<" + mDecimalFormat.format(avObject.getAVGeoPoint("location").distanceInMilesTo(mPoint)) + "m");
         viewHolder.mTvLocationYouhuiListview.setText(avObject.getString("ShopAddress"));
-        viewHolder.mTvDianshuYouhui.setText(avObject.getString("ShopPhone"));
+        viewHolder.mTvDianshuYouhui.setText(avObject.getString("descript"));
 
     }
 
@@ -310,7 +360,7 @@ public class YouhuiJuanActivity extends AppCompatActivity implements AMapLocatio
         @Bind(R.id.tv_discount_youhui)
         TextView mTvDiscountYouhui;
         @Bind(R.id.iv_shop)
-        ImageView mIvShop;
+        RoundedImageView mIvShop;
 
         ViewHolder(View view) {
             ButterKnife.bind(this, view);
@@ -320,6 +370,7 @@ public class YouhuiJuanActivity extends AppCompatActivity implements AMapLocatio
     @Override
     protected void onDestroy() {
         super.onDestroy();
+        mSkip = 0;
         if (mLocationClient != null) {
             mLocationClient.stopLocation();
             mLocationClient.onDestroy();
@@ -352,24 +403,6 @@ public class YouhuiJuanActivity extends AppCompatActivity implements AMapLocatio
 
     }
 
-    private String getTime() {
-        return new SimpleDateFormat("MM-dd HH:mm", Locale.CHINA).format(new Date());
-    }
-
-    private void onLoad() {
-        mListView.stopRefresh();
-        mListView.stopLoadMore();
-        mListView.setRefreshTime(getTime());
-    }
-
-    @Override
-    public void onWindowFocusChanged(boolean hasFocus) {
-        super.onWindowFocusChanged(hasFocus);
-
-        if (hasFocus) {
-            mListView.autoRefresh();
-        }
-    }
 
     @Override
     protected void onPause() {

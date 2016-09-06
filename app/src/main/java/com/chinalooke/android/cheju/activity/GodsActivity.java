@@ -10,6 +10,7 @@ import android.os.Bundle;
 import android.os.Handler;
 import android.os.Message;
 import android.support.v7.app.AppCompatActivity;
+import android.util.Log;
 import android.view.Gravity;
 import android.view.LayoutInflater;
 import android.view.View;
@@ -20,7 +21,11 @@ import android.widget.TextView;
 import android.widget.Toast;
 
 import com.avos.avoscloud.AVException;
+import com.avos.avoscloud.AVObject;
+import com.avos.avoscloud.AVQuery;
+import com.avos.avoscloud.AVRelation;
 import com.avos.avoscloud.AVUser;
+import com.avos.avoscloud.FindCallback;
 import com.avos.avoscloud.SaveCallback;
 import com.chinalooke.android.cheju.R;
 import com.chinalooke.android.cheju.bean.Goods;
@@ -108,6 +113,7 @@ public class GodsActivity extends AppCompatActivity implements MyScrollView.OnSc
     private List<View> mAdList = new ArrayList<>();
     private Toast mToast;
     private ProgressDialog mProgressDialog;
+    private AVObject mGood;
 
     @Override
     protected void onCreate(Bundle savedInstanceState) {
@@ -122,49 +128,49 @@ public class GodsActivity extends AppCompatActivity implements MyScrollView.OnSc
     }
 
     private void initView() {
-        mTvGoodsName.setText(mGoods.getTitle());
-        mTvGodsCureent.setText("¥" + mGoods.getCurrentPrice());
-        mTvGodsPrice.setText("¥" + mGoods.getPrice());
+        mTvGoodsName.setText(mGood.getString("name"));
+        mTvGodsCureent.setText("¥" + mGood.getString("currentPrice"));
+        mTvGodsPrice.setText("¥" + mGood.getString("price"));
         mTvGodsPrice.getPaint().setFlags(Paint.STRIKE_THRU_TEXT_FLAG);
-        mTvSales.setText("已售" + mGoods.getSales());
-        int grade = Integer.parseInt(mGoods.getGrade());
+        mTvSales.setText("已售" + mGood.getString("sales"));
+        Number grade = mGood.getNumber("grade");
         setStar(grade);
         mTvScoreGoods.setText(grade + "分");
-        mTvGoodsDescript.setText(mGoods.getDescript());
-        mTvGodsScore.setText("消耗积分:" + mGoods.getScore());
-        for (String string : mImages) {
-            ImageView imageView = new ImageView(this);
-            Picasso.with(this).load(string).resize(screenWidth, MyUtills.Dp2Px(this, 160)).centerCrop().into(imageView);
-            mAdList.add(imageView);
-        }
-        mKannerGoods.setData(mAdList);
+        mTvGoodsDescript.setText(mGood.getString("descript"));
+        mTvGodsScore.setText("消耗积分:" + mGood.getString("score"));
     }
 
-    private void setStar(int grade) {
-        mIv1.setEnabled(grade > 0);
-        mIv2.setEnabled(grade > 1);
-        mIv3.setEnabled(grade > 2);
-        mIv4.setEnabled(grade > 3);
-        mIv5.setEnabled(grade > 4);
+    private void setStar(Number grade) {
+        mIv1.setEnabled(grade.intValue() > 0);
+        mIv2.setEnabled(grade.intValue() > 1);
+        mIv3.setEnabled(grade.intValue() > 2);
+        mIv4.setEnabled(grade.intValue() > 3);
+        mIv5.setEnabled(grade.intValue() > 4);
     }
 
     private void initData() {
-        mGoods = (Goods) getIntent().getExtras().getSerializable("goods");
-        String images = mGoods.getImages();
+        mGood = getIntent().getParcelableExtra("goods");
+        AVRelation<AVObject> images = mGood.getRelation("images");
+        AVQuery<AVObject> query = images.getQuery();
+        if (NetUtil.is_Network_Available(getApplicationContext())) {
 
-        try {
-            JSONArray jsonArray = new JSONArray(images);
-            for (int i = 0; i < jsonArray.length(); i++) {
-                JSONObject jsonObject = jsonArray.getJSONObject(i);
-                String id = jsonObject.getString("id");
-                if (id != null)
-                    mImages.add(id);
-
-                if (i == jsonArray.length() - 1)
-                    mHandler.sendEmptyMessage(1);
-            }
-        } catch (JSONException e) {
-            e.printStackTrace();
+            query.findInBackground(new FindCallback<AVObject>() {
+                @Override
+                public void done(List<AVObject> list, AVException e) {
+                    if (e == null) {
+                        for (AVObject avObject : list) {
+                            String url = avObject.getString("url");
+                            ImageView imageView = new ImageView(GodsActivity.this);
+                            Picasso.with(GodsActivity.this).load(url).resize(screenWidth, MyUtills.Dp2Px(getApplicationContext(), 160)).centerCrop().into(imageView);
+                            mAdList.add(imageView);
+                        }
+                        mKannerGoods.setData(mAdList);
+                    }
+                }
+            });
+        } else {
+            mToast.setText("网络不可用，请检查网络连接");
+            mToast.show();
         }
     }
 
@@ -254,8 +260,10 @@ public class GodsActivity extends AppCompatActivity implements MyScrollView.OnSc
 
         int i2 = Integer.parseInt(mGoods.getScore());
 
+        Log.e("TAG", oldScore + "");
+
         if (i < i2) {
-            mToast.setText("对不起，余额不足");
+            mToast.setText("对不起，积分余额不足");
             mToast.show();
             mProgressDialog.dismiss();
         } else {
