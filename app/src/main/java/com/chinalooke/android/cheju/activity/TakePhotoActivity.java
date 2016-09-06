@@ -97,9 +97,10 @@ public class TakePhotoActivity extends AppCompatActivity {
         mXlvDetail.setPullLoadEnable(false);
         mMyAdapt = new MyAdapt();
         mXlvDetail.setAdapter(mMyAdapt);
-//        mTvPrice.setText(mPolicy.getPrice());
-//        mTvDiscountprice.setText(mPolicy.getDiscountPrice());
+        mTvPrice.setText(mPolicy.getPrice());
+        mTvDiscountprice.setText(mPolicy.getDiscountPrice());
         mTvPrice.getPaint().setFlags(Paint.STRIKE_THRU_TEXT_FLAG);
+        int status = mPolicyObject.getInt("status");
     }
 
     private void initData() {
@@ -300,6 +301,7 @@ public class TakePhotoActivity extends AppCompatActivity {
                                 bundle.putParcelable("dpolicy", mPolicyObject);
                                 bundle.putParcelable("order", order);
                                 bundle.putSerializable("policy", mPolicy);
+                                bundle.putSerializable("address", mAddress);
                                 intent.putExtras(bundle);
                                 startActivity(intent);
                             } else {

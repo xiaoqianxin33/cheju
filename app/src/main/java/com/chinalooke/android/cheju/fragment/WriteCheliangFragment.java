@@ -479,6 +479,7 @@ public class WriteCheliangFragment extends Fragment {
         policy.put("phone", mPolicy.getPhone());
         policy.put("IDNo", mPolicy.getIdNo());
         policy.put("carNo", mPolicy.getCarNo());
+        policy.put("referrerPhone", mCurrentUser.getString("referrer"));
         policy.put("company", mPolicy.getCompany());
         policy.put("type", mPolicy.getType());
         policy.put("regDate", mPolicy.getRegDate());

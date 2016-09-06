@@ -16,6 +16,7 @@
 
         <TextView
             style="@style/rowstyle"
+            android:layout_marginTop="0dp"
             android:layout_weight="3"
             android:paddingLeft="8dp"
             android:text="收货人姓名"
@@ -24,6 +25,7 @@
         <EditText
             android:id="@+id/et_adrress_name"
             style="@style/rowstyle"
+            android:layout_marginTop="0dp"
             android:layout_weight="7"
             android:background="@null"
             android:hint="请输入2-10个字"/>
@@ -46,6 +48,7 @@
 
         <TextView
             style="@style/rowstyle"
+            android:layout_marginTop="0dp"
             android:layout_weight="3"
             android:paddingLeft="8dp"
             android:text="手机号码"
@@ -54,6 +57,7 @@
         <EditText
             android:id="@+id/et_phone_address"
             style="@style/rowstyle"
+            android:layout_marginTop="0dp"
             android:layout_weight="7"
             android:background="@null"
             android:hint="请输入11位手机号"
@@ -73,8 +77,8 @@
         android:layout_height="48dp"
         android:background="#EDEBE9"
         android:orientation="horizontal"
-        android:paddingRight="24dp"
-        android:paddingLeft="8dp">
+        android:paddingLeft="8dp"
+        android:paddingRight="24dp">
 
         <TextView
             android:layout_width="0dp"
@@ -84,7 +88,7 @@
             android:paddingLeft="8dp"
             android:text="选择地区"
             android:textColor="@android:color/black"
-            android:textSize="16sp"/>
+            android:textSize="14sp"/>
 
 
         <TextView
@@ -97,7 +101,7 @@
             android:paddingRight="8dp"
             android:text="正在定位..."
             android:textColor="@android:color/black"
-            android:textSize="16sp"/>
+            android:textSize="14sp"/>
 
         <ImageView
             android:id="@+id/iv_location_address"
@@ -130,6 +134,7 @@
 
         <TextView
             style="@style/rowstyle"
+            android:layout_marginTop="0dp"
             android:layout_weight="3"
             android:paddingLeft="8dp"
             android:text="详细地址"
@@ -138,6 +143,7 @@
         <EditText
             android:id="@+id/et_detail_address"
             style="@style/rowstyle"
+            android:layout_marginTop="0dp"
             android:layout_weight="7"
             android:background="@null"
             android:hint="请填写"/>

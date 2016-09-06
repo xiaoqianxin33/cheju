@@ -28,6 +28,7 @@ import com.chinalooke.android.cheju.R;
 import com.chinalooke.android.cheju.activity.AddressActivity;
 import com.chinalooke.android.cheju.utills.MyUtills;
 import com.chinalooke.android.cheju.utills.NetUtil;
+import com.chinalooke.android.cheju.utills.UIutils;
 import com.lljjcoder.citypickerview.widget.CityPickerView;
 
 import java.util.Arrays;
@@ -117,6 +118,7 @@ public class AddAdressFragment extends Fragment implements AMapLocationListener 
                 }
                 break;
             case R.id.tv_location_address:
+                UIutils.closeKeyboard(getActivity());
                 selectLocation();
                 break;
         }

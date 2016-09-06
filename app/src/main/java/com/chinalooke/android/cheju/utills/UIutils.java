@@ -2,8 +2,10 @@ package com.chinalooke.android.cheju.utills;
 
 import android.app.Activity;
 import android.app.ProgressDialog;
+import android.content.Context;
 import android.view.View;
 import android.view.ViewGroup;
+import android.view.inputmethod.InputMethodManager;
 import android.widget.ListAdapter;
 import android.widget.ListView;
 
@@ -11,6 +13,14 @@ import android.widget.ListView;
  * Created by xiao on 2016/8/15.
  */
 public class UIutils {
+
+
+    public static void closeKeyboard(Activity activity) {
+        InputMethodManager inputManager = (InputMethodManager) activity
+                .getSystemService(Context.INPUT_METHOD_SERVICE);
+        inputManager.hideSoftInputFromWindow(activity.getCurrentFocus()
+                .getWindowToken(), InputMethodManager.HIDE_NOT_ALWAYS);
+    }
 
 
     public static ProgressDialog initLoadDialog(Activity activity) {

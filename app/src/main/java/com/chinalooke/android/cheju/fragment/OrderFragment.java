@@ -8,6 +8,7 @@ import android.os.Handler;
 import android.os.Message;
 import android.support.v4.app.Fragment;
 import android.support.v4.widget.SwipeRefreshLayout;
+import android.util.Log;
 import android.view.LayoutInflater;
 import android.view.View;
 import android.view.ViewGroup;
@@ -17,6 +18,7 @@ import android.widget.BaseAdapter;
 import android.widget.ImageView;
 import android.widget.ListView;
 import android.widget.TextView;
+import android.widget.Toast;
 
 import com.avos.avoscloud.AVException;
 import com.avos.avoscloud.AVObject;
@@ -26,9 +28,11 @@ import com.avos.avoscloud.AVUser;
 import com.avos.avoscloud.FindCallback;
 import com.chinalooke.android.cheju.R;
 import com.chinalooke.android.cheju.activity.MainActivity;
+import com.chinalooke.android.cheju.activity.OrderActivity;
 import com.chinalooke.android.cheju.activity.TakePhotoActivity;
 import com.chinalooke.android.cheju.activity.WriteMessgeActivity;
 import com.chinalooke.android.cheju.bean.Policy;
+import com.chinalooke.android.cheju.utills.MyUtills;
 import com.chinalooke.android.cheju.utills.NetUtil;
 
 import java.text.SimpleDateFormat;
@@ -84,12 +88,16 @@ public class OrderFragment extends Fragment implements AdapterView.OnItemClickLi
     private boolean isVisible;
     private AVUser mCurrentUser;
     private JuanAdapt mJuanAdapt;
+    private ProgressDialog mDialog;
+    private Toast mToast;
+    private AVObject mOrder;
 
     @Override
     public View onCreateView(LayoutInflater inflater, ViewGroup container, Bundle savedInstanceState) {
         mView = inflater.inflate(R.layout.fragment_order, container, false);
         ButterKnife.bind(this, mView);
         mPolicy = new Policy();
+        mToast = Toast.makeText(getActivity(), "", Toast.LENGTH_SHORT);
         isPrepared = true;
         mCurrentUser = ((MainActivity) getActivity()).getCurrentUser();
         lazyLoad();
@@ -220,17 +228,50 @@ public class OrderFragment extends Fragment implements AdapterView.OnItemClickLi
         setDtail();
         if (status == 0) {
             intent.setClass(getActivity(), WriteMessgeActivity.class);
-            if (currentFragment == 0)
+            if (currentFragment == 0) {
                 bundle.putSerializable("dpolicy", mPolicy);
-        } else {
+                intent.putExtras(bundle);
+                startActivity(intent);
+            }
+        } else if (status == 1) {
             intent.setClass(getActivity(), TakePhotoActivity.class);
             if (currentFragment == 0) {
                 bundle.putSerializable("policy", mPolicy);
                 bundle.putParcelable("avobject", mAvObject);
+                intent.putExtras(bundle);
+                startActivity(intent);
+            }
+        } else if (status == 2 || status == 3) {
+            if (currentFragment == 0) {
+                mDialog = MyUtills.initDialog("加载中", getActivity());
+                mDialog.show();
+                bundle.putSerializable("policy", mPolicy);
+                getOrder(bundle, intent);
             }
         }
-        intent.putExtras(bundle);
-        startActivity(intent);
+
+    }
+
+    private void getOrder(final Bundle bundle, final Intent intent) {
+        AVQuery<AVObject> query = new AVQuery<>("Order");
+        query.whereEqualTo("policyId", mAvObject.getObjectId());
+        query.findInBackground(new FindCallback<AVObject>() {
+            @Override
+            public void done(List<AVObject> list, AVException e) {
+                mDialog.dismiss();
+                if (e == null) {
+                    mOrder = list.get(0);
+                    bundle.putParcelable("order", mOrder);
+                    intent.putExtras(bundle);
+                    intent.setClass(getActivity(), OrderActivity.class);
+                    startActivity(intent);
+
+                } else {
+                    mToast.setText("加载失败，请重试");
+                    mToast.show();
+                }
+            }
+        });
     }
 
     @OnClick({R.id.tv_order_chexian, R.id.tv_order_youhuijua})

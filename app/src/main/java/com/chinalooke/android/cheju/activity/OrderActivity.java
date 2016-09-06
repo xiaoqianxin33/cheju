@@ -43,6 +43,16 @@ public class OrderActivity extends AppCompatActivity {
     SyListView mLvOrder;
     @Bind(R.id.btn_take_goods)
     Button mBtnTakeGoods;
+    @Bind(R.id.tv_name)
+    TextView mTvName;
+    @Bind(R.id.tv_phone)
+    TextView mTvPhone;
+    @Bind(R.id.tv_address)
+    TextView mTvAddress;
+    @Bind(R.id.tv_order_statu)
+    TextView mTvOrderStatu;
+    @Bind(R.id.tv_topolicy_order)
+    TextView mTvTopolicyOrder;
     private ArrayList<String> mStrings = new ArrayList<>();
     private ArrayList<String> mPrices = new ArrayList<>();
     private MyAdapt mMyAdapt;
@@ -52,6 +62,8 @@ public class OrderActivity extends AppCompatActivity {
     private Toast mToast;
     private ProgressDialog mProgressDialog;
     private AVUser mCurrentUser;
+    private AVObject mAddress;
+    private int mStatus;
 
     @Override
     protected void onCreate(Bundle savedInstanceState) {
@@ -66,12 +78,28 @@ public class OrderActivity extends AppCompatActivity {
     private void initView() {
         mMyAdapt = new MyAdapt();
         mLvOrder.setAdapter(mMyAdapt);
+        if (NetUtil.is_Network_Available(getApplicationContext())) {
+            getAddress();
+        } else {
+            mTvAddress.setText("无法获取地址");
+            mToast.setText("网络不可用，请检查网络连接");
+            mToast.show();
+        }
+
+        if (mStatus == 2) {
+            mTvOrderStatu.setText("已付款，待发货");
+        } else if (mStatus == 3) {
+            mTvOrderStatu.setText("已确认收货");
+            mBtnTakeGoods.setText("已收货");
+            mBtnTakeGoods.setEnabled(false);
+        }
     }
 
     private void initData() {
         mOrder = getIntent().getParcelableExtra("order");
         mPolicy = getIntent().getParcelableExtra("dpolicy");
         mPolicy1 = (Policy) getIntent().getSerializableExtra("policy");
+        mStatus = mOrder.getInt("status");
         mStrings.add("订单编号：");
         mStrings.add("支付方式：");
         mStrings.add("付款金额：");
@@ -103,6 +131,28 @@ public class OrderActivity extends AppCompatActivity {
             mPrices.add(carriage + "");
         } else {
             mPrices.add(" ");
+        }
+    }
+
+    private void getAddress() {
+        if (mOrder != null) {
+            String addressId = mOrder.getString("addressId");
+            AVQuery<AVObject> query = new AVQuery<>("Address");
+            query.whereEqualTo("objectId", addressId);
+            query.findInBackground(new FindCallback<AVObject>() {
+                @Override
+                public void done(List<AVObject> list, AVException e) {
+                    if (e == null) {
+                        mAddress = list.get(0);
+                        mTvName.setText("收货人 :" + mAddress.getString("name"));
+                        mTvAddress.setText("收货地址 :" + mAddress.getString("address"));
+                        mTvPhone.setText(mAddress.getString("phone"));
+                    } else {
+                        mToast.setText("获取地址出错，请检查网络");
+                        mToast.show();
+                    }
+                }
+            });
         }
     }
 
@@ -228,7 +278,7 @@ public class OrderActivity extends AppCompatActivity {
             @Override
             public void done(List<AVObject> list, AVException e) {
                 if (e == null) {
-                    AVObject avObject = list.get(0);
+                    final AVObject avObject = list.get(0);
                     String installationId = avObject.getString("installationId");
                     AVQuery pushQuery = AVInstallation.getQuery();
                     pushQuery.whereEqualTo("installationId", installationId);
@@ -237,6 +287,12 @@ public class OrderActivity extends AppCompatActivity {
                         public void done(AVException e) {
                             mProgressDialog.dismiss();
                             if (e == null) {
+                                AVObject statics = new AVObject("Statistics");
+                                statics.put("userId", mCurrentUser.getObjectId());
+                                statics.put("date", new Date());
+                                statics.put("type", "user");
+                                statics.put("price", mOrder.getNumber("price"));
+
                                 mToast.setText("提交成功");
                                 mToast.show();
                                 mBtnTakeGoods.setText("已收货");
@@ -254,6 +310,5 @@ public class OrderActivity extends AppCompatActivity {
                 }
             }
         });
-
     }
 }

@@ -129,7 +129,6 @@
                     android:layout_alignParentLeft="true"
                     android:layout_centerVertical="true"
                     android:gravity="center_vertical"
-                    android:text="收货人:王江飞"
                     android:textColor="@android:color/black"
                     android:textSize="16sp"/>
 
@@ -142,7 +141,6 @@
                     android:layout_marginRight="34dp"
                     android:gravity="center_vertical"
                     android:paddingRight="16dp"
-                    android:text="188888888"
                     android:textColor="@android:color/black"
                     android:textSize="16sp"/>
             </RelativeLayout>
@@ -154,7 +152,6 @@
                 android:layout_height="40dp"
                 android:background="@android:color/white"
                 android:gravity="center_vertical"
-                android:text="收货地址：中国河南省洛阳市涧西区河南科技大学"
                 android:textColor="@android:color/black"
                 android:textSize="12sp"/>
         </LinearLayout>
