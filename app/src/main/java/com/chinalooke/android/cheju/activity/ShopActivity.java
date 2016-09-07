@@ -155,6 +155,7 @@ public class ShopActivity extends AppCompatActivity implements RevealBackgroundV
         Intent intent = new Intent(this, GodsActivity.class);
         Bundle bundle = new Bundle();
         bundle.putParcelable("goods", mAvObject);
+        intent.putExtra("shapid", mShop1.getObjectId());
         intent.putExtras(bundle);
         startActivity(intent);
     }
@@ -224,7 +225,7 @@ public class ShopActivity extends AppCompatActivity implements RevealBackgroundV
 
     static class ViewHolder {
         @Bind(R.id.iv_gods)
-        SquaredImageView mIvGods;
+        ImageView mIvGods;
         @Bind(R.id.tv_gods_title)
         TextView mTvGodsTitle;
         @Bind(R.id.tv_gods_score)

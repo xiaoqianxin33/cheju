@@ -203,6 +203,8 @@
         </activity>
         <activity android:name=".activity.FindPasswordActivity">
         </activity>
+        <activity android:name=".activity.GoodsCountActivity">
+        </activity>
     </application>
 
 </manifest>

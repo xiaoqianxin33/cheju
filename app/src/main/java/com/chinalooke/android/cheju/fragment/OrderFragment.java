@@ -68,23 +68,10 @@ public class OrderFragment extends Fragment implements AdapterView.OnItemClickLi
     private ProgressDialog mProgressDialog;
     private boolean isLoading = false;
     private boolean isPrepared = false;
-    private boolean isDone = false;
     private List<AVObject> mPolicys = new ArrayList<>();
+    private int mSkip;
 
 
-    Handler mHandler = new Handler() {
-
-        @Override
-        public void handleMessage(Message msg) {
-            if (1 == msg.what) {
-
-                mMyOrderAdapt = new MyOrderAdapt();
-                setAdapt(0);
-                mProgressDialog.dismiss();
-                isDone = true;
-            }
-        }
-    };
     private boolean isVisible;
     private AVUser mCurrentUser;
     private JuanAdapt mJuanAdapt;
@@ -100,6 +87,8 @@ public class OrderFragment extends Fragment implements AdapterView.OnItemClickLi
         mToast = Toast.makeText(getActivity(), "", Toast.LENGTH_SHORT);
         isPrepared = true;
         mCurrentUser = ((MainActivity) getActivity()).getCurrentUser();
+        mMyOrderAdapt = new MyOrderAdapt();
+        setAdapt(0);
         lazyLoad();
         return mView;
     }
@@ -135,6 +124,7 @@ public class OrderFragment extends Fragment implements AdapterView.OnItemClickLi
         mSr.setOnRefreshListener(new SwipeRefreshLayout.OnRefreshListener() {
             @Override
             public void onRefresh() {
+                mSkip = 0;
                 initChexianData();
                 mMyOrderAdapt.notifyDataSetChanged();
                 mSr.setRefreshing(false);
@@ -167,6 +157,8 @@ public class OrderFragment extends Fragment implements AdapterView.OnItemClickLi
 
                 AVRelation<AVObject> relation = mCurrentUser.getRelation("policy");
                 AVQuery<AVObject> query = relation.getQuery();
+                query.limit(10);
+                query.skip(mSkip);
                 query.findInBackground(new FindCallback<AVObject>() {
                     @Override
                     public void done(List<AVObject> list, AVException e) {
@@ -174,11 +166,17 @@ public class OrderFragment extends Fragment implements AdapterView.OnItemClickLi
                             mProgressDialog.dismiss();
                         if (e == null) {
                             if (list == null || list.size() == 0) {
-                                mTvNopolicy.setVisibility(View.VISIBLE);
+                                if (mSkip == 0)
+                                    mTvNopolicy.setVisibility(View.VISIBLE);
                             } else {
                                 mPolicys = list;
                                 mTvNopolicy.setVisibility(View.GONE);
-                                mHandler.sendEmptyMessage(1);
+                                if (mMyOrderAdapt != null)
+                                    mMyOrderAdapt.notifyDataSetChanged();
+                                mSkip += 10;
+                                isLoading = false;
+                                mProgressDialog.dismiss();
+
                             }
                         } else {
                             mTvNopolicy.setVisibility(View.VISIBLE);
@@ -424,7 +422,12 @@ public class OrderFragment extends Fragment implements AdapterView.OnItemClickLi
     }
 
     private void loadMore(int currentFragment) {
-        isLoading = true;
+        if (mSkip != 0) {
+            if (currentFragment == 0) {
+                initChexianData();
+            }
+            isLoading = true;
+        }
 
     }
 

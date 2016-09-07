@@ -43,6 +43,8 @@ public class OrderActivity extends AppCompatActivity {
     SyListView mLvOrder;
     @Bind(R.id.btn_take_goods)
     Button mBtnTakeGoods;
+    @Bind(R.id.btn_refund)
+    Button mBtnRefund;
     @Bind(R.id.tv_name)
     TextView mTvName;
     @Bind(R.id.tv_phone)
@@ -88,10 +90,20 @@ public class OrderActivity extends AppCompatActivity {
 
         if (mStatus == 2) {
             mTvOrderStatu.setText("已付款，待发货");
-        } else if (mStatus == 3) {
+        } else if (mStatus == 4) {
             mTvOrderStatu.setText("已确认收货");
             mBtnTakeGoods.setText("已收货");
             mBtnTakeGoods.setEnabled(false);
+        } else if (mStatus == 3) {
+            mTvOrderStatu.setText("已发货");
+        } else if (mStatus == 5) {
+            mTvOrderStatu.setText("退款申请中");
+            mBtnRefund.setText("正在退款");
+            mBtnRefund.setEnabled(false);
+        } else if (mStatus == 6) {
+            mTvOrderStatu.setText("退款完成");
+            mBtnRefund.setText("已退款");
+            mBtnRefund.setEnabled(false);
         }
     }
 
@@ -211,9 +223,14 @@ public class OrderActivity extends AppCompatActivity {
     }
 
 
-    @OnClick({R.id.iv_wirte_back, R.id.tv_title2, R.id.tv_topolicy_order, R.id.btn_take_goods})
+    @OnClick({R.id.iv_wirte_back, R.id.tv_topolicy_order, R.id.btn_take_goods
+            , R.id.btn_refund})
     public void onClick(View view) {
         switch (view.getId()) {
+            case R.id.btn_refund:
+
+
+                break;
             case R.id.tv_topolicy_order:
                 Intent intent = new Intent();
                 intent.setClass(OrderActivity.this, WriteMessgeActivity.class);
@@ -252,8 +269,8 @@ public class OrderActivity extends AppCompatActivity {
     }
 
     private void saveLeanCloud() {
-        mOrder.put("status", 3);
-        mPolicy.put("status", 3);
+        mOrder.put("status", 4);
+        mPolicy.put("status", 4);
         mPolicy.saveInBackground();
         mOrder.saveInBackground(new SaveCallback() {
             @Override

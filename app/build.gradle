@@ -14,8 +14,8 @@ android {
         applicationId "com.chinalooke.android.cheju"
         minSdkVersion 14
         targetSdkVersion 22
-        versionCode 4
-        versionName '1.001'
+        versionCode 5
+        versionName '1.002'
         multiDexEnabled true
         resConfigs "zh"
 
@@ -89,4 +89,6 @@ dependencies {
     compile files('libs/org.apache.http.legacy.jar')
     compile project(':easeui-release_3.1.5')
     compile 'com.makeramen:roundedimageview:2.2.1'
+    compile files('libs/volley-1.0.19.jar')
+    compile 'ren.qinc.numberbutton:numberbutton:0.0.1'
 }

@@ -3,14 +3,12 @@ package com.chinalooke.android.cheju.activity;
 import android.app.ProgressDialog;
 import android.content.Context;
 import android.content.DialogInterface;
+import android.content.Intent;
 import android.graphics.Bitmap;
 import android.graphics.Paint;
 import android.graphics.PixelFormat;
 import android.os.Bundle;
-import android.os.Handler;
-import android.os.Message;
 import android.support.v7.app.AppCompatActivity;
-import android.util.Log;
 import android.view.Gravity;
 import android.view.LayoutInflater;
 import android.view.View;
@@ -20,33 +18,33 @@ import android.widget.LinearLayout;
 import android.widget.TextView;
 import android.widget.Toast;
 
+import com.android.volley.RequestQueue;
+import com.android.volley.Response;
+import com.android.volley.VolleyError;
+import com.android.volley.toolbox.ImageRequest;
+import com.android.volley.toolbox.Volley;
 import com.avos.avoscloud.AVException;
 import com.avos.avoscloud.AVObject;
 import com.avos.avoscloud.AVQuery;
 import com.avos.avoscloud.AVRelation;
 import com.avos.avoscloud.AVUser;
 import com.avos.avoscloud.FindCallback;
+import com.avos.avoscloud.GetCallback;
 import com.avos.avoscloud.SaveCallback;
 import com.chinalooke.android.cheju.R;
-import com.chinalooke.android.cheju.bean.Goods;
 import com.chinalooke.android.cheju.utills.MyUtills;
 import com.chinalooke.android.cheju.utills.NetUtil;
 import com.chinalooke.android.cheju.view.MyScrollView;
 import com.squareup.picasso.Picasso;
 
-import org.json.JSONArray;
-import org.json.JSONException;
-import org.json.JSONObject;
-
-import java.text.NumberFormat;
 import java.util.ArrayList;
+import java.util.Date;
 import java.util.List;
 
 import butterknife.Bind;
 import butterknife.ButterKnife;
 import butterknife.OnClick;
 import cn.bingoogolapple.bgabanner.BGABanner;
-import cn.bingoogolapple.qrcode.zxing.QRCodeEncoder;
 
 public class GodsActivity extends AppCompatActivity implements MyScrollView.OnScrollListener {
 
@@ -79,8 +77,8 @@ public class GodsActivity extends AppCompatActivity implements MyScrollView.OnSc
     TextView mTvGoodsDescript;
     @Bind(R.id.tv_gods_score)
     TextView mTvGodsScore;
-    @Bind(R.id.iv_qcord)
-    ImageView mIvQcord;
+    @Bind(R.id.iv_qrcode)
+    ImageView mIvQrcode;
 
 
     private int screenWidth;
@@ -96,6 +94,8 @@ public class GodsActivity extends AppCompatActivity implements MyScrollView.OnSc
     private Toast mToast;
     private ProgressDialog mProgressDialog;
     private AVObject mGood;
+    private AVUser mCurrentUser;
+    private String mShopId;
 
     @Override
     protected void onCreate(Bundle savedInstanceState) {
@@ -106,6 +106,7 @@ public class GodsActivity extends AppCompatActivity implements MyScrollView.OnSc
         mWindowManager = (WindowManager) getSystemService(Context.WINDOW_SERVICE);
         screenWidth = mWindowManager.getDefaultDisplay().getWidth();
         mBuyLayout = (LinearLayout) findViewById(R.id.buy);
+        mCurrentUser = AVUser.getCurrentUser();
         initData();
         initView();
         initEvent();
@@ -133,6 +134,7 @@ public class GodsActivity extends AppCompatActivity implements MyScrollView.OnSc
     }
 
     private void initData() {
+        mShopId = getIntent().getStringExtra("shopid");
         mGood = getIntent().getParcelableExtra("goods");
         AVRelation<AVObject> images = mGood.getRelation("images");
         AVQuery<AVObject> query = images.getQuery();
@@ -211,76 +213,28 @@ public class GodsActivity extends AppCompatActivity implements MyScrollView.OnSc
         }
     }
 
-    @OnClick(R.id.btn_buy)
-    public void onClick() {
-        MyUtills.showSingerDialog(this, "提示", "确定购买吗?", new DialogInterface.OnClickListener() {
-            @Override
-            public void onClick(DialogInterface dialog, int which) {
-                dialog.dismiss();
-                if (NetUtil.is_Network_Available(getApplicationContext())) {
-                    mProgressDialog = MyUtills.initDialog("购买中...", GodsActivity.this);
-                    mProgressDialog.show();
-                    saveLeanCloud();
-                } else {
-                    mToast.setText("网络不可用，请检查网络连接");
-                    mToast.show();
-                }
+    @OnClick({R.id.btn_buy, R.id.iv_wirte_back})
+    public void onClick(View view) {
+        switch (view.getId()) {
+            case R.id.btn_buy:
+                Intent intent = new Intent(GodsActivity.this, GoodsCountActivity.class);
+                intent.putExtra("shopid", mShopId);
+                Bundle bundle = new Bundle();
+                bundle.putParcelable("goods", mGood);
+                intent.putExtras(bundle);
+                startActivity(intent);
+                break;
 
-            }
-        }, new DialogInterface.OnClickListener() {
-            @Override
-            public void onClick(DialogInterface dialog, int which) {
-                dialog.dismiss();
-            }
-        });
-
-    }
-
-    private void saveLeanCloud() {
-        Number oldScore = AVUser.getCurrentUser().getNumber("score");
-        int i = oldScore.intValue();
-
-        int i2 = Integer.parseInt(mGood.getString("score"));
-
-        if (i < i2) {
-            mToast.setText("对不起，积分余额不足");
-            mToast.show();
-            mProgressDialog.dismiss();
-        } else {
-            int i1 = i - Integer.parseInt(mGood.getString("score"));
-            AVUser.getCurrentUser().put("score", i1);
-            AVUser.getCurrentUser().saveInBackground(new SaveCallback() {
-                @Override
-                public void done(AVException e) {
-                    mProgressDialog.dismiss();
-                    if (e == null) {
-                        createQRcard();
-                    } else {
-                        mToast.setText("购买失败，请重试");
-                        mToast.show();
-                    }
-                }
-            });
+            case R.id.iv_wirte_back:
+                finish();
+                break;
         }
 
+
     }
 
-    private void createQRcard() {
-        mIvQcord.setVisibility(View.VISIBLE);
-        new Thread(new Runnable() {
-            @Override
-            public void run() {
-                final Bitmap bitmap = QRCodeEncoder.syncEncodeQRCode(mGood.getString("name") + ":" + mGood.getString("score"),
-                        MyUtills.Dp2Px(getApplicationContext(), 300));
-                runOnUiThread(new Runnable() {
-                    @Override
-                    public void run() {
-                        mIvQcord.setImageBitmap(bitmap);
-                        mToast.setText("购买成功，二维码可在我的优惠劵中查看");
-                        mToast.show();
-                    }
-                });
-            }
-        }).start();
-    }
+
+
+
+
 }

@@ -9,6 +9,7 @@ public class Constant {
     public static final int REQUSET = 0;
 
     public static final String START_LOCATION = "start_location";
+    public static final String qrCode = "http://api.k780.com:88/?app=qr.get&data=?&level=L&size=6";
 
     public static final String BUSINESS = "商家";
     public static final String SALESMAN = "业务员";

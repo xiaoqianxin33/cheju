@@ -10,10 +10,11 @@
     tools:context="com.chinalooke.android.cheju.activity.GodsActivity">
 
     <ImageView
-        android:id="@+id/iv_qcord"
+        android:id="@+id/iv_qrcode"
         android:layout_width="match_parent"
         android:layout_height="match_parent"
-        android:visibility="gone"/>
+        android:visibility="gone"
+        />
 
 
     <RelativeLayout

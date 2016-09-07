@@ -239,6 +239,17 @@
             android:text="确认收货"
             android:textColor="@android:color/white"
             android:textSize="14sp"/>
+
+        <Button
+            android:id="@+id/btn_refund"
+            android:layout_width="100dp"
+            android:layout_height="32dp"
+            android:layout_alignBottom="@+id/btn_take_goods"
+            android:layout_centerHorizontal="true"
+            android:background="@drawable/fund_shape"
+            android:text="申请退款"
+            android:textColor="@android:color/holo_red_light"
+            android:textSize="14sp"/>
     </RelativeLayout>
 
 
