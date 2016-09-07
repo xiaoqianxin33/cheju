@@ -205,6 +205,8 @@
         </activity>
         <activity android:name=".activity.GoodsCountActivity">
         </activity>
+        <activity android:name=".activity.QRCodeActivity">
+        </activity>
     </application>
 
 </manifest>

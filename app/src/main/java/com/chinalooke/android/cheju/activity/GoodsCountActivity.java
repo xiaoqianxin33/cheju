@@ -173,7 +173,7 @@ public class GoodsCountActivity extends AppCompatActivity {
                 @Override
                 public void done(AVException e) {
                     if (e == null) {
-                        String message = mCurrentUser.getObjectId() + ":" + mShopId + ":" + mGoods.getObjectId()
+                        String message = mCurrentUser.getObjectId() + ":" + mGoods.getObjectId()
                                 + ":" + mCount + ":" + mPrice;
                         creatOrder(message);
                     } else {
@@ -195,6 +195,7 @@ public class GoodsCountActivity extends AppCompatActivity {
         order.put("price", mPrice);
         order.put("count", mCount);
         order.put("statu", 2);
+        order.put("type", 1);
         RequestQueue mQueue = Volley.newRequestQueue(getApplicationContext());
         ImageRequest imageRequest = new ImageRequest(
                 "http://api.k780.com:88/?app=qr.get&data=" + message + "&level=L&size=6",
