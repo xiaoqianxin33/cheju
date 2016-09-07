@@ -11,7 +11,8 @@
     <ImageView
         android:id="@+id/iv_qcord"
         android:layout_width="match_parent"
-        android:layout_height="match_parent"/>
+        android:layout_height="match_parent"
+        android:visibility="gone"/>
 
     <RelativeLayout
         android:layout_width="match_parent"
@@ -103,7 +104,7 @@
             android:textColor="@android:color/black"
             android:textSize="14sp"/>
 
-        <ren.qinc.numberbutton.NumberButton
+        <com.chinalooke.android.cheju.view.NumberButton
             android:id="@+id/nbtn"
             android:layout_width="0dp"
             android:layout_height="match_parent"

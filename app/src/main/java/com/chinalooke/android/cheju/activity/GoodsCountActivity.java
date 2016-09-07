@@ -6,6 +6,9 @@ import android.content.Intent;
 import android.graphics.Bitmap;
 import android.os.Bundle;
 import android.support.v7.app.AppCompatActivity;
+import android.text.Editable;
+import android.text.TextWatcher;
+import android.util.Log;
 import android.view.View;
 import android.widget.Button;
 import android.widget.ImageView;
@@ -42,7 +45,7 @@ public class GoodsCountActivity extends AppCompatActivity {
     @Bind(R.id.tv_count)
     TextView mTvCount;
     @Bind(R.id.nbtn)
-    NumberButton mNbtn;
+    com.chinalooke.android.cheju.view.NumberButton mNbtn;
     @Bind(R.id.tv_count_price)
     TextView mTvCountPrice;
     @Bind(R.id.iv_qcord)
@@ -73,26 +76,30 @@ public class GoodsCountActivity extends AppCompatActivity {
     private void initEvent() {
         mNbtn.setBuyMax(5)
                 .setInventory(6)
-                .setCurrentNumber(10)
-                .setOnWarnListener(new NumberButton.OnWarnListener() {
+                .setCurrentNumber(1)
+                .setTextWatch(new TextWatcher() {
                     @Override
-                    public void onWarningForInventory(int inventory) {
-                        mCount = inventory;
-                        mTvCountPrice.setText("消耗积分:" + mUnitPrice * inventory);
-                        mPrice = mUnitPrice * inventory;
+                    public void beforeTextChanged(CharSequence s, int start, int count, int after) {
+
                     }
 
                     @Override
-                    public void onWarningForBuyMax(int buyMax) {
-                        mToast.setText("超过最大购买数:" + buyMax);
-                        mToast.show();
+                    public void onTextChanged(CharSequence s, int start, int before, int count) {
+
+                    }
+
+                    @Override
+                    public void afterTextChanged(Editable s) {
+                        mCount = Integer.parseInt(s.toString());
+                        mPrice = mCount * mUnitPrice;
+                        mTvCountPrice.setText("消耗积分:" + mPrice);
                     }
                 });
 
     }
 
     private void initView() {
-        mTvGoodsName.setText(mGoods.getString("title"));
+        mTvGoodsName.setText(mGoods.getString("name"));
         mTvGoodsPrice.setText("消耗积分:" + mGoods.getString("score"));
         mTvCountPrice.setText("消耗积分:" + mGoods.getString("score"));
     }
@@ -115,9 +122,6 @@ public class GoodsCountActivity extends AppCompatActivity {
                     @Override
                     public void onClick(DialogInterface dialog, int which) {
                         dialog.dismiss();
-                        Intent intent = new Intent();
-
-
                         if (NetUtil.is_Network_Available(getApplicationContext())) {
                             mProgressDialog = MyUtills.initDialog("购买中...", GoodsCountActivity.this);
                             mProgressDialog.show();
@@ -184,12 +188,13 @@ public class GoodsCountActivity extends AppCompatActivity {
     }
 
     private void creatOrder(String message) {
-        final AVObject order = new AVObject("order");
+        final AVObject order = new AVObject("Order");
         order.put("userId", mCurrentUser.getObjectId());
         order.put("addDate", new Date());
         order.put("goodsId", mGoods.getObjectId());
         order.put("price", mPrice);
-        order.put("status", 2);
+        order.put("count", mCount);
+        order.put("statu", 2);
         RequestQueue mQueue = Volley.newRequestQueue(getApplicationContext());
         ImageRequest imageRequest = new ImageRequest(
                 "http://api.k780.com:88/?app=qr.get&data=" + message + "&level=L&size=6",

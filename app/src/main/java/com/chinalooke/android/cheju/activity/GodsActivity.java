@@ -233,8 +233,4 @@ public class GodsActivity extends AppCompatActivity implements MyScrollView.OnSc
 
     }
 
-
-
-
-
 }
