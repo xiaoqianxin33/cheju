@@ -9,6 +9,7 @@ import android.os.Parcelable;
 import android.support.v4.widget.SwipeRefreshLayout;
 import android.support.v7.app.AppCompatActivity;
 import android.text.TextUtils;
+import android.util.Log;
 import android.view.View;
 import android.view.ViewGroup;
 import android.widget.AbsListView;
@@ -38,7 +39,6 @@ import com.chinalooke.android.cheju.utills.PreferenceUtils;
 import com.makeramen.roundedimageview.RoundedImageView;
 import com.squareup.picasso.Picasso;
 
-import java.io.Serializable;
 import java.text.DecimalFormat;
 import java.util.ArrayList;
 import java.util.Date;
@@ -74,7 +74,6 @@ public class YouhuiJuanActivity extends AppCompatActivity implements AMapLocatio
             super.handleMessage(msg);
             if (msg.what == 1) {
                 mNearbyShops.clear();
-
             }
         }
     };
@@ -239,11 +238,9 @@ public class YouhuiJuanActivity extends AppCompatActivity implements AMapLocatio
 
     }
 
+
     @Override
     public void onItemClick(AdapterView<?> parent, View view, int position, long id) {
-
-        mProgressDialog = MyUtills.initDialog("加载中", YouhuiJuanActivity.this);
-        mProgressDialog.show();
 
         AVObject avObject = mNearbyShops.get(position);
 
@@ -252,32 +249,16 @@ public class YouhuiJuanActivity extends AppCompatActivity implements AMapLocatio
         int[] startingLocation = new int[2];
         view.getLocationOnScreen(startingLocation);
         startingLocation[0] += view.getWidth() / 2;
-
         intent.putExtra(Constant.START_LOCATION, startingLocation);
-
-        AVRelation<AVObject> goods = avObject.getRelation("goods");
-        AVQuery<AVObject> query = goods.getQuery();
-        query.findInBackground(new FindCallback<AVObject>() {
-            @Override
-            public void done(List<AVObject> list, AVException e) {
-                mProgressDialog.dismiss();
-                if (e == null) {
-                    good = list;
-                } else {
-                    mToast.setText("该商家暂未上架产品");
-                    mToast.show();
-                }
-            }
-        });
         String shopGoods = avObject.getString("ShopGoods");
         BusinessShop businessShop = new BusinessShop();
         businessShop.setShopName(avObject.getString("ShopName"));
         businessShop.setShopPhone(avObject.getString("ShopPhone"));
-        businessShop.setExpire(avObject.getDate("expire").toString());
+        if (avObject.getDate("expire") != null)
+            businessShop.setExpire(avObject.getDate("expire").toString());
         businessShop.setShopAddress(avObject.getString("ShopAddress"));
         Bundle bundle = new Bundle();
         bundle.putSerializable("shop", businessShop);
-        bundle.putParcelableArrayList("goods", (ArrayList<? extends Parcelable>) good);
         bundle.putParcelable("Shop", avObject);
         intent.putExtras(bundle);
         intent.putExtra("shopGoods", shopGoods);
@@ -375,9 +356,6 @@ public class YouhuiJuanActivity extends AppCompatActivity implements AMapLocatio
             mLocationClient.stopLocation();
             mLocationClient.onDestroy();
         }
-        if (mNearbyShops != null) {
-            mNearbyShops.clear();
-        }
     }
 
 
@@ -403,10 +381,4 @@ public class YouhuiJuanActivity extends AppCompatActivity implements AMapLocatio
 
     }
 
-
-    @Override
-    protected void onPause() {
-        super.onPause();
-        mNearbyShops.clear();
-    }
 }

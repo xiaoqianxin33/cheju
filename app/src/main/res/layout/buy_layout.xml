@@ -48,14 +48,14 @@
         android:id="@+id/btn_buy"
         android:layout_width="0dp"
         android:layout_height="match_parent"
-        android:layout_marginBottom="8dp"
+        android:layout_marginBottom="10dp"
         android:layout_marginRight="16dp"
-        android:layout_marginTop="8dp"
+        android:layout_marginTop="10dp"
         android:layout_weight="1"
         android:background="@drawable/shape"
         android:text="立即购买"
         android:textColor="@android:color/white"
-        android:textSize="18sp"/>
+        android:textSize="16sp"/>
 
 
 </LinearLayout>

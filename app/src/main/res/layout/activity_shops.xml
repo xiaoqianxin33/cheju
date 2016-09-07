@@ -131,20 +131,43 @@
             <TextView
                 style="@style/linestyle"/>
 
-
-            <com.chinalooke.android.cheju.view.SyListView
-                android:id="@+id/lv_gods"
+            <FrameLayout
                 android:layout_width="match_parent"
                 android:layout_height="wrap_content"
-                android:background="@null"
                 android:layout_marginTop="16dp">
-            </com.chinalooke.android.cheju.view.SyListView>
+
+                <com.chinalooke.android.cheju.view.SyListView
+                    android:id="@+id/lv_gods"
+                    android:layout_width="match_parent"
+                    android:layout_height="wrap_content"
+                    android:background="@null"
+                    android:divider="@color/divid"
+                    android:dividerHeight="1dp"
+                    />
+
+                <ProgressBar
+                    android:id="@+id/pb_load"
+                    android:layout_width="50dp"
+                    android:layout_height="50dp"
+                    android:layout_gravity="center"
+                    android:indeterminateDrawable="@drawable/progressbar"/>
+
+                <TextView
+                    android:id="@+id/tv_nogoods"
+                    android:layout_width="match_parent"
+                    android:layout_height="50dp"
+                    android:layout_gravity="center"
+                    android:gravity="center"
+                    android:text="该商家尚未上架商品"
+                    android:textSize="14sp"/>
+            </FrameLayout>
+
 
             <TextView
                 android:id="@+id/tv_line"
                 android:layout_width="match_parent"
                 android:layout_height="1dp"
-                android:background="#ADA9A4"
+                android:background="@color/divid"
                 android:visibility="gone"/>
 
 

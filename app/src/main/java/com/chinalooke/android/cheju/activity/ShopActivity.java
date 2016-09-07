@@ -8,14 +8,12 @@ import android.graphics.Paint;
 import android.net.Uri;
 import android.os.Build;
 import android.os.Bundle;
-import android.os.Handler;
-import android.os.Message;
 import android.support.design.widget.AppBarLayout;
 import android.support.design.widget.CollapsingToolbarLayout;
 import android.support.design.widget.CoordinatorLayout;
 import android.support.v7.app.AppCompatActivity;
 import android.support.v7.widget.Toolbar;
-import android.text.TextUtils;
+import android.util.Log;
 import android.view.View;
 import android.view.ViewGroup;
 import android.view.ViewTreeObserver;
@@ -25,11 +23,12 @@ import android.widget.AdapterView;
 import android.widget.BaseAdapter;
 import android.widget.ImageView;
 import android.widget.ListView;
+import android.widget.ProgressBar;
 import android.widget.RelativeLayout;
 import android.widget.TextView;
+import android.widget.Toast;
 
 import com.avos.avoscloud.AVException;
-import com.avos.avoscloud.AVFile;
 import com.avos.avoscloud.AVObject;
 import com.avos.avoscloud.AVQuery;
 import com.avos.avoscloud.AVRelation;
@@ -39,13 +38,12 @@ import com.chinalooke.android.cheju.bean.BusinessShop;
 import com.chinalooke.android.cheju.bean.Goods;
 import com.chinalooke.android.cheju.constant.Constant;
 import com.chinalooke.android.cheju.utills.MyUtills;
+import com.chinalooke.android.cheju.utills.NetUtil;
 import com.chinalooke.android.cheju.view.RevealBackgroundView;
 import com.chinalooke.android.cheju.view.SquaredImageView;
 import com.squareup.picasso.Picasso;
 
 import org.json.JSONArray;
-import org.json.JSONException;
-import org.json.JSONObject;
 
 import java.util.ArrayList;
 import java.util.HashMap;
@@ -76,6 +74,10 @@ public class ShopActivity extends AppCompatActivity implements RevealBackgroundV
     CoordinatorLayout mCoordinatorLayout;
     @Bind(R.id.iv)
     ImageView mIv;
+    @Bind(R.id.tv_nogoods)
+    TextView mTvNoGoods;
+    @Bind(R.id.pb_load)
+    ProgressBar mPb;
     @Bind(R.id.rl_phone)
     RelativeLayout mRlPhone;
     private HashMap<AVObject, String> mAVObjectStringHashMap = new HashMap<>();
@@ -84,31 +86,13 @@ public class ShopActivity extends AppCompatActivity implements RevealBackgroundV
     private List<AVObject> mGod = new ArrayList<>();
     private BusinessShop mShop;
     private ArrayList<String> mStrings = new ArrayList<>();
-    Handler mHandler = new Handler() {
-        @Override
-        public void handleMessage(Message msg) {
-            switch (msg.what) {
-                case 1:
-                    initView();
-                    break;
-                case 2:
-                    mDialog.dismiss();
-                    break;
 
-            }
-
-        }
-    };
     private Dialog mDialog;
     private Goods mGoods;
     private AVObject mAvObject;
     private AVObject mShop1;
-
-    private void initProDialog() {
-        mDialog = new Dialog(this, R.style.LodingDialog);
-        mDialog.setContentView(R.layout.dialog_loading);
-        mDialog.show();
-    }
+    private MyAdapt mMyAdapt;
+    private Toast mToast;
 
 
     @Override
@@ -116,7 +100,7 @@ public class ShopActivity extends AppCompatActivity implements RevealBackgroundV
         super.onCreate(savedInstanceState);
         setContentView(R.layout.activity_shops);
         ButterKnife.bind(this);
-        initProDialog();
+        mToast = Toast.makeText(getApplicationContext(), "", Toast.LENGTH_SHORT);
         mAppBarLayout.setVisibility(View.INVISIBLE);
         setSupportActionBar(mToolbar);
         getSupportActionBar().setDisplayHomeAsUpEnabled(true);
@@ -131,7 +115,9 @@ public class ShopActivity extends AppCompatActivity implements RevealBackgroundV
         setStatusBarColor(getResources().getColor(R.color.light_toolbar));
         setupRevealBackground(savedInstanceState);
         mGoods = new Goods();
+        mTvNoGoods.setVisibility(View.GONE);
         initData();
+        initView();
     }
 
     private void setupRevealBackground(Bundle savedInstanceState) {
@@ -156,9 +142,9 @@ public class ShopActivity extends AppCompatActivity implements RevealBackgroundV
         mTvShopName.setText(mShop.getShopName());
         mTvShopAddress.setText(mShop.getShopAddress());
         mCollapsingToolbarLayout.setTitle(mShop.getShopName());
-        mLvGods.setAdapter(new MyAdapt());
+        mMyAdapt = new MyAdapt();
+        mLvGods.setAdapter(mMyAdapt);
         mLvGods.setOnItemClickListener(this);
-
         Picasso.with(this).load(mShop1.getAVFile("images").getUrl())
                 .resize(MyUtills.Dp2Px(this, 200), MyUtills.Dp2Px(this, 200)).centerCrop().into(mIv);
     }
@@ -178,7 +164,7 @@ public class ShopActivity extends AppCompatActivity implements RevealBackgroundV
 
         @Override
         public int getCount() {
-            return mGod.size();
+            return mGood.size();
         }
 
         @Override
@@ -211,18 +197,19 @@ public class ShopActivity extends AppCompatActivity implements RevealBackgroundV
 
     private void setDetails(final ViewHolder viewHolder, int positon) {
         final AVObject avObject = mGood.get(positon);
-        final String s = mAVObjectStringHashMap.get(avObject);
         AVRelation<AVObject> images = avObject.getRelation("images");
         AVQuery<AVObject> query = images.getQuery();
         query.findInBackground(new FindCallback<AVObject>() {
             @Override
             public void done(List<AVObject> list, AVException e) {
                 if (e == null) {
-                    AVObject avObject1 = list.get(0);
-                    String url = avObject1.getString("url");
-                    Picasso.with(ShopActivity.this).load(url).resize(
-                            MyUtills.Dp2Px(getApplicationContext(), 100), MyUtills.Dp2Px(getApplicationContext(), 100)
-                    ).centerCrop().into(viewHolder.mIvGods);
+                    if (list.size() != 0) {
+                        AVObject avObject1 = list.get(0);
+                        String url = avObject1.getString("url");
+                        Picasso.with(ShopActivity.this).load(url).resize(
+                                MyUtills.Dp2Px(getApplicationContext(), 100), MyUtills.Dp2Px(getApplicationContext(), 100)
+                        ).centerCrop().into(viewHolder.mIvGods);
+                    }
                 }
             }
         });
@@ -232,9 +219,6 @@ public class ShopActivity extends AppCompatActivity implements RevealBackgroundV
         viewHolder.mTvPrice.setText("¥" + avObject.getString("price"));
         viewHolder.mTvSales.setText("已售" + avObject.getString("sales"));
         viewHolder.mTvPrice.getPaint().setFlags(Paint.STRIKE_THRU_TEXT_FLAG);
-        if (positon == mGod.size() - 1) {
-            mHandler.sendEmptyMessage(2);
-        }
     }
 
 
@@ -258,10 +242,29 @@ public class ShopActivity extends AppCompatActivity implements RevealBackgroundV
     }
 
     private void initData() {
-        mGood = getIntent().getParcelableArrayListExtra("goods");
-        mShop = (BusinessShop) getIntent().getSerializableExtra("shop");
         mShop1 = getIntent().getParcelableExtra("Shop");
-
+        if (NetUtil.is_Network_Available(getApplicationContext())) {
+            AVRelation<AVObject> goods = mShop1.getRelation("goods");
+            AVQuery<AVObject> query = goods.getQuery();
+            query.findInBackground(new FindCallback<AVObject>() {
+                @Override
+                public void done(List<AVObject> list, AVException e) {
+                    mPb.setVisibility(View.GONE);
+                    if (e == null) {
+                        mGood = list;
+                        if (list.size() == 0) {
+                            mTvNoGoods.setVisibility(View.VISIBLE);
+                        }
+                        if (mMyAdapt != null)
+                            mMyAdapt.notifyDataSetChanged();
+                    }
+                }
+            });
+        } else {
+            mToast.setText("网络不可用，请检查网络连接");
+            mToast.show();
+        }
+        mShop = (BusinessShop) getIntent().getSerializableExtra("shop");
     }
 
 

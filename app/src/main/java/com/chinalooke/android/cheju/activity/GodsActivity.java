@@ -91,25 +91,7 @@ public class GodsActivity extends AppCompatActivity implements MyScrollView.OnSc
     private int buyLayoutTop;
     private WindowManager mWindowManager;
     private LinearLayout mBuyLayout;
-    private Goods mGoods;
-    private List<String> mImages = new ArrayList<>();
 
-
-    Handler mHandler = new Handler() {
-
-
-        @Override
-        public void handleMessage(Message msg) {
-            switch (msg.what) {
-                case 1:
-                    initView();
-                    initEvent();
-                    break;
-
-            }
-
-        }
-    };
     private List<View> mAdList = new ArrayList<>();
     private Toast mToast;
     private ProgressDialog mProgressDialog;
@@ -125,6 +107,8 @@ public class GodsActivity extends AppCompatActivity implements MyScrollView.OnSc
         screenWidth = mWindowManager.getDefaultDisplay().getWidth();
         mBuyLayout = (LinearLayout) findViewById(R.id.buy);
         initData();
+        initView();
+        initEvent();
     }
 
     private void initView() {
@@ -176,8 +160,6 @@ public class GodsActivity extends AppCompatActivity implements MyScrollView.OnSc
 
     private void initEvent() {
         mScrollView.setOnScrollListener(this);
-
-
     }
 
     @Override
@@ -258,16 +240,14 @@ public class GodsActivity extends AppCompatActivity implements MyScrollView.OnSc
         Number oldScore = AVUser.getCurrentUser().getNumber("score");
         int i = oldScore.intValue();
 
-        int i2 = Integer.parseInt(mGoods.getScore());
-
-        Log.e("TAG", oldScore + "");
+        int i2 = Integer.parseInt(mGood.getString("score"));
 
         if (i < i2) {
             mToast.setText("对不起，积分余额不足");
             mToast.show();
             mProgressDialog.dismiss();
         } else {
-            int i1 = i - Integer.parseInt(mGoods.getScore());
+            int i1 = i - Integer.parseInt(mGood.getString("score"));
             AVUser.getCurrentUser().put("score", i1);
             AVUser.getCurrentUser().saveInBackground(new SaveCallback() {
                 @Override
@@ -290,7 +270,7 @@ public class GodsActivity extends AppCompatActivity implements MyScrollView.OnSc
         new Thread(new Runnable() {
             @Override
             public void run() {
-                final Bitmap bitmap = QRCodeEncoder.syncEncodeQRCode(mGoods.getTitle() + ":" + mGoods.getScore(),
+                final Bitmap bitmap = QRCodeEncoder.syncEncodeQRCode(mGood.getString("name") + ":" + mGood.getString("score"),
                         MyUtills.Dp2Px(getApplicationContext(), 300));
                 runOnUiThread(new Runnable() {
                     @Override
