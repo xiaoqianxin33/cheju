@@ -322,7 +322,7 @@ public class YouhuiJuanActivity extends AppCompatActivity implements AMapLocatio
         AVFile images = avObject.getAVFile("images");
         if (images != null)
             Picasso.with(getApplicationContext()).load(images.getUrl()).resize(MyUtills.Dp2Px(getApplicationContext(), 54),
-                    MyUtills.Dp2Px(getApplicationContext(), 54)).centerCrop().into(viewHolder.mIvShop);
+                    MyUtills.Dp2Px(getApplicationContext(), 54)).centerCrop().placeholder(R.mipmap.placeholder).into(viewHolder.mIvShop);
         viewHolder.mTvShopnameYouhui.setText(avObject.getString("ShopName"));
         viewHolder.mTvDiscountYouhui.setText("<" + mDecimalFormat.format(avObject.getAVGeoPoint("location").distanceInMilesTo(mPoint)) + "m");
         viewHolder.mTvLocationYouhuiListview.setText(avObject.getString("ShopAddress"));

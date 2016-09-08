@@ -13,7 +13,6 @@ import android.support.design.widget.CollapsingToolbarLayout;
 import android.support.design.widget.CoordinatorLayout;
 import android.support.v7.app.AppCompatActivity;
 import android.support.v7.widget.Toolbar;
-import android.util.Log;
 import android.view.View;
 import android.view.ViewGroup;
 import android.view.ViewTreeObserver;
@@ -40,7 +39,6 @@ import com.chinalooke.android.cheju.constant.Constant;
 import com.chinalooke.android.cheju.utills.MyUtills;
 import com.chinalooke.android.cheju.utills.NetUtil;
 import com.chinalooke.android.cheju.view.RevealBackgroundView;
-import com.chinalooke.android.cheju.view.SquaredImageView;
 import com.squareup.picasso.Picasso;
 
 import org.json.JSONArray;
@@ -146,7 +144,8 @@ public class ShopActivity extends AppCompatActivity implements RevealBackgroundV
         mLvGods.setAdapter(mMyAdapt);
         mLvGods.setOnItemClickListener(this);
         Picasso.with(this).load(mShop1.getAVFile("images").getUrl())
-                .resize(MyUtills.Dp2Px(this, 200), MyUtills.Dp2Px(this, 200)).centerCrop().into(mIv);
+                .resize(MyUtills.Dp2Px(this, 200), MyUtills.Dp2Px(this, 200)).centerCrop()
+                .placeholder(R.mipmap.placeholder).into(mIv);
     }
 
     @Override
@@ -209,7 +208,7 @@ public class ShopActivity extends AppCompatActivity implements RevealBackgroundV
                         String url = avObject1.getString("url");
                         Picasso.with(ShopActivity.this).load(url).resize(
                                 MyUtills.Dp2Px(getApplicationContext(), 100), MyUtills.Dp2Px(getApplicationContext(), 100)
-                        ).centerCrop().into(viewHolder.mIvGods);
+                        ).centerCrop().placeholder(R.mipmap.placeholder).into(viewHolder.mIvGods);
                     }
                 }
             }

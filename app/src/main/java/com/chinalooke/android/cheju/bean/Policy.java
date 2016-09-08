@@ -19,7 +19,7 @@ public class Policy implements Serializable {
     private String brand;
     private String policyDate;
     private String price;
-    private int type;
+    private String type;
     private String objectId;
     private String userid;
     private String company;
@@ -78,11 +78,11 @@ public class Policy implements Serializable {
         this.userid = userid;
     }
 
-    public int getType() {
+    public String getType() {
         return type;
     }
 
-    public void setType(int type) {
+    public void setType(String type) {
         this.type = type;
     }
 
@@ -94,7 +94,7 @@ public class Policy implements Serializable {
         this.objectId = objectId;
     }
 
-    private int status;
+    private String status;
 
     public String getPrice() {
         return price;
@@ -194,11 +194,11 @@ public class Policy implements Serializable {
         this.policyDate = policyDate;
     }
 
-    public int getStatus() {
+    public String getStatus() {
         return status;
     }
 
-    public void setStatus(int status) {
+    public void setStatus(String status) {
         this.status = status;
     }
 

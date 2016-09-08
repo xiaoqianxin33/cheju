@@ -6,6 +6,8 @@ import android.content.Intent;
 import android.os.Bundle;
 import android.support.v4.app.Fragment;
 import android.support.v4.widget.SwipeRefreshLayout;
+import android.text.TextUtils;
+import android.util.Log;
 import android.view.LayoutInflater;
 import android.view.View;
 import android.view.ViewGroup;
@@ -34,6 +36,7 @@ import com.chinalooke.android.cheju.utills.NetUtil;
 import com.chinalooke.android.cheju.utills.StringUtils;
 
 import java.util.ArrayList;
+import java.util.Date;
 import java.util.List;
 
 import butterknife.Bind;
@@ -64,10 +67,6 @@ public class CarOrderFragment extends Fragment implements AdapterView.OnItemClic
     private AVObject mOrder;
     private Toast mToast;
 
-    public CarOrderFragment() {
-        // Required empty public constructor
-    }
-
 
     @Override
     public View onCreateView(LayoutInflater inflater, ViewGroup container,
@@ -85,7 +84,6 @@ public class CarOrderFragment extends Fragment implements AdapterView.OnItemClic
     @Override
     public void onActivityCreated(Bundle savedInstanceState) {
         super.onActivityCreated(savedInstanceState);
-        initData();
         initEvent();
     }
 
@@ -100,8 +98,8 @@ public class CarOrderFragment extends Fragment implements AdapterView.OnItemClic
             @Override
             public void onRefresh() {
                 mSkip = 0;
+                mPolicys.clear();
                 initData();
-                mMyOrderAdapt.notifyDataSetChanged();
                 mSr.setRefreshing(false);
             }
         });
@@ -120,6 +118,7 @@ public class CarOrderFragment extends Fragment implements AdapterView.OnItemClic
                 }
 
                 if (firstVisibleItem + visibleItemCount == totalItemCount && !isLoading) {
+                    Log.e("TAG", "3");
                     loadMore();
                 }
             }
@@ -128,19 +127,18 @@ public class CarOrderFragment extends Fragment implements AdapterView.OnItemClic
 
 
     private void loadMore() {
-        if (mSkip != 0) {
-            initData();
-        }
+        Log.e("TAG", "1");
         isLoading = true;
+        initData();
     }
 
 
     private void initData() {
+        Log.e("TAG", "2");
         if (mCurrentUser != null) {
             if (NetUtil.is_Network_Available(getActivity())) {
-
-                AVRelation<AVObject> relation = mCurrentUser.getRelation("policy");
-                AVQuery<AVObject> query = relation.getQuery();
+                AVQuery<AVObject> query = new AVQuery<>("Policy");
+                query.whereEqualTo("userId", mCurrentUser.getObjectId());
                 query.limit(10);
                 query.skip(mSkip);
                 query.findInBackground(new FindCallback<AVObject>() {
@@ -148,21 +146,17 @@ public class CarOrderFragment extends Fragment implements AdapterView.OnItemClic
                     public void done(List<AVObject> list, AVException e) {
                         mPbOrder.setVisibility(View.GONE);
                         if (e == null) {
-                            if (list == null || list.size() == 0) {
-                                if (mSkip == 0)
-                                    mTvNopolicy.setVisibility(View.VISIBLE);
-                            } else {
-                                mPolicys = list;
+                            if (list.size() != 0) {
+                                mPolicys.addAll(list);
                                 mTvNopolicy.setVisibility(View.GONE);
                                 if (mMyOrderAdapt != null)
                                     mMyOrderAdapt.notifyDataSetChanged();
                                 mSkip += 10;
                                 isLoading = false;
-                                mPbOrder.setVisibility(View.GONE);
-
+                            } else {
+                                if (mSkip == 0)
+                                    mTvNopolicy.setVisibility(View.VISIBLE);
                             }
-                        } else {
-                            mTvNopolicy.setVisibility(View.VISIBLE);
                         }
                     }
                 });
@@ -182,16 +176,16 @@ public class CarOrderFragment extends Fragment implements AdapterView.OnItemClic
     @Override
     public void onItemClick(AdapterView<?> parent, View view, int position, long id) {
         mAvObject = mPolicys.get(position);
-        int status = mAvObject.getInt("status");
+        String status = mAvObject.getString("status");
         Intent intent = new Intent();
         Bundle bundle = new Bundle();
         setDtail();
-        if (status == 0) {
+        if (status.equals("0")) {
             intent.setClass(getActivity(), WriteMessgeActivity.class);
             bundle.putSerializable("dpolicy", mPolicy);
             intent.putExtras(bundle);
             startActivity(intent);
-        } else if (status == 1) {
+        } else if (status.equals("1")) {
             intent.setClass(getActivity(), TakePhotoActivity.class);
 
             bundle.putSerializable("policy", mPolicy);
@@ -199,7 +193,7 @@ public class CarOrderFragment extends Fragment implements AdapterView.OnItemClic
             intent.putExtras(bundle);
             startActivity(intent);
 
-        } else if (status == 2 || status == 3) {
+        } else if (status.equals("2") || status.equals("3")) {
             mDialog = MyUtills.initDialog("加载中", getActivity());
             mDialog.show();
             bundle.putSerializable("policy", mPolicy);
@@ -234,11 +228,11 @@ public class CarOrderFragment extends Fragment implements AdapterView.OnItemClic
         if (mAvObject != null) {
             mPolicy.setObjectId(mAvObject.getObjectId());
             mPolicy.setCompany(mAvObject.getString("company"));
-            mPolicy.setStatus(mAvObject.getInt("status"));
-            mPolicy.setPrice(mAvObject.getNumber("price") + "");
+            mPolicy.setStatus(mAvObject.getString("status"));
+            mPolicy.setPrice(mAvObject.getString("price"));
             mPolicy.setRegDate(mAvObject.getDate("regDate"));
             mPolicy.setDetail(mAvObject.getString("detail"));
-            mPolicy.setDiscountPrice(mAvObject.getNumber("discountPrice") + "");
+            mPolicy.setDiscountPrice(mAvObject.getString("discountPrice"));
             mPolicy.setCarNo(mAvObject.getString("carNo"));
             mPolicy.setCity(mAvObject.getString("city"));
             mPolicy.setBrand(mAvObject.getString("brand"));
@@ -246,7 +240,7 @@ public class CarOrderFragment extends Fragment implements AdapterView.OnItemClic
             mPolicy.setEngine(mAvObject.getString("engine"));
             mPolicy.setFrameNo(mAvObject.getString("frameNo"));
             mPolicy.setUserName(mAvObject.getString("userName"));
-            mPolicy.setType(mAvObject.getInt("type"));
+            mPolicy.setType(mAvObject.getString("type"));
             mPolicy.setPhone(mAvObject.getString("phone"));
         }
     }
@@ -286,36 +280,46 @@ public class CarOrderFragment extends Fragment implements AdapterView.OnItemClic
 
     public void setOrderDatails(final ViewHolder viewHolder, final int positon) {
         final AVObject avObject = mPolicys.get(positon);
-        viewHolder.mTvDateOrder.setText(StringUtils.getTime(avObject.getDate("regDate")));
-        int statu = avObject.getInt("status");
-        switch (statu) {
-            case 0:
-                viewHolder.mTvStatuOrder.setText("待算价");
-                break;
-            case 1:
-                viewHolder.mTvStatuOrder.setText("已算价");
-                break;
-            case 2:
-                viewHolder.mTvStatuOrder.setText("待审核");
-                break;
-            case 3:
-                viewHolder.mTvStatuOrder.setText("已完成");
-                break;
+        Date policyDate = avObject.getDate("policyDate");
+        if (policyDate != null)
+            viewHolder.mTvDateOrder.setText(StringUtils.getTime(avObject.getDate("policyDate")));
+        String statu = avObject.getString("status");
+        if (!TextUtils.isEmpty(statu)) {
+            switch (statu) {
+                case "0":
+                    viewHolder.mTvStatuOrder.setText("待算价");
+                    break;
+                case "1":
+                    viewHolder.mTvStatuOrder.setText("已算价");
+                    break;
+                case "2":
+                    viewHolder.mTvStatuOrder.setText("已支付");
+                    break;
+                case "3":
+                    viewHolder.mTvStatuOrder.setText("已发货");
+                    break;
+                case "4":
+                    viewHolder.mTvStatuOrder.setText("已完成");
+                    break;
+                case "5":
+                    viewHolder.mTvStatuOrder.setText("退款中");
+                    break;
+                case "6":
+                    viewHolder.mTvStatuOrder.setText("已退款");
+                    break;
+            }
         }
-
         viewHolder.mTvCompanyOrder.setText(avObject.getString("company"));
-        Number price = avObject.getNumber("price");
+        String price = avObject.getString("price");
 
-        if (price == 0) {
+        if (TextUtils.isEmpty(price)) {
             viewHolder.mTvPriceOrderListview.setText("");
         } else {
-            viewHolder.mTvPriceOrderListview.setText(price + "");
+            viewHolder.mTvPriceOrderListview.setText("¥" + price);
         }
     }
 
     class ViewHolder {
-        @Bind(R.id.iv_order_chexian_listview)
-        ImageView mIvOrderChexianListview;
         @Bind(R.id.tv_company_order)
         TextView mTvCompanyOrder;
         @Bind(R.id.tv_date_order)

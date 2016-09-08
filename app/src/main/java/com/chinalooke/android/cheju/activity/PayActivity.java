@@ -155,7 +155,7 @@ public class PayActivity extends AppCompatActivity implements TimePickerView.OnT
 
             mOrder1.put("addressId", mAddress.getObjectId());
             mOrder1.put("sendDate", mDate);
-            mOrder1.put("price", Integer.parseInt(mDpolicy.getDiscountPrice()));
+            mOrder1.put("price", mDpolicy.getDiscountPrice());
             mOrder1.saveInBackground(new SaveCallback() {
                 @Override
                 public void done(AVException e) {

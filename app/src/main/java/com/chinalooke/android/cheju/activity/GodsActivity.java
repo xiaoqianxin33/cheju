@@ -147,7 +147,8 @@ public class GodsActivity extends AppCompatActivity implements MyScrollView.OnSc
                         for (AVObject avObject : list) {
                             String url = avObject.getString("url");
                             ImageView imageView = new ImageView(GodsActivity.this);
-                            Picasso.with(GodsActivity.this).load(url).resize(screenWidth, MyUtills.Dp2Px(getApplicationContext(), 160)).centerCrop().into(imageView);
+                            Picasso.with(GodsActivity.this).load(url).resize(screenWidth, MyUtills.Dp2Px(getApplicationContext(), 160)).centerCrop()
+                                    .placeholder(R.mipmap.placeholder).into(imageView);
                             mAdList.add(imageView);
                         }
                         mKannerGoods.setData(mAdList);

@@ -91,7 +91,7 @@
                     android:layout_height="match_parent"
                     android:layout_weight="1"
                     android:gravity="center_vertical|end"
-                    android:text="数量:"
+                    android:text="订单状态:"
                     android:textSize="14sp"/>
 
                 <TextView
@@ -101,7 +101,6 @@
                     android:layout_weight="2"
                     android:gravity="center_vertical"
                     android:paddingLeft="16dp"
-                    android:text="中关村"
                     android:textSize="14sp"/>
 
 
@@ -115,7 +114,8 @@
             android:id="@+id/tv_price_order_listview"
             android:layout_width="100dp"
             android:layout_height="match_parent"
-            android:gravity="center"
+            android:gravity="center_vertical|right"
+            android:paddingRight="16dp"
             android:paddingBottom="2dp"
             android:text="价格"
             android:textColor="@android:color/holo_red_light"

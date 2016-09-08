@@ -87,7 +87,7 @@ public class TakePhotoActivity extends AppCompatActivity {
         mXlvDetail.setOnItemClickListener(new AdapterView.OnItemClickListener() {
             @Override
             public void onItemClick(AdapterView<?> parent, View view, int position, long id) {
-//                MyUtills.showDialog();
+                MyUtills.showNorDialog(TakePhotoActivity.this, "", "");
             }
         });
     }
@@ -100,7 +100,6 @@ public class TakePhotoActivity extends AppCompatActivity {
         mTvPrice.setText(mPolicy.getPrice());
         mTvDiscountprice.setText(mPolicy.getDiscountPrice());
         mTvPrice.getPaint().setFlags(Paint.STRIKE_THRU_TEXT_FLAG);
-        int status = mPolicyObject.getInt("status");
     }
 
     private void initData() {
@@ -173,7 +172,6 @@ public class TakePhotoActivity extends AppCompatActivity {
             case R.id.btn_pay:
                 if (check()) {
                     Intent intent1 = new Intent(TakePhotoActivity.this, PayActivity.class);
-//                    intent1.putExtra("address", mAdress);
                     Bundle bundle1 = new Bundle();
                     bundle1.putSerializable("dpolicy", mPolicy);
                     bundle1.putSerializable("address", mAddress);
@@ -284,8 +282,9 @@ public class TakePhotoActivity extends AppCompatActivity {
 
     private void saveLeanCloud(Intent data) {
         final AVObject order = data.getParcelableExtra("order");
-        order.put("status", 2);
-        mPolicyObject.put("status", 2);
+        order.put("status", "2");
+        order.put("addressId", mAddresses.get(0).getObjectId());
+        mPolicyObject.put("status", "2");
         order.saveInBackground(new SaveCallback() {
             @Override
             public void done(AVException e) {

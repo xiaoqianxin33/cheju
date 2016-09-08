@@ -14,6 +14,7 @@ import android.widget.RadioGroup;
 import com.avos.avoscloud.AVUser;
 import com.chinalooke.android.cheju.R;
 import com.chinalooke.android.cheju.adapter.MyPagerAdapter;
+import com.chinalooke.android.cheju.db.CacheDbHelper;
 import com.chinalooke.android.cheju.fragment.OrderFragment;
 import com.chinalooke.android.cheju.fragment.ServiceFragment;
 import com.chinalooke.android.cheju.fragment.SyFragment;
@@ -44,6 +45,7 @@ public class MainActivity extends FragmentActivity {
     private FragmentManager mFragmentManager;
     private ArrayList<Fragment> mFragments = new ArrayList<>();
     private AVUser mCurrentUser;
+    private CacheDbHelper mCacheDbHelper;
 
     public AVUser getCurrentUser() {
         return mCurrentUser;
@@ -55,25 +57,16 @@ public class MainActivity extends FragmentActivity {
         setContentView(R.layout.activity_main);
         ButterKnife.bind(this);
         mCurrentUser = AVUser.getCurrentUser();
-
+        mCacheDbHelper = new CacheDbHelper(this, 1);
         setDrwableSize();
         initView();
         initEvent();
     }
 
-//    @Override
-//    protected void onre() {
-//        super.onStart();
-//        if(mCurrentUser!=null){
-//
-//            mCurrentUser.fetchIfNeededInBackground(new GetCallback<AVObject>() {
-//                @Override
-//                public void done(AVObject avObject, AVException e) {
-//
-//                }
-//            });
-//        }
-//    }
+
+    public CacheDbHelper getCacheDbHelper() {
+        return mCacheDbHelper;
+    }
 
 
     @Override
@@ -92,7 +85,7 @@ public class MainActivity extends FragmentActivity {
         mFragments.add(new OrderFragment());
         mFragments.add(new WodeFragment());
         mViewpageMain.setAdapter(new MyPagerAdapter(mFragmentManager, mFragments));
-        mViewpageMain.setOffscreenPageLimit(2);
+        mViewpageMain.setOffscreenPageLimit(1);
     }
 
 

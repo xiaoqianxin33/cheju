@@ -105,6 +105,7 @@ public class WriteCheliangFragment extends Fragment {
         View view = inflater.inflate(R.layout.fragment_write, container, false);
         ButterKnife.bind(this, view);
         mToast = Toast.makeText(getActivity(), "", Toast.LENGTH_SHORT);
+        mCurrentUser = AVUser.getCurrentUser();
         return view;
     }
 
@@ -128,10 +129,10 @@ public class WriteCheliangFragment extends Fragment {
             mTvDate.setEnabled(false);
             mTvCompany.setText(mDpolicy.getCompany());
             mTvCompany.setEnabled(false);
-            int type = mDpolicy.getType();
-            if (type == 0) {
+            String type = mDpolicy.getType();
+            if (type.equals("0")) {
                 mTvType.setText("强制险");
-            } else if (type == 1) {
+            } else if (type.equals("1")) {
                 mTvType.setText("商业险");
             }
             mTvType.setEnabled(false);
@@ -252,9 +253,9 @@ public class WriteCheliangFragment extends Fragment {
         mPolicy.setCompany(mTvCompany.getText().toString());
         String s = mTvType.getText().toString();
         if ("商业险".equals(s)) {
-            mPolicy.setType(1);
+            mPolicy.setType("1");
         } else if ("强制险".equals(s)) {
-            mPolicy.setType(0);
+            mPolicy.setType("0");
         }
         if (mDate != null) {
             mPolicy.setRegDate(mDate);
@@ -473,8 +474,7 @@ public class WriteCheliangFragment extends Fragment {
         policy.put("engine", mPolicy.getEngine());
         policy.put("brand", mPolicy.getBrand());
         policy.put("policyDate", new Date());
-        mCurrentUser = AVUser.getCurrentUser();
-        policy.put("status", 0);
+        policy.put("status", "0");
         policy.put("city", mPolicy.getCity());
         policy.put("phone", mPolicy.getPhone());
         policy.put("IDNo", mPolicy.getIdNo());
@@ -520,7 +520,8 @@ public class WriteCheliangFragment extends Fragment {
         order.put("policyId", policy.getObjectId());
         order.put("userId", mCurrentUser.getObjectId());
         order.put("addDate", new Date());
-        order.put("statu", 0);
+        order.put("status", "0");
+        order.put("type", "0");
         order.saveInBackground(new SaveCallback() {
             @Override
             public void done(AVException e) {

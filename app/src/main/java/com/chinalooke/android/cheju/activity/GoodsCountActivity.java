@@ -59,7 +59,7 @@ public class GoodsCountActivity extends AppCompatActivity {
     private int mUnitPrice;
     private ProgressDialog mProgressDialog;
     private AVUser mCurrentUser;
-    private int mPrice;
+    private String mPrice;
 
     @Override
     protected void onCreate(Bundle savedInstanceState) {
@@ -91,7 +91,7 @@ public class GoodsCountActivity extends AppCompatActivity {
                     @Override
                     public void afterTextChanged(Editable s) {
                         mCount = Integer.parseInt(s.toString());
-                        mPrice = mCount * mUnitPrice;
+                        mPrice = mCount * mUnitPrice + "";
                         mTvCountPrice.setText("消耗积分:" + mPrice);
                     }
                 });
@@ -160,14 +160,14 @@ public class GoodsCountActivity extends AppCompatActivity {
         Number oldScore = AVUser.getCurrentUser().getNumber("score");
         int i = oldScore.intValue();
 
-        int i2 = mPrice;
+        int i2 = Integer.parseInt(mPrice);
 
         if (i < i2) {
             mToast.setText("对不起，积分余额不足");
             mToast.show();
             mProgressDialog.dismiss();
         } else {
-            int i1 = i - mPrice;
+            int i1 = i - i2;
             AVUser.getCurrentUser().put("score", i1);
             AVUser.getCurrentUser().saveInBackground(new SaveCallback() {
                 @Override
@@ -194,8 +194,8 @@ public class GoodsCountActivity extends AppCompatActivity {
         order.put("goodsId", mGoods.getObjectId());
         order.put("price", mPrice);
         order.put("count", mCount);
-        order.put("statu", 2);
-        order.put("type", 1);
+        order.put("status", "2");
+        order.put("type", "1");
         RequestQueue mQueue = Volley.newRequestQueue(getApplicationContext());
         ImageRequest imageRequest = new ImageRequest(
                 "http://api.k780.com:88/?app=qr.get&data=" + message + "&level=L&size=6",

@@ -51,26 +51,19 @@ public class CouponOrderFragment extends Fragment implements AdapterView.OnItemC
     ProgressBar mPbOrder;
     private AVUser mCurrentUser;
     private int mSkip;
-    private DialogInterface mProgressDialog;
-    private List<AVObject> mPolicys = new ArrayList<>();
     private MyCouponAdapt mMyOrderAdapt;
     private boolean isLoading = false;
     private AVObject mAvObject;
-    private ProgressDialog mDialog;
     private Policy mPolicy;
     private AVObject mOrder;
     private Toast mToast;
     private List<AVObject> mCoupons = new ArrayList<>();
 
-    public CouponOrderFragment() {
-        // Required empty public constructor
-    }
-
 
     @Override
     public View onCreateView(LayoutInflater inflater, ViewGroup container,
                              Bundle savedInstanceState) {
-        View view = inflater.inflate(R.layout.fragment_car_order, container, false);
+        View view = inflater.inflate(R.layout.fragment_coupon_order, container, false);
         ButterKnife.bind(this, view);
         mCurrentUser = AVUser.getCurrentUser();
         mMyOrderAdapt = new MyCouponAdapt();
@@ -82,7 +75,6 @@ public class CouponOrderFragment extends Fragment implements AdapterView.OnItemC
     @Override
     public void onActivityCreated(Bundle savedInstanceState) {
         super.onActivityCreated(savedInstanceState);
-        initData();
         initEvent();
     }
 
@@ -97,8 +89,8 @@ public class CouponOrderFragment extends Fragment implements AdapterView.OnItemC
             @Override
             public void onRefresh() {
                 mSkip = 0;
+                mCoupons.clear();
                 initData();
-                mMyOrderAdapt.notifyDataSetChanged();
                 mSr.setRefreshing(false);
             }
         });
@@ -124,9 +116,7 @@ public class CouponOrderFragment extends Fragment implements AdapterView.OnItemC
     }
 
     private void loadMore() {
-        if (mSkip != 0) {
-            initData();
-        }
+        initData();
         isLoading = true;
     }
 
@@ -138,14 +128,14 @@ public class CouponOrderFragment extends Fragment implements AdapterView.OnItemC
                 query.whereEqualTo("userId", mCurrentUser.getObjectId());
                 query.limit(10);
                 query.skip(mSkip);
-                query.whereEqualTo("type", 1);
+                query.whereEqualTo("type", "1");
                 query.findInBackground(new FindCallback<AVObject>() {
                     @Override
                     public void done(List<AVObject> list, AVException e) {
                         mPbOrder.setVisibility(View.GONE);
                         if (e == null) {
                             if (list.size() != 0) {
-                                mCoupons = list;
+                                mCoupons.addAll(list);
                                 mTvNopolicy.setVisibility(View.GONE);
                                 if (mMyOrderAdapt != null)
                                     mMyOrderAdapt.notifyDataSetChanged();
@@ -233,7 +223,7 @@ public class CouponOrderFragment extends Fragment implements AdapterView.OnItemC
     private void setCouponDetail(final ViewHolder viewHolder2, int positon) {
         AVObject avObject = mCoupons.get(positon);
         viewHolder2.mTvDateOrder.setText(StringUtils.getTime(avObject.getDate("addDate")));
-        viewHolder2.mTvPriceOrderListview.setText(avObject.getNumber("price") + "");
+        viewHolder2.mTvPriceOrderListview.setText(avObject.getString("price"));
         viewHolder2.mTvStatuOrder.setText(avObject.getNumber("count") + "");
         String goodsId = avObject.getString("goodsId");
         AVQuery<AVObject> query = new AVQuery<>("Goods");

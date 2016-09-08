@@ -6,6 +6,7 @@ import android.content.Intent;
 import android.os.Bundle;
 import android.support.v7.app.AppCompatActivity;
 import android.text.TextUtils;
+import android.util.Log;
 import android.view.View;
 import android.view.ViewGroup;
 import android.widget.BaseAdapter;
@@ -13,6 +14,7 @@ import android.widget.Button;
 import android.widget.TextView;
 import android.widget.Toast;
 
+import com.avos.avoscloud.AVCloud;
 import com.avos.avoscloud.AVException;
 import com.avos.avoscloud.AVInstallation;
 import com.avos.avoscloud.AVObject;
@@ -20,18 +22,22 @@ import com.avos.avoscloud.AVPush;
 import com.avos.avoscloud.AVQuery;
 import com.avos.avoscloud.AVUser;
 import com.avos.avoscloud.FindCallback;
+import com.avos.avoscloud.FunctionCallback;
 import com.avos.avoscloud.SaveCallback;
 import com.avos.avoscloud.SendCallback;
 import com.chinalooke.android.cheju.R;
 import com.chinalooke.android.cheju.bean.Policy;
 import com.chinalooke.android.cheju.utills.MyUtills;
 import com.chinalooke.android.cheju.utills.NetUtil;
+import com.chinalooke.android.cheju.utills.PreferenceUtils;
 import com.chinalooke.android.cheju.view.SyListView;
 
 import java.text.SimpleDateFormat;
 import java.util.ArrayList;
 import java.util.Date;
+import java.util.HashMap;
 import java.util.List;
+import java.util.Map;
 
 import butterknife.Bind;
 import butterknife.ButterKnife;
@@ -65,13 +71,14 @@ public class OrderActivity extends AppCompatActivity {
     private ProgressDialog mProgressDialog;
     private AVUser mCurrentUser;
     private AVObject mAddress;
-    private int mStatus;
+    private String mStatus;
 
     @Override
     protected void onCreate(Bundle savedInstanceState) {
         super.onCreate(savedInstanceState);
         setContentView(R.layout.activity_order);
         ButterKnife.bind(this);
+        mCurrentUser = AVUser.getCurrentUser();
         mToast = Toast.makeText(getApplicationContext(), "", Toast.LENGTH_SHORT);
         initData();
         initView();
@@ -88,30 +95,37 @@ public class OrderActivity extends AppCompatActivity {
             mToast.show();
         }
 
-        if (mStatus == 2) {
-            mTvOrderStatu.setText("已付款，待发货");
-        } else if (mStatus == 4) {
-            mTvOrderStatu.setText("已确认收货");
-            mBtnTakeGoods.setText("已收货");
-            mBtnTakeGoods.setEnabled(false);
-        } else if (mStatus == 3) {
-            mTvOrderStatu.setText("已发货");
-        } else if (mStatus == 5) {
-            mTvOrderStatu.setText("退款申请中");
-            mBtnRefund.setText("正在退款");
-            mBtnRefund.setEnabled(false);
-        } else if (mStatus == 6) {
-            mTvOrderStatu.setText("退款完成");
-            mBtnRefund.setText("已退款");
-            mBtnRefund.setEnabled(false);
+        switch (mStatus) {
+            case "2":
+                mTvOrderStatu.setText("已付款，待发货");
+                break;
+            case "3":
+                mTvOrderStatu.setText("已发货");
+                break;
+            case "4":
+                mTvOrderStatu.setText("已确认收货");
+                mBtnTakeGoods.setText("已收货");
+                mBtnTakeGoods.setEnabled(false);
+                break;
+            case "5":
+                mTvOrderStatu.setText("退款申请中");
+                mBtnRefund.setText("正在退款");
+                mBtnRefund.setEnabled(false);
+                break;
+            case "6":
+                mTvOrderStatu.setText("退款完成");
+                mBtnRefund.setText("已退款");
+                mBtnRefund.setEnabled(false);
+                break;
         }
+
     }
 
     private void initData() {
         mOrder = getIntent().getParcelableExtra("order");
         mPolicy = getIntent().getParcelableExtra("dpolicy");
         mPolicy1 = (Policy) getIntent().getSerializableExtra("policy");
-        mStatus = mOrder.getInt("status");
+        mStatus = mOrder.getString("status");
         mStrings.add("订单编号：");
         mStrings.add("支付方式：");
         mStrings.add("付款金额：");
@@ -129,7 +143,7 @@ public class OrderActivity extends AppCompatActivity {
         } else {
             mPrices.add(" ");
         }
-        mPrices.add(mOrder.getNumber("price") + "");
+        mPrices.add(mOrder.getString("price"));
         mPrices.add(getTime(mOrder.getDate("addDate")));
         Date sendDate = mOrder.getDate("sendDate");
         if (sendDate != null) {
@@ -264,22 +278,36 @@ public class OrderActivity extends AppCompatActivity {
                 });
                 break;
 
-
         }
     }
 
     private void saveLeanCloud() {
-        mOrder.put("status", 4);
-        mPolicy.put("status", 4);
+        mOrder.put("status", "4");
+        mPolicy.put("status", "4");
         mPolicy.saveInBackground();
         mOrder.saveInBackground(new SaveCallback() {
             @Override
             public void done(AVException e) {
                 if (e == null) {
                     pushMessage();
+//                    Map<String, String> dicParameters = new HashMap<String, String>();
+//                    dicParameters.put("username", mCurrentUser.getUsername());
+//                    dicParameters.put("pay", mOrder.getString("price"));
+//                    AVCloud.callFunctionInBackground("getScore", dicParameters, new FunctionCallback() {
+//                        public void done(Object object, AVException e) {
+//                            if (e == null) {
+//
+//                            } else {
+//                                mProgressDialog.dismiss();
+//                                mToast.setText("提交失败，请稍后重试");
+//                                mToast.show();
+//                            }
+//                        }
+//                    });
+
                 } else {
                     mProgressDialog.dismiss();
-                    mToast.setText("提交失败");
+                    mToast.setText("请稍后重试");
                     mToast.show();
                 }
             }
@@ -287,7 +315,6 @@ public class OrderActivity extends AppCompatActivity {
     }
 
     private void pushMessage() {
-        mCurrentUser = AVUser.getCurrentUser();
         String referrer = mCurrentUser.getString("referrer");
         AVQuery<AVObject> query = new AVQuery<>("_User");
         query.whereEqualTo("mobilePhoneNumber", referrer);
@@ -303,18 +330,30 @@ public class OrderActivity extends AppCompatActivity {
                     AVPush.sendMessageInBackground("message to installation", pushQuery, new SendCallback() {
                         @Override
                         public void done(AVException e) {
-                            mProgressDialog.dismiss();
                             if (e == null) {
                                 AVObject statics = new AVObject("Statistics");
                                 statics.put("userId", mCurrentUser.getObjectId());
                                 statics.put("date", new Date());
                                 statics.put("type", "user");
-                                statics.put("price", mOrder.getNumber("price"));
-                                mToast.setText("提交成功");
-                                mToast.show();
-                                mBtnTakeGoods.setText("已收货");
-                                mBtnTakeGoods.setEnabled(false);
+                                statics.put("price", Integer.parseInt(mOrder.getString("price")));
+                                statics.saveInBackground(new SaveCallback() {
+                                    @Override
+                                    public void done(AVException e) {
+                                        mProgressDialog.dismiss();
+                                        if (e == null) {
+                                            mToast.setText("提交成功");
+                                            mToast.show();
+                                            mBtnTakeGoods.setText("已收货");
+                                            mBtnTakeGoods.setEnabled(false);
+                                        } else {
+                                            mToast.setText("提交失败");
+                                            mToast.show();
+                                        }
+                                    }
+                                });
+
                             } else {
+                                mProgressDialog.dismiss();
                                 mToast.setText("提交失败");
                                 mToast.show();
                             }

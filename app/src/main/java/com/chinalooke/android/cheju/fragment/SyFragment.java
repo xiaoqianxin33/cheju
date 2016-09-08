@@ -230,7 +230,7 @@ public class SyFragment extends Fragment {
                         String url = image.getUrl();
                         ImageView imageView = new ImageView(getActivity());
 
-                        Picasso.with(getActivity()).load(url).resize(mWidth, MyUtills.Dp2Px(getActivity(), 122)).centerCrop().into(imageView);
+                        Picasso.with(getActivity()).load(url).placeholder(R.mipmap.placeholder).resize(mWidth, MyUtills.Dp2Px(getActivity(), 122)).centerCrop().into(imageView);
                         mAdList.add(imageView);
                     }
                     mBanner.setData(mAdList);
@@ -338,7 +338,7 @@ public class SyFragment extends Fragment {
                 viewHolder = (MainHolder) convertView.getTag();
             }
 
-            Picasso.with(getActivity()).load(mInsurances.get(position).getImage()).into(viewHolder.iv_holder);
+            Picasso.with(getActivity()).load(mInsurances.get(position).getImage()).placeholder(R.mipmap.placeholder).into(viewHolder.iv_holder);
             return convertView;
         }
     }
