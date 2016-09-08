@@ -24,7 +24,7 @@ public class Constant {
             R.drawable.orange_round_shape, R.drawable.red_round_shape, R.drawable.qing_round_shape, R.drawable.purple_round_shape, R.drawable.yellow_round_shape, R.drawable.tuijian_round_shape};
 
 
-    public static String[] mainTitleGridView = {"购买车险", "在线理赔", "优惠劵兑换", "特惠洗车", "正品轮胎", "道路救援", "优质快修", "推荐APP"};
+    public static String[] mainTitleGridView = {"购买车险", "在线理赔", "积分兑换", "特惠洗车", "正品轮胎", "道路救援", "优质快修", "推荐APP"};
 
     public static String[] writeChezhuListView = {"手机号码", "身份证号", "车牌号码", "注册登记日期"};
 

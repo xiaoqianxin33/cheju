@@ -5,11 +5,9 @@ import android.content.Intent;
 import android.os.Bundle;
 import android.os.Handler;
 import android.os.Message;
-import android.os.Parcelable;
 import android.support.v4.widget.SwipeRefreshLayout;
 import android.support.v7.app.AppCompatActivity;
 import android.text.TextUtils;
-import android.util.Log;
 import android.view.View;
 import android.view.ViewGroup;
 import android.widget.AbsListView;
@@ -28,7 +26,6 @@ import com.avos.avoscloud.AVFile;
 import com.avos.avoscloud.AVGeoPoint;
 import com.avos.avoscloud.AVObject;
 import com.avos.avoscloud.AVQuery;
-import com.avos.avoscloud.AVRelation;
 import com.avos.avoscloud.FindCallback;
 import com.chinalooke.android.cheju.R;
 import com.chinalooke.android.cheju.bean.BusinessShop;
@@ -60,6 +57,8 @@ public class YouhuiJuanActivity extends AppCompatActivity implements AMapLocatio
     SwipeRefreshLayout mScrollview;
     @Bind(R.id.tv_none)
     TextView mTvNone;
+    @Bind(R.id.tv_title)
+    TextView mTvTitle;
     private double mLongitude;
     private double mLatitude;
     private List<AVObject> mNearbyShops = new ArrayList<>();
@@ -117,6 +116,7 @@ public class YouhuiJuanActivity extends AppCompatActivity implements AMapLocatio
 
     }
 
+
     private void initEvent() {
         mScrollview.setColorSchemeResources(android.R.color.holo_blue_bright,
                 android.R.color.holo_green_light,
@@ -172,15 +172,19 @@ public class YouhuiJuanActivity extends AppCompatActivity implements AMapLocatio
             switch (mType) {
                 case 1:
                     query.whereEqualTo("type", 1);
+                    mTvTitle.setText("特惠洗车");
                     break;
                 case 2:
                     query.whereEqualTo("type", 2);
+                    mTvTitle.setText("正品轮胎");
                     break;
                 case 3:
                     query.whereEqualTo("type", 3);
+                    mTvTitle.setText("道路救援");
                     break;
                 case 4:
                     query.whereEqualTo("type", 4);
+                    mTvTitle.setText("优质快修");
                     break;
             }
             query.findInBackground(new FindCallback<AVObject>() {

@@ -90,5 +90,28 @@
         android:scrollbars="none">
     </com.chinalooke.android.cheju.view.XListView>
 
+    <FrameLayout
+        android:id="@+id/fl_load"
+        android:layout_width="match_parent"
+        android:layout_height="match_parent">
+
+        <ProgressBar
+            android:id="@+id/pb_load"
+            style="?android:attr/progressBarStyleSmall"
+            android:layout_width="40dp"
+            android:layout_height="40dp"
+            android:layout_centerHorizontal="true"
+            android:layout_centerVertical="true"
+            android:layout_gravity="center"/>
+
+        <TextView
+            android:id="@+id/tv_tui"
+            android:layout_width="wrap_content"
+            android:layout_height="wrap_content"
+            android:layout_gravity="center"
+            android:text="推荐下载车聚APP，下载安装后成为你的客户"
+            android:textSize="16sp"/>
+    </FrameLayout>
+
 
 </LinearLayout>

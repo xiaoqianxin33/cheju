@@ -289,21 +289,28 @@ public class OrderActivity extends AppCompatActivity {
             @Override
             public void done(AVException e) {
                 if (e == null) {
-                    pushMessage();
-//                    Map<String, String> dicParameters = new HashMap<String, String>();
-//                    dicParameters.put("username", mCurrentUser.getUsername());
-//                    dicParameters.put("pay", mOrder.getString("price"));
-//                    AVCloud.callFunctionInBackground("getScore", dicParameters, new FunctionCallback() {
-//                        public void done(Object object, AVException e) {
-//                            if (e == null) {
-//
-//                            } else {
-//                                mProgressDialog.dismiss();
-//                                mToast.setText("提交失败，请稍后重试");
-//                                mToast.show();
-//                            }
-//                        }
-//                    });
+                    Map<String, String> dicParameters = new HashMap<>();
+                    dicParameters.put("username", mCurrentUser.getUsername());
+                    dicParameters.put("pay", mOrder.getString("price"));
+                    AVCloud.callFunctionInBackground("getScore", dicParameters, new FunctionCallback() {
+                        public void done(Object object, AVException e) {
+                            if (e == null) {
+                                String result = (String) object;
+                                String substring = result.substring(10, 14);
+                                if ("true".equals(substring)) {
+                                    pushMessage();
+                                } else {
+                                    mProgressDialog.dismiss();
+                                    mToast.setText("提交失败，请稍后重试");
+                                    mToast.show();
+                                }
+                            } else {
+                                mProgressDialog.dismiss();
+                                mToast.setText("提交失败，请稍后重试");
+                                mToast.show();
+                            }
+                        }
+                    });
 
                 } else {
                     mProgressDialog.dismiss();

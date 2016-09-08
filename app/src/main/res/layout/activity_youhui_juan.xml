@@ -33,11 +33,12 @@
         </FrameLayout>
 
         <TextView
+            android:id="@+id/tv_title"
             android:layout_width="match_parent"
             android:layout_height="@dimen/edit_height"
             android:gravity="center"
             android:paddingLeft="16dp"
-            android:text="优惠劵兑换"
+            android:text="积分兑换"
             android:textColor="#FFFFFF"
             android:textSize="18dp"
             android:textStyle="bold"

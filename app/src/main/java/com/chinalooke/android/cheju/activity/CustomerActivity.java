@@ -1,16 +1,14 @@
 package com.chinalooke.android.cheju.activity;
 
 import android.content.Intent;
-import android.graphics.Color;
-import android.net.Uri;
 import android.os.Bundle;
 import android.os.Handler;
 import android.support.v7.app.AppCompatActivity;
 import android.view.View;
 import android.view.ViewGroup;
-import android.widget.ArrayAdapter;
 import android.widget.BaseAdapter;
-import android.widget.ImageView;
+import android.widget.FrameLayout;
+import android.widget.ProgressBar;
 import android.widget.TextView;
 import android.widget.Toast;
 
@@ -22,13 +20,8 @@ import com.avos.avoscloud.FindCallback;
 import com.chinalooke.android.cheju.R;
 import com.chinalooke.android.cheju.utills.NetUtil;
 import com.chinalooke.android.cheju.utills.StringUtils;
-import com.chinalooke.android.cheju.utills.UIutils;
 import com.chinalooke.android.cheju.view.XListView;
-import com.squareup.picasso.Picasso;
 
-import org.json.JSONArray;
-
-import java.io.Serializable;
 import java.text.SimpleDateFormat;
 import java.util.ArrayList;
 import java.util.Date;
@@ -43,6 +36,12 @@ public class CustomerActivity extends AppCompatActivity implements XListView.IXL
 
     @Bind(R.id.xlistview_customer)
     XListView mXlistviewCustomer;
+    @Bind(R.id.pb_load)
+    ProgressBar mPbLoad;
+    @Bind(R.id.fl_load)
+    FrameLayout mFlLoad;
+    @Bind(R.id.tv_tui)
+    TextView mTvTui;
     private List<AVUser> mCustomers;
     private List<AVUser> mAVUsers = new ArrayList<>();
     private MyAdapt mMyAdapt;
@@ -52,6 +51,7 @@ public class CustomerActivity extends AppCompatActivity implements XListView.IXL
     private List<String> mTimes = new ArrayList<>();
     private List<String> mMessage = new ArrayList<>();
     private List<AVObject> mMessageList = new ArrayList<>();
+    private List<AVUser> mArrayList = new ArrayList<>();
 
     @Override
     protected void onCreate(Bundle savedInstanceState) {
@@ -65,6 +65,7 @@ public class CustomerActivity extends AppCompatActivity implements XListView.IXL
     }
 
     private void initData() {
+
         mTimes.add("2016-9-1");
         mTimes.add("2016-9-2");
         mTimes.add("2016-9-3");
@@ -256,5 +257,30 @@ public class CustomerActivity extends AppCompatActivity implements XListView.IXL
         String userId = avObject.getString("userId");
         viewHolder.mTvTime.setText(StringUtils.getTime(date));
         viewHolder.mTvMessage.setText("客户" + userId.substring(0, 5) + "********消费了" + avObject.getNumber("price"));
+    }
+
+    private void initCustomerData() {
+        if (NetUtil.is_Network_Available(getApplicationContext())) {
+
+            AVQuery<AVUser> userQuery = new AVQuery<>("_User");
+
+            userQuery.whereEqualTo("referrer", AVUser.getCurrentUser().getMobilePhoneNumber());
+
+            userQuery.findInBackground(new FindCallback<AVUser>() {
+                @Override
+                public void done(List<AVUser> list, AVException e) {
+                    mPbLoad.setVisibility(View.GONE);
+                    if (e == null) {
+                        if (list.size() != 0) {
+                            mFlLoad.setVisibility(View.GONE);
+                            mArrayList = list;
+                        }
+                    }
+                }
+            });
+        } else {
+            mPbLoad.setVisibility(View.GONE);
+            mTvTui.setText("网络不可用,请检查网络连接");
+        }
     }
 }

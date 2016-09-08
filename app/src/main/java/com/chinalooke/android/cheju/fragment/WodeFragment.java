@@ -224,15 +224,16 @@ public class WodeFragment extends Fragment {
                         break;
 
                     case 3:
-                        initDialog("正在获取客户信息");
-                        initCustomerData();
+                        startActivity(new Intent(getActivity(), CustomerActivity.class));
                         break;
 
                     case 1:
                         startActivity(new Intent(getActivity(), ScoreActivity.class));
                         break;
                     case 2:
-                        startActivity(new Intent(getActivity(), YouhuiJuanActivity.class));
+                        Intent intent = new Intent(getActivity(), YouhuiJuanActivity.class);
+                        intent.putExtra("wode", "wode");
+                        startActivity(intent);
                         break;
                 }
             }
@@ -529,34 +530,5 @@ public class WodeFragment extends Fragment {
         mProgressDialog.show();
     }
 
-    private void initCustomerData() {
-        if (NetUtil.is_Network_Available(getActivity())) {
 
-            AVQuery<AVUser> userQuery = new AVQuery<>("_User");
-
-            userQuery.whereEqualTo("referrer", AVUser.getCurrentUser().getMobilePhoneNumber());
-
-            userQuery.findInBackground(new FindCallback<AVUser>() {
-                @Override
-                public void done(List<AVUser> list, AVException e) {
-                    mProgressDialog.dismiss();
-                    if (e == null) {
-                        Intent intent = new Intent(getActivity(), CustomerActivity.class);
-                        Bundle bundle = new Bundle();
-                        mArrayList = list;
-                        bundle.putSerializable("customers", (Serializable) mArrayList);
-                        intent.putExtras(bundle);
-                        startActivity(intent);
-                    } else {
-                        MyUtills.showGodDialog(getActivity(), "提示", "快去分享下载 好友打折买保险 积分返点全归你");
-                    }
-
-                }
-            });
-        } else {
-            mProgressDialog.dismiss();
-            mToast.setText("网络不可用,请检查网络连接");
-            mToast.show();
-        }
-    }
 }
