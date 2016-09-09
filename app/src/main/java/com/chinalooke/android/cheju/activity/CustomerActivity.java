@@ -8,6 +8,7 @@ import android.view.View;
 import android.view.ViewGroup;
 import android.widget.BaseAdapter;
 import android.widget.FrameLayout;
+import android.widget.ListView;
 import android.widget.ProgressBar;
 import android.widget.TextView;
 import android.widget.Toast;
@@ -32,17 +33,15 @@ import butterknife.Bind;
 import butterknife.ButterKnife;
 import butterknife.OnClick;
 
-public class CustomerActivity extends AppCompatActivity implements XListView.IXListViewListener {
+public class CustomerActivity extends AppCompatActivity {
 
     @Bind(R.id.xlistview_customer)
-    XListView mXlistviewCustomer;
+    ListView mXlistviewCustomer;
     @Bind(R.id.pb_load)
     ProgressBar mPbLoad;
-    @Bind(R.id.fl_load)
-    FrameLayout mFlLoad;
     @Bind(R.id.tv_tui)
     TextView mTvTui;
-    private List<AVUser> mCustomers;
+    private List<AVUser> mCustomers = new ArrayList<>();
     private List<AVUser> mAVUsers = new ArrayList<>();
     private MyAdapt mMyAdapt;
     private int mInt;
@@ -51,7 +50,6 @@ public class CustomerActivity extends AppCompatActivity implements XListView.IXL
     private List<String> mTimes = new ArrayList<>();
     private List<String> mMessage = new ArrayList<>();
     private List<AVObject> mMessageList = new ArrayList<>();
-    private List<AVUser> mArrayList = new ArrayList<>();
 
     @Override
     protected void onCreate(Bundle savedInstanceState) {
@@ -59,8 +57,9 @@ public class CustomerActivity extends AppCompatActivity implements XListView.IXL
         mToast = Toast.makeText(getApplicationContext(), "", Toast.LENGTH_SHORT);
         setContentView(R.layout.activity_customer);
         ButterKnife.bind(this);
-        initView();
+        initCustomerData();
         initData();
+        initView();
 
     }
 
@@ -75,7 +74,7 @@ public class CustomerActivity extends AppCompatActivity implements XListView.IXL
         mMessage.add("客户157********购买了强制险");
         mMessage.add("客户156********购买了商业险");
         mMessage.add("客户155********购买了商业险");
-        mCustomers = (List<AVUser>) getIntent().getSerializableExtra("customers");
+
         if (NetUtil.is_Network_Available(getApplicationContext())) {
             for (int i = 0; i < mCustomers.size(); i++) {
                 AVUser avUser = mCustomers.get(i);
@@ -104,33 +103,12 @@ public class CustomerActivity extends AppCompatActivity implements XListView.IXL
             mToast.setText("网络不可用，请检查网络连接");
             mToast.show();
         }
-        getItems();
-    }
 
-    private void getItems() {
-        for (int i = mInt; i < mInt + 5; i++) {
-            if (i == mCustomers.size()) {
-                mToast.setText("没有更多了");
-                mToast.show();
-                mXlistviewCustomer.dropFooter();
-                break;
-            }
-            mAVUsers.add(mCustomers.get(i));
-        }
     }
 
     private void initView() {
-        mXlistviewCustomer.setPullLoadEnable(true);
-//        mXlistviewCustomer.setPullRefreshEnable(false);
-//        mXlistviewCustomer.setAutoLoadEnable(true);
-        mXlistviewCustomer.setXListViewListener(this);
-        mXlistviewCustomer.setRefreshTime(getTime());
         mMyAdapt = new MyAdapt();
         mXlistviewCustomer.setAdapter(mMyAdapt);
-    }
-
-    private String getTime() {
-        return new SimpleDateFormat("MM-dd HH:mm", Locale.CHINA).format(new Date());
     }
 
     @OnClick({R.id.iv_wirte_back, R.id.tv_lookscro})
@@ -142,49 +120,6 @@ public class CustomerActivity extends AppCompatActivity implements XListView.IXL
             case R.id.tv_lookscro:
                 startActivity(new Intent(CustomerActivity.this, ScoreActivity.class));
                 break;
-        }
-    }
-
-    @Override
-    public void onRefresh() {
-        mHandler.postDelayed(new Runnable() {
-            @Override
-            public void run() {
-                mInt = 0;
-                mAVUsers.clear();
-                getItems();
-                mMyAdapt = new MyAdapt();
-                mXlistviewCustomer.setAdapter(mMyAdapt);
-                onLoad();
-            }
-        }, 50);
-    }
-
-    private void onLoad() {
-        mXlistviewCustomer.stopRefresh();
-        mXlistviewCustomer.stopLoadMore();
-        mXlistviewCustomer.setRefreshTime(getTime());
-    }
-
-    @Override
-    public void onLoadMore() {
-        mHandler.postDelayed(new Runnable() {
-            @Override
-            public void run() {
-                mInt = mInt + 5;
-                getItems();
-                mMyAdapt.notifyDataSetChanged();
-                onLoad();
-            }
-        }, 200);
-    }
-
-    @Override
-    public void onWindowFocusChanged(boolean hasFocus) {
-        super.onWindowFocusChanged(hasFocus);
-
-        if (hasFocus) {
-            mXlistviewCustomer.autoRefresh();
         }
     }
 
@@ -271,10 +206,14 @@ public class CustomerActivity extends AppCompatActivity implements XListView.IXL
                 public void done(List<AVUser> list, AVException e) {
                     mPbLoad.setVisibility(View.GONE);
                     if (e == null) {
-                        if (list.size() != 0) {
-                            mFlLoad.setVisibility(View.GONE);
-                            mArrayList = list;
+                        if (list != null && list.size() != 0) {
+                            mTvTui.setVisibility(View.GONE);
+                            mCustomers = list;
+                        } else {
+                            mTvTui.setVisibility(View.VISIBLE);
                         }
+                    } else {
+                        mTvTui.setVisibility(View.VISIBLE);
                     }
                 }
             });

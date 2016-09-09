@@ -31,7 +31,9 @@ import com.avos.avoscloud.AVException;
 import com.avos.avoscloud.AVObject;
 import com.avos.avoscloud.AVQuery;
 import com.avos.avoscloud.AVRelation;
+import com.avos.avoscloud.AVUser;
 import com.avos.avoscloud.FindCallback;
+import com.avos.avoscloud.SaveCallback;
 import com.chinalooke.android.cheju.R;
 import com.chinalooke.android.cheju.bean.BusinessShop;
 import com.chinalooke.android.cheju.bean.Goods;
@@ -62,8 +64,7 @@ public class ShopActivity extends AppCompatActivity implements RevealBackgroundV
     CollapsingToolbarLayout mCollapsingToolbarLayout;
     @Bind(R.id.app_bar_layout)
     AppBarLayout mAppBarLayout;
-    @Bind(R.id.tv_shop_name)
-    TextView mTvShopName;
+
     @Bind(R.id.tv_shop_address)
     TextView mTvShopAddress;
     @Bind(R.id.lv_gods)
@@ -78,9 +79,12 @@ public class ShopActivity extends AppCompatActivity implements RevealBackgroundV
     ProgressBar mPb;
     @Bind(R.id.rl_phone)
     RelativeLayout mRlPhone;
+    @Bind(R.id.tv_shop_name)
+    TextView mTvShopName;
+    @Bind(R.id.iv_collect)
+    ImageView mIvCollect;
     private HashMap<AVObject, String> mAVObjectStringHashMap = new HashMap<>();
     private List<AVObject> mGood = new ArrayList<>();
-    private JSONArray mJsonArray;
     private List<AVObject> mGod = new ArrayList<>();
     private BusinessShop mShop;
     private ArrayList<String> mStrings = new ArrayList<>();
@@ -91,6 +95,8 @@ public class ShopActivity extends AppCompatActivity implements RevealBackgroundV
     private AVObject mShop1;
     private MyAdapt mMyAdapt;
     private Toast mToast;
+    private boolean isCollect = false;
+    private AVUser mCurrentUser;
 
 
     @Override
@@ -114,6 +120,7 @@ public class ShopActivity extends AppCompatActivity implements RevealBackgroundV
         setupRevealBackground(savedInstanceState);
         mGoods = new Goods();
         mTvNoGoods.setVisibility(View.GONE);
+        mCurrentUser = AVUser.getCurrentUser();
         initData();
         initView();
     }
@@ -137,9 +144,9 @@ public class ShopActivity extends AppCompatActivity implements RevealBackgroundV
     }
 
     private void initView() {
-        mTvShopName.setText(mShop.getShopName());
-        mTvShopAddress.setText(mShop.getShopAddress());
-        mCollapsingToolbarLayout.setTitle(mShop.getShopName());
+        mTvShopName.setText(mShop1.getString("ShopName"));
+        mTvShopAddress.setText(mShop1.getString("ShopAddress"));
+        mCollapsingToolbarLayout.setTitle(mShop1.getString("ShopName"));
         mMyAdapt = new MyAdapt();
         mLvGods.setAdapter(mMyAdapt);
         mLvGods.setOnItemClickListener(this);
@@ -243,6 +250,9 @@ public class ShopActivity extends AppCompatActivity implements RevealBackgroundV
 
     private void initData() {
         mShop1 = getIntent().getParcelableExtra("Shop");
+        if (mShop1 == null) {
+            mShop1 = getIntent().getParcelableExtra("shop");
+        }
         if (NetUtil.is_Network_Available(getApplicationContext())) {
             AVRelation<AVObject> goods = mShop1.getRelation("goods");
             AVQuery<AVObject> query = goods.getQuery();
@@ -265,6 +275,33 @@ public class ShopActivity extends AppCompatActivity implements RevealBackgroundV
             mToast.show();
         }
         mShop = (BusinessShop) getIntent().getSerializableExtra("shop");
+
+        isCollec();
+    }
+
+    private void isCollec() {
+        AVObject todoFolder = AVObject.createWithoutData("_User", mCurrentUser.getObjectId());
+        AVRelation<AVObject> relation = todoFolder.getRelation("collectShop");
+        AVQuery<AVObject> query = relation.getQuery();
+        query.findInBackground(new FindCallback<AVObject>() {
+            @Override
+            public void done(List<AVObject> list, AVException e) {
+                if (e == null) {
+                    if (list.size() != 0) {
+                        for (AVObject shop : list) {
+                            String objectId = shop.getObjectId();
+                            if (objectId.equals(mShop1.getObjectId())) {
+                                mIvCollect.setImageResource(R.mipmap.select);
+                                isCollect = true;
+                            }
+                        }
+                    } else {
+                        mIvCollect.setImageResource(R.mipmap.unselect);
+                        isCollect = false;
+                    }
+                }
+            }
+        });
     }
 
 
@@ -298,11 +335,21 @@ public class ShopActivity extends AppCompatActivity implements RevealBackgroundV
 
     }
 
-    @OnClick({R.id.iv_phone, R.id.rl_phone})
+    @OnClick({R.id.iv_phone, R.id.rl_phone, R.id.iv_collect})
     public void onClick(View view) {
         switch (view.getId()) {
             case R.id.iv_phone:
                 callPhone();
+                break;
+            case R.id.iv_collect:
+                if (isCollect) {
+                    mIvCollect.setImageResource(R.mipmap.unselect);
+                    isCollect = false;
+                } else {
+                    mIvCollect.setImageResource(R.mipmap.select);
+                    isCollect = true;
+                }
+                saveCollect();
                 break;
             case R.id.rl_phone:
                 callPhone();
@@ -310,8 +357,42 @@ public class ShopActivity extends AppCompatActivity implements RevealBackgroundV
         }
     }
 
+    private void saveCollect() {
+        if (NetUtil.is_Network_Available(getApplicationContext())) {
+            AVRelation<AVObject> relation = mCurrentUser.getRelation("collectShop");// 新建一个 AVRelation
+            if (isCollect) {
+                relation.add(mShop1);
+            } else {
+                relation.remove(mShop1);
+            }
+            mCurrentUser.saveInBackground(new SaveCallback() {
+                @Override
+                public void done(AVException e) {
+                    if (e == null) {
+                        if (isCollect) {
+                            mToast.setText("收藏成功");
+                        } else {
+                            mToast.setText("取消收藏成功");
+                        }
+                        mToast.show();
+                    } else {
+                        if (isCollect) {
+                            mToast.setText("收藏失败");
+                        } else {
+                            mToast.setText("取消收藏失败");
+                        }
+                        mToast.show();
+                    }
+                }
+            });
+        } else {
+            mToast.setText("网络不可用，收藏失败");
+            mToast.show();
+        }
+    }
+
     private void callPhone() {
-        Intent intentPhone = new Intent(Intent.ACTION_CALL, Uri.parse("tel:" + mShop.getShopPhone()));
+        Intent intentPhone = new Intent(Intent.ACTION_CALL, Uri.parse("tel:" + mShop1.getString("ShopPhone")));
         startActivity(intentPhone);
     }
 }

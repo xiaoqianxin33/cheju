@@ -196,7 +196,7 @@
             android:layout_weight="1"
             android:gravity="center_vertical"
             android:paddingLeft="5dp"
-            android:text="邮箱 :"
+            android:text="推荐人 :"
             android:textColor="@android:color/black"
             android:textSize="16sp"/>
 
@@ -206,7 +206,7 @@
             android:layout_height="match_parent"
             android:layout_weight="2"
             android:background="@null"
-            android:hint="请填写邮箱(选填)"
+            android:hint="请填写推荐人手机号(选填)"
             android:inputType="textPassword"
             android:textColor="@android:color/black"
             android:textSize="16sp"/>

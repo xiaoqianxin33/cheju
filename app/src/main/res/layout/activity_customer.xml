@@ -78,22 +78,23 @@
         android:layout_height="1dp"
         android:background="@android:color/black"/>
 
-    <com.chinalooke.android.cheju.view.XListView
-        android:id="@+id/xlistview_customer"
-        android:layout_width="match_parent"
-        android:layout_height="match_parent"
-        android:background="@android:color/white"
-        android:divider="@color/backcolor"
-        android:dividerHeight="1dp"
-        android:paddingLeft="16dp"
-        android:paddingRight="16dp"
-        android:scrollbars="none">
-    </com.chinalooke.android.cheju.view.XListView>
-
     <FrameLayout
         android:id="@+id/fl_load"
         android:layout_width="match_parent"
         android:layout_height="match_parent">
+
+        <ListView
+            android:id="@+id/xlistview_customer"
+            android:layout_width="match_parent"
+            android:layout_height="match_parent"
+            android:background="@android:color/white"
+            android:divider="@color/backcolor"
+            android:dividerHeight="1dp"
+            android:paddingLeft="16dp"
+            android:paddingRight="16dp"
+            android:scrollbars="none">
+        </ListView>
+
 
         <ProgressBar
             android:id="@+id/pb_load"
@@ -102,7 +103,8 @@
             android:layout_height="40dp"
             android:layout_centerHorizontal="true"
             android:layout_centerVertical="true"
-            android:layout_gravity="center"/>
+            android:layout_gravity="center"
+            android:indeterminateDrawable="@drawable/progressbar"/>
 
         <TextView
             android:id="@+id/tv_tui"

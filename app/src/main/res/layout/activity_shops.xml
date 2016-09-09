@@ -67,16 +67,33 @@
 
             android:orientation="vertical">
 
-            <TextView
-                android:id="@+id/tv_shop_name"
+            <RelativeLayout
                 android:layout_width="match_parent"
-                android:layout_height="50dp"
-                android:background="@android:color/white"
-                android:gravity="center_vertical"
-                android:paddingLeft="16dp"
-                android:text="烤肉店"
-                android:textColor="@android:color/black"
-                android:textSize="18sp"/>
+                android:layout_height="50dp">
+
+
+                <TextView
+                    android:id="@+id/tv_shop_name"
+                    android:layout_width="match_parent"
+                    android:layout_height="50dp"
+                    android:background="@android:color/white"
+                    android:gravity="center_vertical"
+                    android:paddingLeft="16dp"
+                    android:text="烤肉店"
+                    android:textColor="@android:color/black"
+                    android:textSize="18sp"/>
+
+                <ImageView
+                    android:id="@+id/iv_collect"
+                    android:layout_width="36dp"
+                    android:layout_height="36dp"
+                    android:layout_alignParentRight="true"
+                    android:layout_centerVertical="true"
+                    android:layout_marginRight="16dp"
+                    android:src="@mipmap/unselect"
+                    />
+            </RelativeLayout>
+
 
             <TextView
                 style="@style/linestyle"/>

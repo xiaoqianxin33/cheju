@@ -29,6 +29,7 @@ import com.chinalooke.android.cheju.activity.WriteMessgeActivity;
 import com.chinalooke.android.cheju.activity.YouhuiJuanActivity;
 import com.chinalooke.android.cheju.bean.Insurance;
 import com.chinalooke.android.cheju.constant.Constant;
+import com.chinalooke.android.cheju.utills.ImageTools;
 import com.chinalooke.android.cheju.utills.MyUtills;
 import com.chinalooke.android.cheju.view.SyListView;
 import com.squareup.picasso.Picasso;
@@ -60,6 +61,7 @@ public class SyFragment extends Fragment {
     private int mWidth;
     private ListViewAdapt mListViewAdapt;
     private AVUser mCurrentUser;
+    private Drawable mDrawable;
 
 
     @Override
@@ -135,8 +137,8 @@ public class SyFragment extends Fragment {
                         break;
 
                     case 2:
-                        AVUser currentUser = AVUser.getCurrentUser();
-                        if (currentUser != null)
+//                        AVUser currentUser = AVUser.getCurrentUser();
+//                        if (currentUser != null)
                             startActivity(new Intent(getActivity(), YouhuiJuanActivity.class));
                         break;
                     case 7:
@@ -211,7 +213,7 @@ public class SyFragment extends Fragment {
     private void initView() {
         setAd();
         mListviewMain.setVerticalScrollBarEnabled(false);
-
+        mDrawable = ImageTools.setDrwableSize2(getActivity(), R.mipmap.placeholder, 500, 122);
         mListviewMain.setAdapter(mListViewAdapt);
         mGvSy.setAdapter(new MyGvAdapt(getContext()));
 
@@ -229,11 +231,13 @@ public class SyFragment extends Fragment {
                         AVFile image = avObject.getAVFile("image");
                         String url = image.getUrl();
                         ImageView imageView = new ImageView(getActivity());
-
-                        Picasso.with(getActivity()).load(url).placeholder(R.mipmap.placeholder).resize(mWidth, MyUtills.Dp2Px(getActivity(), 122)).centerCrop().into(imageView);
+                        imageView.setImageResource(R.mipmap.placeholder);
+                        imageView.setScaleType(ImageView.ScaleType.CENTER_CROP);
+                        Picasso.with(getActivity()).load(url).resize(mWidth, MyUtills.Dp2Px(getActivity(), 122)).centerCrop().into(imageView);
                         mAdList.add(imageView);
                     }
-                    mBanner.setData(mAdList);
+                    if (mAdList != null)
+                        mBanner.setData(mAdList);
                 }
             }
         });
@@ -338,7 +342,7 @@ public class SyFragment extends Fragment {
                 viewHolder = (MainHolder) convertView.getTag();
             }
 
-            Picasso.with(getActivity()).load(mInsurances.get(position).getImage()).placeholder(R.mipmap.placeholder).into(viewHolder.iv_holder);
+            Picasso.with(getActivity()).load(mInsurances.get(position).getImage()).into(viewHolder.iv_holder);
             return convertView;
         }
     }

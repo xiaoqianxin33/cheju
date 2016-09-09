@@ -2,6 +2,8 @@ package com.chinalooke.android.cheju.activity;
 
 import android.app.ProgressDialog;
 import android.content.Intent;
+import android.graphics.BitmapFactory;
+import android.graphics.drawable.Drawable;
 import android.os.Bundle;
 import android.os.Handler;
 import android.os.Message;
@@ -26,13 +28,16 @@ import com.avos.avoscloud.AVFile;
 import com.avos.avoscloud.AVGeoPoint;
 import com.avos.avoscloud.AVObject;
 import com.avos.avoscloud.AVQuery;
+import com.avos.avoscloud.AVUser;
 import com.avos.avoscloud.FindCallback;
 import com.chinalooke.android.cheju.R;
 import com.chinalooke.android.cheju.bean.BusinessShop;
 import com.chinalooke.android.cheju.constant.Constant;
+import com.chinalooke.android.cheju.utills.ImageTools;
 import com.chinalooke.android.cheju.utills.MyUtills;
 import com.chinalooke.android.cheju.utills.NetUtil;
 import com.chinalooke.android.cheju.utills.PreferenceUtils;
+import com.hyphenate.util.ImageUtils;
 import com.makeramen.roundedimageview.RoundedImageView;
 import com.squareup.picasso.Picasso;
 
@@ -59,6 +64,8 @@ public class YouhuiJuanActivity extends AppCompatActivity implements AMapLocatio
     TextView mTvNone;
     @Bind(R.id.tv_title)
     TextView mTvTitle;
+    @Bind(R.id.tv_score)
+    TextView mTvScore;
     private double mLongitude;
     private double mLatitude;
     private List<AVObject> mNearbyShops = new ArrayList<>();
@@ -83,6 +90,7 @@ public class YouhuiJuanActivity extends AppCompatActivity implements AMapLocatio
     private boolean isLoading = false;
     private ProgressDialog mProgressDialog;
     private List<AVObject> good = new ArrayList<>();
+    private Drawable mDrawable;
 
 
     @Override
@@ -111,9 +119,13 @@ public class YouhuiJuanActivity extends AppCompatActivity implements AMapLocatio
             mTvLocationYouhui.setText(PreferenceUtils.getPrefString(this, "city", ""));
             mHandler.sendEmptyMessage(1);
         }
-
+        initView();
         initEvent();
 
+    }
+
+    private void initView() {
+        mDrawable = ImageTools.setDrwableSize2(this, R.mipmap.placeholder, 54, 54);
     }
 
 
@@ -160,6 +172,12 @@ public class YouhuiJuanActivity extends AppCompatActivity implements AMapLocatio
 
 
     private void initData() {
+        AVUser currentUser = AVUser.getCurrentUser();
+        if (currentUser != null) {
+            String score = currentUser.getNumber("score") + "";
+            mTvScore.setText("可用积分:" + score);
+        }
+
         if (NetUtil.is_Network_Available(getApplicationContext())) {
 
             AVQuery<AVObject> query = new AVQuery<>("BusinessShop");
@@ -325,8 +343,8 @@ public class YouhuiJuanActivity extends AppCompatActivity implements AMapLocatio
         AVObject avObject = mNearbyShops.get(position);
         AVFile images = avObject.getAVFile("images");
         if (images != null)
-            Picasso.with(getApplicationContext()).load(images.getUrl()).resize(MyUtills.Dp2Px(getApplicationContext(), 54),
-                    MyUtills.Dp2Px(getApplicationContext(), 54)).centerCrop().placeholder(R.mipmap.placeholder).into(viewHolder.mIvShop);
+            Picasso.with(getApplicationContext()).load(images.getUrl()).placeholder(mDrawable).resize(MyUtills.Dp2Px(getApplicationContext(), 54),
+                    MyUtills.Dp2Px(getApplicationContext(), 54)).centerCrop().into(viewHolder.mIvShop);
         viewHolder.mTvShopnameYouhui.setText(avObject.getString("ShopName"));
         viewHolder.mTvDiscountYouhui.setText("<" + mDecimalFormat.format(avObject.getAVGeoPoint("location").distanceInMilesTo(mPoint)) + "m");
         viewHolder.mTvLocationYouhuiListview.setText(avObject.getString("ShopAddress"));

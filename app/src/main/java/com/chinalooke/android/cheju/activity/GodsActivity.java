@@ -2,9 +2,7 @@ package com.chinalooke.android.cheju.activity;
 
 import android.app.ProgressDialog;
 import android.content.Context;
-import android.content.DialogInterface;
 import android.content.Intent;
-import android.graphics.Bitmap;
 import android.graphics.Paint;
 import android.graphics.PixelFormat;
 import android.os.Bundle;
@@ -18,18 +16,12 @@ import android.widget.LinearLayout;
 import android.widget.TextView;
 import android.widget.Toast;
 
-import com.android.volley.RequestQueue;
-import com.android.volley.Response;
-import com.android.volley.VolleyError;
-import com.android.volley.toolbox.ImageRequest;
-import com.android.volley.toolbox.Volley;
 import com.avos.avoscloud.AVException;
 import com.avos.avoscloud.AVObject;
 import com.avos.avoscloud.AVQuery;
 import com.avos.avoscloud.AVRelation;
 import com.avos.avoscloud.AVUser;
 import com.avos.avoscloud.FindCallback;
-import com.avos.avoscloud.GetCallback;
 import com.avos.avoscloud.SaveCallback;
 import com.chinalooke.android.cheju.R;
 import com.chinalooke.android.cheju.utills.MyUtills;
@@ -38,7 +30,6 @@ import com.chinalooke.android.cheju.view.MyScrollView;
 import com.squareup.picasso.Picasso;
 
 import java.util.ArrayList;
-import java.util.Date;
 import java.util.List;
 
 import butterknife.Bind;
@@ -92,7 +83,6 @@ public class GodsActivity extends AppCompatActivity implements MyScrollView.OnSc
 
     private List<View> mAdList = new ArrayList<>();
     private Toast mToast;
-    private ProgressDialog mProgressDialog;
     private AVObject mGood;
     private AVUser mCurrentUser;
     private String mShopId;
@@ -214,7 +204,7 @@ public class GodsActivity extends AppCompatActivity implements MyScrollView.OnSc
         }
     }
 
-    @OnClick({R.id.btn_buy, R.id.iv_wirte_back})
+    @OnClick({R.id.btn_buy, R.id.iv_wirte_back, R.id.iv_collect})
     public void onClick(View view) {
         switch (view.getId()) {
             case R.id.btn_buy:
@@ -225,13 +215,10 @@ public class GodsActivity extends AppCompatActivity implements MyScrollView.OnSc
                 intent.putExtras(bundle);
                 startActivity(intent);
                 break;
-
             case R.id.iv_wirte_back:
                 finish();
                 break;
+
         }
-
-
     }
-
 }

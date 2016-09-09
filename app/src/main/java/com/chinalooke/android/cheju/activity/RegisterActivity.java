@@ -38,10 +38,10 @@ public class RegisterActivity extends AppCompatActivity {
     EditText mEtRegisterPassword;
     @Bind(R.id.et_register_password_again)
     EditText mEtRegisterPasswordAgain;
-    @Bind(R.id.et_register_email)
-    EditText mEtRegisterEmail;
     @Bind(R.id.btn_login_getsms_r)
     Button mBtnLoginGetsms;
+    @Bind(R.id.et_register_email)
+    EditText mEtRegisterEmail;
     private String phoneNumer;
     private ProgressDialog mProgressDialog;
 
@@ -123,6 +123,8 @@ public class RegisterActivity extends AppCompatActivity {
                     avUser.put("password", mPassword);
                     avUser.put("email", mEmail);
                     avUser.put("phone", mPhone);
+                    if (!TextUtils.isEmpty(mEmail))
+                        avUser.put("referrer", mEmail);
                     avUser.saveInBackground(new SaveCallback() {
                         @Override
                         public void done(AVException e) {

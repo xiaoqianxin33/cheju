@@ -8,7 +8,6 @@ import android.os.Handler;
 import android.text.Editable;
 import android.text.TextUtils;
 import android.text.TextWatcher;
-import android.util.Log;
 import android.view.LayoutInflater;
 import android.view.View;
 import android.view.ViewGroup;
@@ -27,7 +26,6 @@ import com.avos.avoscloud.AVQuery;
 import com.avos.avoscloud.AVRelation;
 import com.avos.avoscloud.AVUser;
 import com.avos.avoscloud.FindCallback;
-import com.avos.avoscloud.LogUtil;
 import com.avos.avoscloud.SaveCallback;
 import com.bigkoo.pickerview.OptionsPickerView;
 import com.bigkoo.pickerview.TimePickerView;
@@ -35,12 +33,9 @@ import com.chinalooke.android.cheju.R;
 import com.chinalooke.android.cheju.activity.WriteMessgeActivity;
 import com.chinalooke.android.cheju.bean.Policy;
 import com.chinalooke.android.cheju.constant.Constant;
-import com.chinalooke.android.cheju.utills.IDCardUtil;
 import com.chinalooke.android.cheju.utills.MyUtills;
 import com.chinalooke.android.cheju.utills.NetUtil;
-import com.chinalooke.android.cheju.utills.PreferenceUtils;
 
-import java.sql.Array;
 import java.text.SimpleDateFormat;
 import java.util.ArrayList;
 import java.util.Arrays;
@@ -192,7 +187,6 @@ public class WriteCheliangFragment extends Fragment {
         mLlItemWrite.setVisibility(View.GONE);
         mLlChezhu.setVisibility(View.GONE);
         mTvXian.setVisibility(View.GONE);
-
         mWrite.setText("精准询价");
         mLvWrite.setAdapter(new MyAdapt());
         mTvDate.setText(MyUtills.getDate());
@@ -229,19 +223,13 @@ public class WriteCheliangFragment extends Fragment {
                 boolean b = checkMessage();
                 if (b) {
                     mProgressDialog.show();
-
-                    mHandler.postDelayed(new Runnable() {
-                        @Override
-                        public void run() {
-                            if (NetUtil.is_Network_Available(getActivity())) {
-                                saveCloud();
-                            } else {
-                                mProgressDialog.dismiss();
-                                mToast.setText("网络错误，请检查网络");
-                                mToast.show();
-                            }
-                        }
-                    }, 500);
+                    if (NetUtil.is_Network_Available(getActivity())) {
+                        saveCloud();
+                    } else {
+                        mProgressDialog.dismiss();
+                        mToast.setText("网络错误，请检查网络");
+                        mToast.show();
+                    }
                 } else {
                     mWrite.setEnabled(true);
                 }
@@ -479,7 +467,9 @@ public class WriteCheliangFragment extends Fragment {
         policy.put("phone", mPolicy.getPhone());
         policy.put("IDNo", mPolicy.getIdNo());
         policy.put("carNo", mPolicy.getCarNo());
-        policy.put("referrerPhone", mCurrentUser.getString("referrer"));
+        String referrer = mCurrentUser.getString("referrer");
+        if (!TextUtils.isEmpty(referrer))
+            policy.put("referrerPhone", mCurrentUser.getString("referrer"));
         policy.put("company", mPolicy.getCompany());
         policy.put("type", mPolicy.getType());
         policy.put("regDate", mPolicy.getRegDate());

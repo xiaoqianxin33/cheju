@@ -50,6 +50,12 @@ public class ImageTools {
         return drawableWeiHui;
     }
 
+    public static Drawable setDrwableSize2(Activity activity, int id, int width, int height) {
+        Drawable drawableWeiHui = activity.getResources().getDrawable(id);
+        drawableWeiHui.setBounds(0, 5, MyUtills.Dp2Px(activity, width), MyUtills.Dp2Px(activity, height));
+        return drawableWeiHui;
+    }
+
 
     public static String getAbsoluteImagePath(Uri uri, Activity activity) {
         // can post image

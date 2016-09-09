@@ -118,7 +118,6 @@ public class CarOrderFragment extends Fragment implements AdapterView.OnItemClic
                 }
 
                 if (firstVisibleItem + visibleItemCount == totalItemCount && !isLoading) {
-                    Log.e("TAG", "3");
                     loadMore();
                 }
             }
@@ -127,14 +126,12 @@ public class CarOrderFragment extends Fragment implements AdapterView.OnItemClic
 
 
     private void loadMore() {
-        Log.e("TAG", "1");
         isLoading = true;
         initData();
     }
 
 
     private void initData() {
-        Log.e("TAG", "2");
         if (mCurrentUser != null) {
             if (NetUtil.is_Network_Available(getActivity())) {
                 AVQuery<AVObject> query = new AVQuery<>("Policy");
@@ -144,7 +141,8 @@ public class CarOrderFragment extends Fragment implements AdapterView.OnItemClic
                 query.findInBackground(new FindCallback<AVObject>() {
                     @Override
                     public void done(List<AVObject> list, AVException e) {
-                        mPbOrder.setVisibility(View.GONE);
+                        if (mPbOrder != null)
+                            mPbOrder.setVisibility(View.GONE);
                         if (e == null) {
                             if (list.size() != 0) {
                                 mPolicys.addAll(list);
@@ -180,24 +178,25 @@ public class CarOrderFragment extends Fragment implements AdapterView.OnItemClic
         Intent intent = new Intent();
         Bundle bundle = new Bundle();
         setDtail();
-        if (status.equals("0")) {
-            intent.setClass(getActivity(), WriteMessgeActivity.class);
-            bundle.putSerializable("dpolicy", mPolicy);
-            intent.putExtras(bundle);
-            startActivity(intent);
-        } else if (status.equals("1")) {
-            intent.setClass(getActivity(), TakePhotoActivity.class);
+        if (!TextUtils.isEmpty(status)) {
+            if (status.equals("0")) {
+                intent.setClass(getActivity(), WriteMessgeActivity.class);
+                bundle.putSerializable("dpolicy", mPolicy);
+                intent.putExtras(bundle);
+                startActivity(intent);
+            } else if (status.equals("1")) {
+                intent.setClass(getActivity(), TakePhotoActivity.class);
+                bundle.putSerializable("policy", mPolicy);
+                bundle.putParcelable("avobject", mAvObject);
+                intent.putExtras(bundle);
+                startActivity(intent);
 
-            bundle.putSerializable("policy", mPolicy);
-            bundle.putParcelable("avobject", mAvObject);
-            intent.putExtras(bundle);
-            startActivity(intent);
-
-        } else if (status.equals("2") || status.equals("3")) {
-            mDialog = MyUtills.initDialog("加载中", getActivity());
-            mDialog.show();
-            bundle.putSerializable("policy", mPolicy);
-            getOrder(bundle, intent);
+            } else if (status.equals("2") || status.equals("3")) {
+                mDialog = MyUtills.initDialog("加载中", getActivity());
+                mDialog.show();
+                bundle.putSerializable("policy", mPolicy);
+                getOrder(bundle, intent);
+            }
         }
 
     }

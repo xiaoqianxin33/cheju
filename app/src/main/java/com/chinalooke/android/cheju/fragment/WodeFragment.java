@@ -42,6 +42,7 @@ import com.avos.avoscloud.FindCallback;
 import com.avos.avoscloud.SaveCallback;
 import com.chinalooke.android.cheju.R;
 import com.chinalooke.android.cheju.activity.AddressActivity;
+import com.chinalooke.android.cheju.activity.CollectActivity;
 import com.chinalooke.android.cheju.activity.CustomerActivity;
 import com.chinalooke.android.cheju.activity.LoginActivity;
 import com.chinalooke.android.cheju.activity.MainActivity;
@@ -234,6 +235,9 @@ public class WodeFragment extends Fragment {
                         Intent intent = new Intent(getActivity(), YouhuiJuanActivity.class);
                         intent.putExtra("wode", "wode");
                         startActivity(intent);
+                        break;
+                    case 0:
+                        startActivity(new Intent(getActivity(), CollectActivity.class));
                         break;
                 }
             }
