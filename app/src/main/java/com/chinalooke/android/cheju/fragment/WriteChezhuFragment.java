@@ -36,6 +36,7 @@ import com.chinalooke.android.cheju.activity.WriteMessgeActivity;
 import com.chinalooke.android.cheju.bean.Policy;
 import com.chinalooke.android.cheju.utills.IDCardUtil;
 import com.chinalooke.android.cheju.utills.MyUtills;
+import com.chinalooke.android.cheju.utills.PreferenceUtils;
 import com.lljjcoder.citypickerview.widget.CityPickerView;
 
 import org.json.JSONArray;
@@ -134,7 +135,14 @@ public class WriteChezhuFragment extends Fragment implements AMapLocationListene
         mCurrentUser = AVUser.getCurrentUser();
         initView();
         initData();
-        location();
+
+        String writechezhu = PreferenceUtils.getPrefString(getActivity(), "writechezhu", "");
+        if (TextUtils.isEmpty(writechezhu)) {
+            location();
+        } else {
+            if (!mDone)
+                mTvLocation.setText(writechezhu);
+        }
 
         return view;
     }
@@ -466,6 +474,7 @@ public class WriteChezhuFragment extends Fragment implements AMapLocationListene
         if (aMapLocation != null) {
             if (aMapLocation.getErrorCode() == 0) {
                 String city = aMapLocation.getCity().substring(0, aMapLocation.getCity().length() - 1);
+                PreferenceUtils.setPrefString(getActivity(), "writechezhu", city);
                 if (!mDone)
                     mTvLocation.setText(city);
             } else {

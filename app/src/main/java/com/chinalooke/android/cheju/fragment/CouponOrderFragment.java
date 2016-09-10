@@ -56,6 +56,7 @@ public class CouponOrderFragment extends Fragment implements AdapterView.OnItemC
     private AVObject mOrder;
     private Toast mToast;
     private List<AVObject> mCoupons = new ArrayList<>();
+    private boolean isFirst = true;
 
 
     @Override
@@ -116,6 +117,22 @@ public class CouponOrderFragment extends Fragment implements AdapterView.OnItemC
     private void loadMore() {
         initData();
         isLoading = true;
+    }
+
+
+    @Override
+    public void onResume() {
+        super.onResume();
+        if (!isFirst) {
+            initData();
+        }
+    }
+
+
+    @Override
+    public void onPause() {
+        super.onPause();
+        isFirst = false;
     }
 
 

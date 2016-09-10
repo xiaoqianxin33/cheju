@@ -66,6 +66,7 @@ public class CarOrderFragment extends Fragment implements AdapterView.OnItemClic
     private Policy mPolicy;
     private AVObject mOrder;
     private Toast mToast;
+    private boolean isFirst = true;
 
 
     @Override
@@ -130,6 +131,21 @@ public class CarOrderFragment extends Fragment implements AdapterView.OnItemClic
         initData();
     }
 
+
+    @Override
+    public void onResume() {
+        super.onResume();
+        if (!isFirst) {
+            initData();
+        }
+    }
+
+
+    @Override
+    public void onPause() {
+        super.onPause();
+        isFirst = false;
+    }
 
     private void initData() {
         if (mCurrentUser != null) {

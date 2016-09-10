@@ -121,7 +121,6 @@ public class RegisterActivity extends AppCompatActivity {
                     mToast.show();
                     mProgressDialog.setMessage("登录中");
                     avUser.put("password", mPassword);
-                    avUser.put("email", mEmail);
                     avUser.put("phone", mPhone);
                     if (!TextUtils.isEmpty(mEmail))
                         avUser.put("referrer", mEmail);
@@ -197,8 +196,8 @@ public class RegisterActivity extends AppCompatActivity {
         mEmail = mEtRegisterEmail.getText().toString();
         if (TextUtils.isEmpty(mEmail)) {
             return true;
-        } else if (!MyUtills.CheckEmail(mEmail)) {
-            mToast.setText("邮箱格式错误，请重新填写");
+        } else if (!MyUtills.CheckPhoneNumer(mEmail)) {
+            mToast.setText("请重新正确的推荐人手机号码");
             mToast.show();
             return false;
         }

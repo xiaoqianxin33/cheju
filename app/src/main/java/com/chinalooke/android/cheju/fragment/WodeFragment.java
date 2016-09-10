@@ -12,7 +12,6 @@ import android.graphics.drawable.Drawable;
 import android.net.Uri;
 import android.os.Bundle;
 import android.os.Environment;
-import android.os.Parcelable;
 import android.provider.MediaStore;
 import android.support.v4.app.Fragment;
 import android.support.v7.app.AlertDialog;
@@ -35,10 +34,7 @@ import android.widget.Toast;
 
 import com.avos.avoscloud.AVException;
 import com.avos.avoscloud.AVFile;
-import com.avos.avoscloud.AVObject;
-import com.avos.avoscloud.AVQuery;
 import com.avos.avoscloud.AVUser;
-import com.avos.avoscloud.FindCallback;
 import com.avos.avoscloud.SaveCallback;
 import com.chinalooke.android.cheju.R;
 import com.chinalooke.android.cheju.activity.AddressActivity;
@@ -55,10 +51,10 @@ import com.chinalooke.android.cheju.utills.MyUtills;
 import com.chinalooke.android.cheju.utills.NetUtil;
 import com.hyphenate.EMCallBack;
 import com.hyphenate.chat.EMClient;
+import com.makeramen.roundedimageview.RoundedImageView;
 import com.squareup.picasso.Picasso;
 
 import java.io.File;
-import java.io.Serializable;
 import java.util.ArrayList;
 import java.util.List;
 
@@ -81,8 +77,8 @@ public class WodeFragment extends Fragment {
     TextView mTvUserphoneWode;
     @Bind(R.id.lv_wode)
     ListView mLvWode;
-    //    @Bind(R.id.head)
-//    RoundImageView mHead;
+    @Bind(R.id.head)
+    RoundedImageView mHead;
     @Bind(R.id.iv_qcord)
     ImageView mIvQcord;
     @Bind(R.id.iv_qcor)
@@ -245,13 +241,13 @@ public class WodeFragment extends Fragment {
     }
 
     private void initData() {
-//        AVFile head = AVUser.getCurrentUser().getAVFile("head");
-//        if (head != null) {
-//            String url = head.getUrl();
-//            Picasso.with(getActivity()).load(url).placeholder(R.mipmap.zhanweitu).into(mHead);
-//        } else {
-//            Picasso.with(getActivity()).load(R.mipmap.zhanweitu).into(mHead);
-//        }
+        AVFile head = AVUser.getCurrentUser().getAVFile("head");
+        if (head != null) {
+            String url = head.getUrl();
+            Picasso.with(getActivity()).load(url).placeholder(R.mipmap.zhanweitu).into(mHead);
+        } else {
+            Picasso.with(getActivity()).load(R.mipmap.zhanweitu).into(mHead);
+        }
     }
 
     private void initView() {
@@ -276,9 +272,9 @@ public class WodeFragment extends Fragment {
             case R.id.iv_arrow:
                 startActivity(new Intent(getActivity(), PersonActivity.class));
                 break;
-//            case R.id.head:
-//                showDialog();
-//                break;
+            case R.id.head:
+                showDialog();
+                break;
             case R.id.iv_qcord:
                 mIvQcor.setVisibility(View.VISIBLE);
                 mIvQcor.setImageBitmap(mBitmap);

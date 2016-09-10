@@ -14,10 +14,10 @@ android {
         applicationId "com.chinalooke.android.cheju"
         minSdkVersion 14
         targetSdkVersion 22
-        versionCode 9
-        versionName '1.006'
+        versionCode 10
+        versionName '1.010'
         multiDexEnabled true
-        resConfigs "zh"
+
 
         ndk {
             moduleName "my_so_lib"
@@ -72,7 +72,6 @@ dependencies {
     compile files('libs/org.apache.http.legacy.jar')
     compile project(':easeui-release_3.1.5')
     compile files('libs/volley-1.0.19.jar')
-
     compile 'com.android.support:appcompat-v7:23.4.0'
     compile 'cn.leancloud.android:avoscloud-sdk:v3.+'
     compile 'cn.leancloud.android:avoscloud-statistics:v3.+'
