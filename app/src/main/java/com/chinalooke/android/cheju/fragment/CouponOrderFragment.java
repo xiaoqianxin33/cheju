@@ -123,6 +123,7 @@ public class CouponOrderFragment extends Fragment implements AdapterView.OnItemC
     @Override
     public void onResume() {
         super.onResume();
+        mCurrentUser = AVUser.getCurrentUser();
         if (!isFirst) {
             initData();
         }
@@ -260,4 +261,6 @@ public class CouponOrderFragment extends Fragment implements AdapterView.OnItemC
         super.onDestroyView();
         ButterKnife.unbind(this);
     }
+
+
 }

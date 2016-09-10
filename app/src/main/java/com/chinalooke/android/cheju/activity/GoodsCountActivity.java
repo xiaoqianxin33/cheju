@@ -209,6 +209,7 @@ public class GoodsCountActivity extends AppCompatActivity {
                             public void done(AVException e) {
                                 mProgressDialog.dismiss();
                                 if (e == null) {
+                                    refreshGoods();
                                     mToast.setText("优惠劵订单创建成功，请在订单表中查看");
                                     mToast.show();
                                     mBtnSubmit.setText("购买成功");
@@ -229,6 +230,13 @@ public class GoodsCountActivity extends AppCompatActivity {
             }
         });
         mQueue.add(imageRequest);
+    }
+
+    private void refreshGoods() {
+        String sales = mGoods.getString("sales");
+        int newSales = Integer.parseInt(sales) + mCount;
+        mGoods.put("sales", newSales);
+        mGoods.saveInBackground();
     }
 
 

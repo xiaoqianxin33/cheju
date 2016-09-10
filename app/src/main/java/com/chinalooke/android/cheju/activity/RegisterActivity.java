@@ -62,9 +62,12 @@ public class RegisterActivity extends AppCompatActivity {
 
     }
 
-    @OnClick({R.id.btn_login_getsms_r, R.id.btn_complete, R.id.iv_login_back})
+    @OnClick({R.id.btn_login_getsms_r, R.id.btn_complete, R.id.iv_wirte_back})
     public void onClick(View view) {
         switch (view.getId()) {
+            case R.id.iv_wirte_back:
+                finish();
+                break;
             case R.id.btn_login_getsms_r:
                 phoneNumer = mEtRegisterPhone.getText().toString();
                 if (MyUtills.CheckPhoneNumer(phoneNumer)) {
@@ -103,10 +106,6 @@ public class RegisterActivity extends AppCompatActivity {
                     }
                 }
                 break;
-            case R.id.iv_login_back:
-                finish();
-                break;
-
         }
     }
 
@@ -222,6 +221,14 @@ public class RegisterActivity extends AppCompatActivity {
                     mToast.show();
                     new CountTimer(60000, 1000, mBtnLoginGetsms) {
                     }.start();
+                } else {
+                    if (e.getCode() == AVException.RATE_LIMITED) {
+                        mToast.setText("此号码短信发送太频繁，请明天再试");
+                        mToast.show();
+                    } else {
+                        mToast.setText("短信发送失败");
+                        mToast.show();
+                    }
                 }
             }
         });

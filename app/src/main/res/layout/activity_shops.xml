@@ -159,7 +159,7 @@
                     android:layout_height="wrap_content"
                     android:background="@null"
                     android:divider="@color/divid"
-                    android:dividerHeight="1dp"
+                    android:dividerHeight="8dp"
                     />
 
                 <ProgressBar

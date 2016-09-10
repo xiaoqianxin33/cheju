@@ -93,17 +93,12 @@ public class WodeFragment extends Fragment {
     TextView mTvBlank;
     private View mView;
     private Bitmap mBitmap;
-    private File mPhotoFile;
-    private String mPhotoPath;
-    private Bitmap mBitmap1;
-    private Bitmap mPhotos;
-    private ProgressDialog mProgressDialog;
     private Toast mToast;
     private List<AVUser> mAVUsers;
     private MainActivity mMainActivity;
     private AVUser mCurrentUser;
     private boolean isLogin = false;
-    private List<AVUser> mArrayList = new ArrayList<>();
+
 
     @Override
     public View onCreateView(LayoutInflater inflater, ViewGroup container, Bundle savedInstanceState) {
@@ -114,6 +109,7 @@ public class WodeFragment extends Fragment {
 
     }
 
+
     @Override
     public void onResume() {
         super.onResume();
@@ -121,7 +117,6 @@ public class WodeFragment extends Fragment {
         if (mCurrentUser != null) {
             isLogin = true;
             createQRcard();
-            initData();
             initEvent();
             initView();
             mTvBlank.setVisibility(View.GONE);
@@ -147,7 +142,6 @@ public class WodeFragment extends Fragment {
         if (mCurrentUser != null) {
             isLogin = true;
             createQRcard();
-            initData();
             initEvent();
             initView();
             mTvBlank.setVisibility(View.GONE);
@@ -240,15 +234,6 @@ public class WodeFragment extends Fragment {
         });
     }
 
-    private void initData() {
-        AVFile head = AVUser.getCurrentUser().getAVFile("head");
-        if (head != null) {
-            String url = head.getUrl();
-            Picasso.with(getActivity()).load(url).placeholder(R.mipmap.zhanweitu).into(mHead);
-        } else {
-            Picasso.with(getActivity()).load(R.mipmap.zhanweitu).into(mHead);
-        }
-    }
 
     private void initView() {
         mLvWode.setAdapter(new MyAdapt());
@@ -271,9 +256,6 @@ public class WodeFragment extends Fragment {
                 break;
             case R.id.iv_arrow:
                 startActivity(new Intent(getActivity(), PersonActivity.class));
-                break;
-            case R.id.head:
-                showDialog();
                 break;
             case R.id.iv_qcord:
                 mIvQcor.setVisibility(View.VISIBLE);
@@ -316,10 +298,14 @@ public class WodeFragment extends Fragment {
                 viewHolder = new ViewHolder();
                 viewHolder.mTextView = (TextView) convertView.findViewById(R.id.tv_wode_listview);
                 viewHolder.mTextHong = (TextView) convertView.findViewById(R.id.tv_hongzi);
+                viewHolder.mImageView = (ImageView) convertView.findViewById(R.id.iv_icon);
                 convertView.setTag(viewHolder);
             } else {
                 viewHolder = (ViewHolder) convertView.getTag();
             }
+
+            Picasso.with(getActivity()).load(Constant.wodeListViewIcon[position]).into(viewHolder.mImageView);
+
             if (isLogin) {
                 viewHolder.mTextView.setText(Constant.wodeListView[position]);
                 if (position == 5) {
@@ -330,6 +316,7 @@ public class WodeFragment extends Fragment {
             } else {
                 viewHolder.mTextView.setText("推荐车聚APP");
                 viewHolder.mTextHong.setText("推荐购险，打折返利");
+                viewHolder.mImageView.setImageResource(R.mipmap.recommend);
             }
             return convertView;
         }
@@ -338,6 +325,7 @@ public class WodeFragment extends Fragment {
     class ViewHolder {
         TextView mTextView;
         TextView mTextHong;
+        ImageView mImageView;
     }
 
     @Override
@@ -386,148 +374,6 @@ public class WodeFragment extends Fragment {
 
 // 启动分享GUI
         oks.show(getActivity());
-    }
-
-    private void showDialog() {
-
-        Context dialogContext = new ContextThemeWrapper(getActivity(), android.R.style.Theme_Light);
-
-        String[] choiceItems = new String[2];
-        choiceItems[0] = "相机拍摄";
-        choiceItems[1] = "本地相册";
-
-        ListAdapter adapter = new ArrayAdapter<String>(dialogContext, android.R.layout.simple_list_item_1, choiceItems);
-        AlertDialog.Builder builder = new AlertDialog.Builder(dialogContext);
-        builder.setTitle("更换头像");
-
-
-        builder.setSingleChoiceItems(adapter, -1, new DialogInterface.OnClickListener() {
-            @Override
-            public void onClick(DialogInterface dialog, int which) {
-                switch (which) {
-                    case 0: //相机
-                        getImageFromCamera();
-                        break;
-                    case 1: //从图库相册中选取
-                        getImageFromAlbum();
-                        break;
-                }
-                dialog.dismiss();
-            }
-        });
-        builder.create().show();
-    }
-
-    public void getImageFromCamera() {
-
-        String state = Environment.getExternalStorageState();
-        if (state.equals(Environment.MEDIA_MOUNTED)) {
-            Intent intent = new Intent(MediaStore.ACTION_IMAGE_CAPTURE);
-            mPhotoFile = new File(Environment.getExternalStorageDirectory(), "image.jpg");
-
-            intent.putExtra(MediaStore.EXTRA_OUTPUT,
-                    Uri.fromFile(mPhotoFile));
-
-            startActivityForResult(intent, CAMERA_REQUEST_CODE_QZ);
-
-        } else {
-            Toast.makeText(getActivity(), "请确认已经插入SD卡",
-                    Toast.LENGTH_LONG).show();
-        }
-    }
-
-
-    public void getImageFromAlbum() {
-        Intent intent = new Intent(Intent.ACTION_PICK, null);
-        intent.setDataAndType(
-                MediaStore.Images.Media.EXTERNAL_CONTENT_URI, "image/*");
-        intent.setAction(Intent.ACTION_GET_CONTENT);
-        startActivityForResult(intent, ALBUM_REQUEST_CODE_QZ);
-    }
-
-    @Override
-    public void onActivityResult(int requestCode, int resultCode, Intent data) {
-        if (resultCode == Activity.RESULT_OK) {
-            if (requestCode == CAMERA_REQUEST_CODE_QZ) {
-                String status = Environment.getExternalStorageState();
-                if (status.equals(Environment.MEDIA_MOUNTED)) {
-//                    Log.e("status", "status");
-                    mBitmap1 = BitmapFactory.decodeFile(Environment.getExternalStorageDirectory() + "/image.jpg");
-                    if (mBitmap1 != null) {
-                        mPhotoPath = Environment.getExternalStorageDirectory() + "/image.jpg";
-                        try {
-                            AVFile avFile = AVFile.parseFileWithAbsoluteLocalPath("image.jpg", Environment.getExternalStorageDirectory().toString());
-
-
-                            saveHeadCloud(0, avFile, null, null);
-                        } catch (Exception e) {
-                            e.printStackTrace();
-                        }
-                    }
-                }
-            } else if (requestCode == ALBUM_REQUEST_CODE_QZ) {
-                try {
-                    Uri originalUri = data.getData();
-                    AVFile avFile = AVFile.parseFileWithAbsoluteLocalPath("image.jpg",
-                            ImageTools.getPath(getActivity(), originalUri));
-                    if (originalUri == null) {
-                        Bundle bundle = data.getExtras();
-                        if (bundle != null) {
-                            mPhotos = (Bitmap) bundle.get("data");
-                            Drawable drawable = new BitmapDrawable(mPhotos);
-                            saveHeadCloud(1, avFile, null, mPhotos);
-                        } else {
-                            Toast.makeText(getActivity(), "err****", Toast.LENGTH_LONG).show();
-                        }
-                    } else {
-                        Bitmap bitmapFromUri = ImageTools.getBitmapFromUri(originalUri, getActivity());
-                        saveHeadCloud(1, avFile, originalUri, null);
-                    }
-
-                } catch (Exception e) {
-                    e.printStackTrace();
-                }
-            }
-        }
-        super.onActivityResult(requestCode, resultCode, data);
-    }
-
-    private void saveHeadCloud(final int i, AVFile avFile, final Uri url, final Bitmap bitmap) {
-        initDialog("正在更新头像");
-        AVUser.getCurrentUser().put("head", avFile);
-        AVUser.getCurrentUser().saveInBackground(new SaveCallback() {
-            @Override
-            public void done(AVException e) {
-                mProgressDialog.dismiss();
-                if (e == null) {
-                    mToast.setText("头像更新成功");
-                    mToast.show();
-                    switch (i) {
-                        case 0:
-//                            Picasso.with(getActivity()).load(new File(mPhotoPath)).resize(100, 100).centerInside().into(mHead);
-                            break;
-                        case 1:
-//                            Picasso.with(getActivity()).load(url).resize(100, 100).centerCrop().into(mHead);
-                            break;
-                        case 2:
-//                            mHead.setImageBitmap(bitmap);
-                            break;
-                    }
-
-                } else {
-                    mToast.setText(e.getMessage());
-                    mToast.show();
-                }
-            }
-        });
-    }
-
-    private void initDialog(String message) {
-        mProgressDialog = new ProgressDialog(getActivity());
-        mProgressDialog.setProgressStyle(ProgressDialog.STYLE_SPINNER);
-        mProgressDialog.setMessage(message);
-        mProgressDialog.setCancelable(true);
-        mProgressDialog.show();
     }
 
 

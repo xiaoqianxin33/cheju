@@ -3,23 +3,24 @@
               xmlns:app="http://schemas.android.com/apk/res-auto"
               android:layout_width="match_parent"
               android:layout_height="match_parent"
+              android:background="@android:color/white"
               android:orientation="vertical">
 
     <LinearLayout
         android:layout_width="match_parent"
-        android:layout_height="80dp"
+        android:layout_height="120dp"
         android:orientation="horizontal"
         android:paddingBottom="8dp"
         android:paddingTop="8dp">
 
         <com.makeramen.roundedimageview.RoundedImageView
             android:id="@+id/iv_shop"
-            android:layout_width="64dp"
-            android:layout_height="64dp"
+            android:layout_width="120dp"
+            android:layout_height="100dp"
             android:background="@drawable/shop_shape"
+            android:paddingLeft="8dp"
             android:src="@mipmap/appcan_s"
             app:riv_corner_radius="3dip"
-            app:riv_tile_mode="repeat"
             />
 
         <LinearLayout
@@ -46,6 +47,7 @@
                 android:layout_weight="1"
                 android:paddingBottom="2dp"
                 android:text="289点劵"
+                android:textColor="@color/selectcolor"
                 android:textSize="14sp"/>
 
             <TextView
@@ -79,9 +81,5 @@
 
     </LinearLayout>
 
-    <TextView
-        android:layout_width="match_parent"
-        android:layout_height="1dp"
-        android:background="#BFBAB4"/>
 
 </LinearLayout>

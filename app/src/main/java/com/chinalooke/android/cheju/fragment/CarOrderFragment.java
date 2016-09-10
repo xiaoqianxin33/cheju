@@ -135,6 +135,7 @@ public class CarOrderFragment extends Fragment implements AdapterView.OnItemClic
     @Override
     public void onResume() {
         super.onResume();
+        mCurrentUser = AVUser.getCurrentUser();
         if (!isFirst) {
             initData();
         }
@@ -355,4 +356,6 @@ public class CarOrderFragment extends Fragment implements AdapterView.OnItemClic
         super.onDestroyView();
         ButterKnife.unbind(this);
     }
+
+
 }

@@ -36,6 +36,7 @@ public class Constant {
 
     public static String[] wodeListView = {"我的收藏", "我的积分", "积分兑换", "我的客户", "邮寄地址", "推荐车聚APP", "退出登录"};
 
+    public static int[] wodeListViewIcon = {R.mipmap.shoucang, R.mipmap.score, R.mipmap.exchange, R.mipmap.customer, R.mipmap.address, R.mipmap.recommend, R.mipmap.loginout};
     public static String[] policyListView = {"保单号", "车主姓名", "行使城市", "手机号码", "身份证号码", "车牌号码", "注册登记日期", "车架号", "发动机号", "品牌型号", "保单状态"};
     public static String[] policyCheckListView = {"保单号", "车主姓名", "行使城市", "手机号码", "身份证号码", "车牌号码", "注册登记日期", "车架号", "发动机号", "品牌型号", "保单状态", "保险公司", "价格"};
 

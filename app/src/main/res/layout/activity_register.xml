@@ -11,13 +11,20 @@
         android:background="#3D96F8"
         >
 
-        <ImageView
-            android:id="@+id/iv_login_back"
-            android:layout_width="24dp"
-            android:layout_height="24dp"
+        <FrameLayout
+            android:id="@+id/iv_wirte_back"
+            android:layout_width="42dp"
+            android:layout_height="42dp"
             android:layout_centerVertical="true"
-            android:layout_marginStart="8dp"
-            android:src="@mipmap/icon_back"/>
+            android:clickable="true">
+
+            <ImageView
+                android:layout_width="24dp"
+                android:layout_height="24dp"
+                android:layout_gravity="center"
+                android:background="@mipmap/icon_back"/>
+
+        </FrameLayout>
 
         <TextView
             android:layout_width="match_parent"
@@ -40,24 +47,17 @@
         android:background="@drawable/shape3"
         android:orientation="horizontal">
 
-        <TextView
-            android:layout_width="0dp"
-            android:layout_height="match_parent"
-            android:layout_weight="1"
-            android:gravity="center_vertical"
-            android:paddingLeft="5dp"
-            android:text="手机号码 :"
-            android:textColor="@android:color/black"
-            android:textSize="16sp"/>
 
         <EditText
             android:id="@+id/et_register_phone"
-            android:layout_width="0dp"
+            android:layout_width="match_parent"
             android:layout_height="match_parent"
-            android:layout_weight="2"
             android:background="@null"
+            android:drawableLeft="@mipmap/user"
+            android:drawablePadding="16dp"
             android:hint="请填写手机号码"
             android:inputType="number"
+            android:paddingLeft="8dp"
             android:textColor="@android:color/black"
             android:textSize="16sp"/>
 
@@ -76,24 +76,15 @@
             android:layout_height="match_parent"
             android:orientation="horizontal">
 
-            <TextView
-                android:layout_width="0dp"
-                android:layout_height="match_parent"
-                android:layout_weight="1"
-                android:gravity="center_vertical"
-                android:paddingLeft="5dp"
-                android:text="验证码 :"
-                android:textColor="@android:color/black"
-                android:textSize="16sp"/>
 
             <EditText
                 android:id="@+id/et_login_sms"
-                android:layout_width="0dp"
+                android:layout_width="match_parent"
                 android:layout_height="match_parent"
-                android:layout_weight="2"
                 android:background="@null"
                 android:hint="请填写验证码"
                 android:inputType="number"
+                android:paddingLeft="24dp"
                 android:textColor="@android:color/black"
                 android:textSize="16sp"/>
 
@@ -125,24 +116,18 @@
         android:background="@drawable/shape5"
         android:orientation="horizontal">
 
-        <TextView
-            android:layout_width="0dp"
-            android:layout_height="match_parent"
-            android:layout_weight="1"
-            android:gravity="center_vertical"
-            android:paddingLeft="5dp"
-            android:text="密码 :"
-            android:textColor="@android:color/black"
-            android:textSize="16sp"/>
 
         <EditText
             android:id="@+id/et_register_password"
             android:layout_width="0dp"
             android:layout_height="match_parent"
-            android:layout_weight="2"
+            android:layout_weight="3.5"
             android:background="@null"
+            android:drawableLeft="@mipmap/lock"
+            android:drawablePadding="16dp"
             android:hint="请填写密码"
             android:inputType="textPassword"
+            android:paddingLeft="8dp"
             android:textColor="@android:color/black"
             android:textSize="16sp"/>
 
@@ -158,24 +143,19 @@
         android:background="@drawable/shape5"
         android:orientation="horizontal">
 
-        <TextView
-            android:layout_width="0dp"
-            android:layout_height="match_parent"
-            android:layout_weight="1"
-            android:gravity="center_vertical"
-            android:paddingLeft="5dp"
-            android:text="确认密码 :"
-            android:textColor="@android:color/black"
-            android:textSize="16sp"/>
+
 
         <EditText
             android:id="@+id/et_register_password_again"
             android:layout_width="0dp"
             android:layout_height="match_parent"
-            android:layout_weight="2"
+            android:layout_weight="3.5"
             android:background="@null"
-            android:hint="请填写密码"
+            android:hint="请再次填写密码"
+            android:drawableLeft="@mipmap/lock"
+            android:drawablePadding="16dp"
             android:inputType="textPassword"
+            android:paddingLeft="8dp"
             android:textColor="@android:color/black"
             android:textSize="16sp"/>
 
@@ -190,24 +170,18 @@
         android:background="@drawable/shape4"
         android:orientation="horizontal">
 
-        <TextView
-            android:layout_width="0dp"
-            android:layout_height="match_parent"
-            android:layout_weight="1"
-            android:gravity="center_vertical"
-            android:paddingLeft="5dp"
-            android:text="推荐人 :"
-            android:textColor="@android:color/black"
-            android:textSize="16sp"/>
 
         <EditText
             android:id="@+id/et_register_email"
             android:layout_width="0dp"
             android:layout_height="match_parent"
-            android:layout_weight="2"
+            android:layout_weight="3.5"
+            android:drawableLeft="@mipmap/referrer"
+            android:drawablePadding="16dp"
             android:background="@null"
             android:hint="请填写推荐人手机号(选填)"
             android:inputType="textPassword"
+            android:paddingLeft="8dp"
             android:textColor="@android:color/black"
             android:textSize="16sp"/>
 

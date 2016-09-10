@@ -91,8 +91,8 @@
             android:id="@+id/lv_youhui"
             android:layout_width="match_parent"
             android:layout_height="wrap_content"
-            android:background="@null"
-            android:divider="@color/divid"
+            android:divider="@color/backcolor"
+            android:dividerHeight="8dp"
             />
 
         <ProgressBar

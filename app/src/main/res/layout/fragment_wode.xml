@@ -16,6 +16,7 @@
         android:id="@+id/ll_wode"
         android:layout_width="match_parent"
         android:layout_height="80dp"
+        android:layout_marginBottom="16dp"
         android:gravity="center_vertical"
         android:orientation="horizontal">
 
@@ -27,7 +28,10 @@
             android:layout_marginBottom="8dp"
             android:layout_marginTop="8dp"
             android:layout_weight="1"
-            android:scaleType="fitXY"
+            android:scaleType="fitCenter"
+            android:src="@mipmap/zhanweitu"
+            app:riv_corner_radius="80dip"
+            app:riv_mutate_background="true"
             app:riv_oval="true"/>
 
 
@@ -64,6 +68,8 @@
         android:id="@+id/rl_wode"
         android:layout_width="match_parent"
         android:layout_height="48dp"
+        android:layout_marginBottom="16dp"
+        android:background="@android:color/white"
         android:gravity="center_vertical"
         android:orientation="horizontal">
 
@@ -75,7 +81,12 @@
             android:paddingLeft="32dp"
             android:text="推荐APP"
             android:textColor="@android:color/black"
-            android:textSize="16sp"/>
+            android:textSize="16sp"
+            android:layout_marginLeft="54dp"
+            android:layout_marginStart="54dp"
+            android:layout_alignParentTop="true"
+            android:layout_alignParentLeft="true"
+            android:layout_alignParentStart="true"/>
 
         <ImageView
             android:id="@+id/imageView3"
@@ -88,21 +99,28 @@
         <TextView
             android:layout_width="wrap_content"
             android:layout_height="wrap_content"
-            android:layout_alignTop="@+id/imageView3"
-            android:layout_marginLeft="41dp"
-            android:layout_toRightOf="@+id/textView3"
             android:text="推荐购险打折返利"
             android:textColor="@android:color/holo_red_light"
-            android:textSize="12sp"/>
+            android:textSize="12sp"
+            android:layout_alignTop="@+id/imageView3"
+            android:layout_toLeftOf="@+id/imageView3"
+            android:layout_toStartOf="@+id/imageView3"
+            android:layout_marginRight="67dp"
+            android:layout_marginEnd="67dp"/>
+
+        <ImageView
+            android:id="@+id/iv_icon"
+            android:layout_width="36dp"
+            android:layout_height="36dp"
+            android:layout_alignParentLeft="true"
+            android:layout_alignParentStart="true"
+            android:layout_centerVertical="true"
+            android:layout_marginLeft="23dp"
+            android:layout_marginStart="23dp"
+            android:src="@mipmap/recommend"/>
 
     </RelativeLayout>
 
-    <TextView
-        android:layout_width="match_parent"
-        android:layout_height="1dp"
-        android:layout_marginEnd="8dp"
-        android:layout_marginStart="8dp"
-        android:background="#ADA9A4"/>
 
     <TextView
         android:id="@+id/tv_blank"
@@ -113,13 +131,12 @@
     <ListView
         android:id="@+id/lv_wode"
         android:layout_width="match_parent"
-        android:layout_height="0dp"
-        android:layout_marginEnd="8dp"
-        android:layout_marginStart="8dp"
-        android:layout_weight="1"
-        android:background="@null"
+        android:layout_height="wrap_content"
+        android:background="@android:color/white"
         android:divider="@color/divid"
-        android:dividerHeight="1dp">
+        android:dividerHeight="1dp"
+        android:paddingLeft="8dp"
+        android:paddingRight="8dp">
     </ListView>
 
 

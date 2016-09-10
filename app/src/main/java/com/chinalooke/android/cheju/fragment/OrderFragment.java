@@ -102,15 +102,4 @@ public class OrderFragment extends Fragment {
         }
     }
 
-    @Override
-    public void onResume() {
-        super.onResume();
-        mCurrentUser = AVUser.getCurrentUser();
-    }
-
-
-    public static String getTime(Date date) {
-        SimpleDateFormat format = new SimpleDateFormat("yyyy-MM-dd HH:mm");
-        return format.format(date);
-    }
 }
