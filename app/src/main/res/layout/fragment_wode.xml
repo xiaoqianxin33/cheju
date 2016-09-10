@@ -6,17 +6,13 @@
               android:background="#EDEBE9"
               android:orientation="vertical">
 
-    <ImageView
-        android:id="@+id/iv_qcor"
-        android:layout_width="match_parent"
-        android:layout_height="match_parent"
-        android:visibility="gone"/>
-
     <LinearLayout
         android:id="@+id/ll_wode"
         android:layout_width="match_parent"
         android:layout_height="80dp"
         android:layout_marginBottom="16dp"
+        android:layout_marginTop="16dp"
+        android:background="@android:color/white"
         android:gravity="center_vertical"
         android:orientation="horizontal">
 
@@ -77,16 +73,16 @@
             android:id="@+id/textView3"
             android:layout_width="180dp"
             android:layout_height="match_parent"
+            android:layout_alignParentLeft="true"
+            android:layout_alignParentStart="true"
+            android:layout_alignParentTop="true"
+            android:layout_marginLeft="54dp"
+            android:layout_marginStart="54dp"
             android:gravity="center_vertical"
             android:paddingLeft="32dp"
             android:text="推荐APP"
             android:textColor="@android:color/black"
-            android:textSize="16sp"
-            android:layout_marginLeft="54dp"
-            android:layout_marginStart="54dp"
-            android:layout_alignParentTop="true"
-            android:layout_alignParentLeft="true"
-            android:layout_alignParentStart="true"/>
+            android:textSize="16sp"/>
 
         <ImageView
             android:id="@+id/imageView3"
@@ -99,14 +95,14 @@
         <TextView
             android:layout_width="wrap_content"
             android:layout_height="wrap_content"
-            android:text="推荐购险打折返利"
-            android:textColor="@android:color/holo_red_light"
-            android:textSize="12sp"
             android:layout_alignTop="@+id/imageView3"
+            android:layout_marginEnd="67dp"
+            android:layout_marginRight="67dp"
             android:layout_toLeftOf="@+id/imageView3"
             android:layout_toStartOf="@+id/imageView3"
-            android:layout_marginRight="67dp"
-            android:layout_marginEnd="67dp"/>
+            android:text="推荐购险打折返利"
+            android:textColor="@android:color/holo_red_light"
+            android:textSize="12sp"/>
 
         <ImageView
             android:id="@+id/iv_icon"

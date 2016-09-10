@@ -209,6 +209,8 @@
         </activity>
         <activity android:name=".activity.CollectActivity">
         </activity>
+        <activity android:name=".activity.UserQcodeActivity">
+        </activity>
     </application>
 
 </manifest>

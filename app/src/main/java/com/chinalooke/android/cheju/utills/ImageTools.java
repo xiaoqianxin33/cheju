@@ -217,4 +217,24 @@ public class ImageTools {
             return null;
         }
     }
+
+
+    public static void saveBitmap(Bitmap bitmap, String picName) {
+
+        File f = new File(Environment.getExternalStorageDirectory().getPath(), picName);
+        if (f.exists()) {
+            f.delete();
+        }
+        try {
+            FileOutputStream out = new FileOutputStream(f);
+            bitmap.compress(Bitmap.CompressFormat.PNG, 90, out);
+            out.flush();
+            out.close();
+
+        } catch (IOException e) {
+
+            e.printStackTrace();
+        }
+
+    }
 }

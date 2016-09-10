@@ -1,41 +1,26 @@
 package com.chinalooke.android.cheju.fragment;
 
-import android.app.Activity;
-import android.app.ProgressDialog;
-import android.content.Context;
 import android.content.DialogInterface;
 import android.content.Intent;
 import android.graphics.Bitmap;
-import android.graphics.BitmapFactory;
-import android.graphics.drawable.BitmapDrawable;
-import android.graphics.drawable.Drawable;
-import android.net.Uri;
 import android.os.Bundle;
 import android.os.Environment;
-import android.provider.MediaStore;
 import android.support.v4.app.Fragment;
-import android.support.v7.app.AlertDialog;
-import android.support.v7.view.ContextThemeWrapper;
 import android.util.Log;
 import android.view.LayoutInflater;
 import android.view.View;
 import android.view.ViewGroup;
 import android.widget.AdapterView;
-import android.widget.ArrayAdapter;
 import android.widget.BaseAdapter;
 import android.widget.Button;
 import android.widget.ImageView;
 import android.widget.LinearLayout;
-import android.widget.ListAdapter;
 import android.widget.ListView;
 import android.widget.RelativeLayout;
 import android.widget.TextView;
 import android.widget.Toast;
 
-import com.avos.avoscloud.AVException;
-import com.avos.avoscloud.AVFile;
 import com.avos.avoscloud.AVUser;
-import com.avos.avoscloud.SaveCallback;
 import com.chinalooke.android.cheju.R;
 import com.chinalooke.android.cheju.activity.AddressActivity;
 import com.chinalooke.android.cheju.activity.CollectActivity;
@@ -44,6 +29,7 @@ import com.chinalooke.android.cheju.activity.LoginActivity;
 import com.chinalooke.android.cheju.activity.MainActivity;
 import com.chinalooke.android.cheju.activity.PersonActivity;
 import com.chinalooke.android.cheju.activity.ScoreActivity;
+import com.chinalooke.android.cheju.activity.UserQcodeActivity;
 import com.chinalooke.android.cheju.activity.YouhuiJuanActivity;
 import com.chinalooke.android.cheju.constant.Constant;
 import com.chinalooke.android.cheju.utills.ImageTools;
@@ -51,11 +37,8 @@ import com.chinalooke.android.cheju.utills.MyUtills;
 import com.chinalooke.android.cheju.utills.NetUtil;
 import com.hyphenate.EMCallBack;
 import com.hyphenate.chat.EMClient;
-import com.makeramen.roundedimageview.RoundedImageView;
 import com.squareup.picasso.Picasso;
 
-import java.io.File;
-import java.util.ArrayList;
 import java.util.List;
 
 import butterknife.Bind;
@@ -77,12 +60,8 @@ public class WodeFragment extends Fragment {
     TextView mTvUserphoneWode;
     @Bind(R.id.lv_wode)
     ListView mLvWode;
-    @Bind(R.id.head)
-    RoundedImageView mHead;
     @Bind(R.id.iv_qcord)
     ImageView mIvQcord;
-    @Bind(R.id.iv_qcor)
-    ImageView mIvQcor;
     @Bind(R.id.ll_wode)
     LinearLayout mLlWode;
     @Bind(R.id.rl_wode)
@@ -241,7 +220,7 @@ public class WodeFragment extends Fragment {
                 .substring(0, 5) + "******");
     }
 
-    @OnClick({R.id.iv_qcord, R.id.iv_qcor, R.id.tv_userphone_wode
+    @OnClick({R.id.iv_qcord, R.id.tv_userphone_wode
             , R.id.iv_arrow, R.id.button_login, R.id.rl_wode})
     public void onClick(View view) {
         switch (view.getId()) {
@@ -258,11 +237,7 @@ public class WodeFragment extends Fragment {
                 startActivity(new Intent(getActivity(), PersonActivity.class));
                 break;
             case R.id.iv_qcord:
-                mIvQcor.setVisibility(View.VISIBLE);
-                mIvQcor.setImageBitmap(mBitmap);
-                break;
-            case R.id.iv_qcor:
-                mIvQcor.setVisibility(View.GONE);
+                startActivity(new Intent(getActivity(), UserQcodeActivity.class));
                 break;
         }
 
@@ -340,10 +315,12 @@ public class WodeFragment extends Fragment {
             public void run() {
                 mBitmap = QRCodeEncoder.syncEncodeQRCode(AVUser.getCurrentUser().getObjectId(),
                         MyUtills.Dp2Px(getActivity(), 300));
+                ImageTools.saveBitmap(mBitmap, "qdcode.png");
                 getActivity().runOnUiThread(new Runnable() {
                     @Override
                     public void run() {
                         mIvQcord.setImageBitmap(mBitmap);
+
                     }
                 });
             }

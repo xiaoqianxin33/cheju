@@ -15,10 +15,9 @@
 
         <com.makeramen.roundedimageview.RoundedImageView
             android:id="@+id/iv_shop"
-            android:layout_width="0dp"
-            android:layout_height="match_parent"
+            android:layout_width="120dp"
+            android:layout_height="100dp"
             android:layout_marginLeft="8dp"
-            android:layout_weight="1"
             android:scaleType="centerCrop"
             android:src="@mipmap/placeholder"
             app:riv_corner_radius="3dip"
@@ -48,7 +47,7 @@
                 android:layout_weight="1"
                 android:gravity="center_vertical"
                 android:text="简介"
-                android:textColor="@color/divid"
+                android:textColor="@color/selectcolor"
                 android:textSize="14sp"/>
 
             <TextView

@@ -346,8 +346,10 @@ public class WriteChezhuFragment extends Fragment implements AMapLocationListene
     public void onDestroyView() {
         super.onDestroyView();
         ButterKnife.unbind(this);
-        mLocationClient.stopLocation();
-        mLocationClient.onDestroy();
+        if (mLocationClient != null) {
+            mLocationClient.stopLocation();
+            mLocationClient.onDestroy();
+        }
     }
 
 
