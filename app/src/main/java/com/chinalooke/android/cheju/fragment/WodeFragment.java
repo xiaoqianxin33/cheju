@@ -224,18 +224,18 @@ public class WodeFragment extends Fragment {
             , R.id.iv_arrow, R.id.button_login, R.id.rl_wode})
     public void onClick(View view) {
         switch (view.getId()) {
-            case R.id.tv_userphone_wode:
-                startActivity(new Intent(getActivity(), PersonActivity.class));
-                break;
+//            case R.id.tv_userphone_wode:
+//                startActivity(new Intent(getActivity(), PersonActivity.class));
+//                break;
             case R.id.rl_wode:
                 startActivity(new Intent(getActivity(), LoginActivity.class));
                 break;
             case R.id.button_login:
                 startActivity(new Intent(getActivity(), LoginActivity.class));
                 break;
-            case R.id.iv_arrow:
-                startActivity(new Intent(getActivity(), PersonActivity.class));
-                break;
+//            case R.id.iv_arrow:
+//                startActivity(new Intent(getActivity(), PersonActivity.class));
+//                break;
             case R.id.iv_qcord:
                 startActivity(new Intent(getActivity(), UserQcodeActivity.class));
                 break;
@@ -296,8 +296,6 @@ public class WodeFragment extends Fragment {
             return convertView;
         }
     }
-
-
 
 
     class ViewHolder {
