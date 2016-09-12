@@ -280,28 +280,32 @@ public class ShopActivity extends AppCompatActivity implements RevealBackgroundV
     }
 
     private void isCollec() {
-        AVObject todoFolder = AVObject.createWithoutData("_User", mCurrentUser.getObjectId());
-        AVRelation<AVObject> relation = todoFolder.getRelation("collectShop");
-        AVQuery<AVObject> query = relation.getQuery();
-        query.findInBackground(new FindCallback<AVObject>() {
-            @Override
-            public void done(List<AVObject> list, AVException e) {
-                if (e == null) {
-                    if (list.size() != 0) {
-                        for (AVObject shop : list) {
-                            String objectId = shop.getObjectId();
-                            if (objectId.equals(mShop1.getObjectId())) {
-                                mIvCollect.setImageResource(R.mipmap.select);
-                                isCollect = true;
+        if (mCurrentUser != null) {
+            AVObject todoFolder = AVObject.createWithoutData("_User", mCurrentUser.getObjectId());
+            AVRelation<AVObject> relation = todoFolder.getRelation("collectShop");
+            AVQuery<AVObject> query = relation.getQuery();
+            query.findInBackground(new FindCallback<AVObject>() {
+                @Override
+                public void done(List<AVObject> list, AVException e) {
+                    if (e == null) {
+                        if (list.size() != 0) {
+                            for (AVObject shop : list) {
+                                String objectId = shop.getObjectId();
+                                if (objectId.equals(mShop1.getObjectId())) {
+                                    mIvCollect.setImageResource(R.mipmap.select);
+                                    isCollect = true;
+                                }
                             }
+                        } else {
+                            mIvCollect.setImageResource(R.mipmap.unselect);
+                            isCollect = false;
                         }
-                    } else {
-                        mIvCollect.setImageResource(R.mipmap.unselect);
-                        isCollect = false;
                     }
                 }
-            }
-        });
+            });
+        } else {
+            mIvCollect.setImageResource(R.mipmap.unselect);
+        }
     }
 
 
@@ -342,14 +346,19 @@ public class ShopActivity extends AppCompatActivity implements RevealBackgroundV
                 callPhone();
                 break;
             case R.id.iv_collect:
-                if (isCollect) {
-                    mIvCollect.setImageResource(R.mipmap.unselect);
-                    isCollect = false;
+                if (mCurrentUser != null) {
+                    if (isCollect) {
+                        mIvCollect.setImageResource(R.mipmap.unselect);
+                        isCollect = false;
+                    } else {
+                        mIvCollect.setImageResource(R.mipmap.select);
+                        isCollect = true;
+                    }
+                    saveCollect();
                 } else {
-                    mIvCollect.setImageResource(R.mipmap.select);
-                    isCollect = true;
+                    mToast.setText("登录用户才可收藏");
+                    mToast.show();
                 }
-                saveCollect();
                 break;
             case R.id.rl_phone:
                 callPhone();
