@@ -204,7 +204,7 @@ public class GodsActivity extends AppCompatActivity implements MyScrollView.OnSc
         }
     }
 
-    @OnClick({R.id.btn_buy, R.id.iv_wirte_back, R.id.iv_collect})
+    @OnClick({R.id.btn_buy, R.id.iv_wirte_back})
     public void onClick(View view) {
         switch (view.getId()) {
             case R.id.btn_buy:
