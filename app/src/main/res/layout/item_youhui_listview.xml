@@ -19,9 +19,11 @@
             android:layout_height="100dp"
             android:background="@drawable/shop_shape"
             android:paddingLeft="8dp"
-            android:src="@mipmap/appcan_s"
+            android:scaleType="centerCrop"
+            android:src="@mipmap/placeholder"
             app:riv_corner_radius="3dip"
             />
+
 
         <LinearLayout
             android:layout_width="0dp"

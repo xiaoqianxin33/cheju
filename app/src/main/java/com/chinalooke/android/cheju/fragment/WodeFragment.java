@@ -297,6 +297,9 @@ public class WodeFragment extends Fragment {
         }
     }
 
+
+
+
     class ViewHolder {
         TextView mTextView;
         TextView mTextHong;

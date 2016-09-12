@@ -18,6 +18,7 @@ import com.avos.avoscloud.AVUser;
 import com.chinalooke.android.cheju.R;
 import com.chinalooke.android.cheju.activity.MainActivity;
 
+import java.lang.reflect.Field;
 import java.text.SimpleDateFormat;
 import java.util.Date;
 
@@ -45,6 +46,14 @@ public class OrderFragment extends Fragment {
     private AVUser mCurrentUser;
     private Toast mToast;
 
+
+    private boolean isVisible = false;
+
+
+    public boolean isVisibled() {
+        return isVisible;
+    }
+
     @TargetApi(Build.VERSION_CODES.JELLY_BEAN_MR1)
     @Override
     public View onCreateView(LayoutInflater inflater, ViewGroup container, Bundle savedInstanceState) {
@@ -62,7 +71,8 @@ public class OrderFragment extends Fragment {
     @Override
     public void onActivityCreated(Bundle savedInstanceState) {
         super.onActivityCreated(savedInstanceState);
-        switchContent(mCouponOrderFragment, mCarOrderFragment);
+        BlackFragment blackFragment = new BlackFragment();
+        switchContent(blackFragment, mCarOrderFragment);
     }
 
 
@@ -71,9 +81,9 @@ public class OrderFragment extends Fragment {
             mContent = to;
             FragmentTransaction transaction = mFragmentManager.beginTransaction();
             if (!to.isAdded()) {    // 先判断是否被add过
-                transaction.hide(from).add(R.id.fl_order, to).commit(); // 隐藏当前的fragment，add下一个到Activity中
+                transaction.hide(from).add(R.id.fl_order, to).commitAllowingStateLoss(); // 隐藏当前的fragment，add下一个到Activity中
             } else {
-                transaction.hide(from).show(to).commit(); // 隐藏当前的fragment，显示下一个
+                transaction.hide(from).show(to).commitAllowingStateLoss(); // 隐藏当前的fragment，显示下一个
             }
         }
     }
@@ -83,6 +93,17 @@ public class OrderFragment extends Fragment {
     public void onDestroyView() {
         super.onDestroyView();
         ButterKnife.unbind(this);
+        try {
+            Field childFragmentManager = Fragment.class.getDeclaredField("mChildFragmentManager");
+            childFragmentManager.setAccessible(true);
+            childFragmentManager.set(this, null);
+
+
+        } catch (NoSuchFieldException e) {
+            throw new RuntimeException(e);
+        } catch (IllegalAccessException e) {
+            throw new RuntimeException(e);
+        }
     }
 
 
@@ -102,4 +123,12 @@ public class OrderFragment extends Fragment {
         }
     }
 
+
+    @Override
+    public void setUserVisibleHint(boolean isVisibleToUser) {
+        super.setUserVisibleHint(isVisibleToUser);
+        if (isVisibleToUser) {
+
+        }
+    }
 }

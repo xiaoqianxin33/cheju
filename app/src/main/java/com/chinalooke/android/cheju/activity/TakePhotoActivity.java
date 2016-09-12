@@ -129,8 +129,18 @@ public class TakePhotoActivity extends AppCompatActivity {
     }
 
     private void initAddress() {
+        AVObject avObject = null;
         if (mAddresses != null && mAddresses.size() != 0) {
-            AVObject avObject = mAddresses.get(0);
+            if (mAddresses.size() == 1) {
+                avObject = mAddresses.get(0);
+            } else {
+                for (AVObject avObject1 : mAddresses) {
+                    if (avObject1.getBoolean("default")) {
+                        avObject = avObject1;
+                        break;
+                    }
+                }
+            }
             mTvName.setText("收货人:" + avObject.getString("name"));
             mTvPhone.setText(avObject.getString("phone"));
             mTvAddress.setText("收货地址：" + avObject.getString("address"));

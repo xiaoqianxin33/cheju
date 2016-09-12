@@ -14,8 +14,8 @@ android {
         applicationId "com.chinalooke.android.cheju"
         minSdkVersion 14
         targetSdkVersion 22
-        versionCode 10
-        versionName '1.010'
+        versionCode 11
+        versionName '1.011'
         multiDexEnabled true
 
 

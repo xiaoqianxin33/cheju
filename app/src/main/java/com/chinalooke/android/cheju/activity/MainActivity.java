@@ -85,7 +85,7 @@ public class MainActivity extends FragmentActivity {
         mFragments.add(new OrderFragment());
         mFragments.add(new WodeFragment());
         mViewpageMain.setAdapter(new MyPagerAdapter(mFragmentManager, mFragments));
-        mViewpageMain.setOffscreenPageLimit(1);
+        mViewpageMain.setOffscreenPageLimit(0);
     }
 
 

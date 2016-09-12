@@ -130,6 +130,7 @@ public class AddAdressFragment extends Fragment implements AMapLocationListener 
         if (mBianAvobject != null) {
             mBianAvobject.put("name", mName);
             mBianAvobject.put("phone", mPhone);
+            mBianAvobject.put("default", false);
             mBianAvobject.put("address", mLocation + mAddress);
             mBianAvobject.saveInBackground(new SaveCallback() {
                 @Override

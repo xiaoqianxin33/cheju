@@ -39,13 +39,13 @@ import butterknife.ButterKnife;
 public class CouponOrderFragment extends Fragment implements AdapterView.OnItemClickListener {
 
 
-    @Bind(R.id.tv_nopolicy)
+    @Bind(R.id.tv_nopolicyS)
     TextView mTvNopolicy;
     @Bind(R.id.lv_chexian_order)
     ListView mLvChexianOrder;
     @Bind(R.id.sr)
     SwipeRefreshLayout mSr;
-    @Bind(R.id.pb_order)
+    @Bind(R.id.pb_orderS)
     ProgressBar mPbOrder;
     private AVUser mCurrentUser;
     private int mSkip;
@@ -114,9 +114,10 @@ public class CouponOrderFragment extends Fragment implements AdapterView.OnItemC
         });
     }
 
-    private void loadMore() {
-        initData();
+    public void loadMore() {
         isLoading = true;
+        initData();
+
     }
 
 
@@ -138,6 +139,7 @@ public class CouponOrderFragment extends Fragment implements AdapterView.OnItemC
 
 
     private void initData() {
+
         if (mCurrentUser != null) {
             if (NetUtil.is_Network_Available(getActivity())) {
                 AVQuery<AVObject> query = new AVQuery<>("Order");
@@ -158,8 +160,10 @@ public class CouponOrderFragment extends Fragment implements AdapterView.OnItemC
                                 mSkip += 10;
                                 isLoading = false;
                             } else {
-                                if (mSkip == 0)
+                                if (mSkip == 0) {
                                     mTvNopolicy.setVisibility(View.VISIBLE);
+
+                                }
                             }
                         }
                     }

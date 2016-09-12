@@ -129,6 +129,7 @@ public class CarOrderFragment extends Fragment implements AdapterView.OnItemClic
     private void loadMore() {
         isLoading = true;
         initData();
+
     }
 
 
@@ -163,7 +164,8 @@ public class CarOrderFragment extends Fragment implements AdapterView.OnItemClic
                         if (e == null) {
                             if (list.size() != 0) {
                                 mPolicys.addAll(list);
-                                mTvNopolicy.setVisibility(View.GONE);
+                                if (mTvNopolicy != null)
+                                    mTvNopolicy.setVisibility(View.GONE);
                                 if (mMyOrderAdapt != null)
                                     mMyOrderAdapt.notifyDataSetChanged();
                                 mSkip += 10;

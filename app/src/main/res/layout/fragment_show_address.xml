@@ -75,7 +75,7 @@
         android:id="@+id/ll_chezhu"
         android:layout_width="match_parent"
         android:layout_height="48dp"
-        android:background="#EDEBE9"
+        android:background="#EEEEEE"
         android:orientation="horizontal"
         android:paddingLeft="8dp"
         android:paddingRight="24dp">

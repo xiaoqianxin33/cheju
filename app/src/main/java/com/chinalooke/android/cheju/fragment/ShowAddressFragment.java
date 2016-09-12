@@ -111,9 +111,22 @@ public class ShowAddressFragment extends Fragment {
         if (isSelected != null)
             isSelected = null;
         isSelected = new HashMap<Integer, Boolean>();
-        for (int i = 0; i < mAdresse.size(); i++) {
-            isSelected.put(i, false);
+
+        if (mAdresse.size() == 1) {
+            AVObject avObject = mAdresse.get(0);
+            boolean aDefault = avObject.getBoolean("default");
+            if (!aDefault) {
+                avObject.put("default", true);
+                avObject.saveInBackground();
+            }
+            isSelected.put(0, true);
+        } else {
+            for (int i = 0; i < mAdresse.size(); i++) {
+                AVObject avObject = mAdresse.get(i);
+                isSelected.put(i, avObject.getBoolean("default"));
+            }
         }
+
         if (beSelectedData.size() > 0) {
             beSelectedData.clear();
         }
@@ -251,6 +264,8 @@ public class ShowAddressFragment extends Fragment {
         };
         viewHolder.mTvBianji.setOnClickListener(onClickListener1);
         viewHolder.mTvBianji.setOnClickListener(onClickListener1);
+        boolean aDefault = avObject.getBoolean("default");
+        viewHolder.mCbCheck.setText(aDefault ? "默认地址" : "设为默认");
 
         viewHolder.mCbCheck.setOnCheckedChangeListener(new CompoundButton.OnCheckedChangeListener() {
             @Override
@@ -260,6 +275,8 @@ public class ShowAddressFragment extends Fragment {
                 } else {
                     buttonView.setText("设为默认");
                 }
+                avObject.put("default", isChecked);
+                avObject.saveInBackground();
             }
         });
     }

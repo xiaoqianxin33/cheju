@@ -139,7 +139,7 @@ public class SyFragment extends Fragment {
                     case 2:
 //                        AVUser currentUser = AVUser.getCurrentUser();
 //                        if (currentUser != null)
-                            startActivity(new Intent(getActivity(), YouhuiJuanActivity.class));
+                        startActivity(new Intent(getActivity(), YouhuiJuanActivity.class));
                         break;
                     case 7:
                         if (mCurrentUser == null) {
@@ -236,7 +236,7 @@ public class SyFragment extends Fragment {
                         Picasso.with(getActivity()).load(url).resize(mWidth, MyUtills.Dp2Px(getActivity(), 122)).centerCrop().into(imageView);
                         mAdList.add(imageView);
                     }
-                    if (mAdList != null)
+                    if (mBanner != null)
                         mBanner.setData(mAdList);
                 }
             }
