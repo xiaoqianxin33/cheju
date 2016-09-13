@@ -140,10 +140,13 @@ public class WriteChezhuFragment extends Fragment implements AMapLocationListene
         if (TextUtils.isEmpty(writechezhu)) {
             location();
         } else {
-            if (!mDone)
+            if (!mDone) {
                 mTvLocation.setText(writechezhu);
+                String chepai = PreferenceUtils.getPrefString(getActivity(), "chepai", "");
+                if (!TextUtils.isEmpty(chepai))
+                    mEtCarnumWritechezhu.setText(chepai);
+            }
         }
-
         return view;
     }
 
@@ -196,6 +199,8 @@ public class WriteChezhuFragment extends Fragment implements AMapLocationListene
 
 
                             if (s.toString().equals(city)) {
+                                String code = mCityCarNumerArrayList.get(i).getString("code");
+                                PreferenceUtils.setPrefString(getActivity(), "chepai", code);
                                 mEtCarnumWritechezhu.setText(mCityCarNumerArrayList.get(i).getString("code"));
                                 break;
                             }

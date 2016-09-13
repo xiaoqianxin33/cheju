@@ -43,6 +43,7 @@ import com.squareup.picasso.Picasso;
 
 import java.text.DecimalFormat;
 import java.util.ArrayList;
+import java.util.Calendar;
 import java.util.Date;
 import java.util.List;
 
@@ -260,34 +261,41 @@ public class YouhuiJuanActivity extends AppCompatActivity implements AMapLocatio
 
     }
 
+    private long lastClickTime = 0;
+
 
     @Override
     public void onItemClick(AdapterView<?> parent, View view, int position, long id) {
+        long currentTime = Calendar.getInstance().getTimeInMillis();
+        int MIN_CLICK_DELAY_TIME = 1000;
+        if (currentTime - lastClickTime > MIN_CLICK_DELAY_TIME) {
+            lastClickTime = currentTime;
 
-        AVObject avObject = mNearbyShops.get(position);
+            AVObject avObject = mNearbyShops.get(position);
 
-        Intent intent = new Intent();
+            Intent intent = new Intent();
 
-        int[] startingLocation = new int[2];
-        view.getLocationOnScreen(startingLocation);
-        startingLocation[0] += view.getWidth() / 2;
-        intent.putExtra(Constant.START_LOCATION, startingLocation);
-        String shopGoods = avObject.getString("ShopGoods");
-        BusinessShop businessShop = new BusinessShop();
-        businessShop.setShopName(avObject.getString("ShopName"));
-        businessShop.setShopPhone(avObject.getString("ShopPhone"));
-        if (avObject.getDate("expire") != null)
-            businessShop.setExpire(avObject.getDate("expire").toString());
-        businessShop.setShopAddress(avObject.getString("ShopAddress"));
-        Bundle bundle = new Bundle();
-        bundle.putSerializable("shop", businessShop);
-        bundle.putParcelable("Shop", avObject);
-        intent.putExtras(bundle);
-        intent.putExtra("shopGoods", shopGoods);
+            int[] startingLocation = new int[2];
+            view.getLocationOnScreen(startingLocation);
+            startingLocation[0] += view.getWidth() / 2;
+            intent.putExtra(Constant.START_LOCATION, startingLocation);
+            String shopGoods = avObject.getString("ShopGoods");
+            BusinessShop businessShop = new BusinessShop();
+            businessShop.setShopName(avObject.getString("ShopName"));
+            businessShop.setShopPhone(avObject.getString("ShopPhone"));
+            if (avObject.getDate("expire") != null)
+                businessShop.setExpire(avObject.getDate("expire").toString());
+            businessShop.setShopAddress(avObject.getString("ShopAddress"));
+            Bundle bundle = new Bundle();
+            bundle.putSerializable("shop", businessShop);
+            bundle.putParcelable("Shop", avObject);
+            intent.putExtras(bundle);
+            intent.putExtra("shopGoods", shopGoods);
 
-        intent.setClass(this, ShopActivity.class);
-        startActivity(intent);
-        this.overridePendingTransition(0, 0);
+            intent.setClass(this, ShopActivity.class);
+            startActivity(intent);
+            this.overridePendingTransition(0, 0);
+        }
     }
 
     @OnClick({R.id.iv_wirte_back})
@@ -298,6 +306,7 @@ public class YouhuiJuanActivity extends AppCompatActivity implements AMapLocatio
                 break;
 
         }
+
     }
 
 

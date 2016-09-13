@@ -90,6 +90,8 @@ public class MainActivity extends FragmentActivity {
 
 
     private void initEvent() {
+
+
         mRgMain.setOnCheckedChangeListener(new RadioGroup.OnCheckedChangeListener() {
             @Override
             public void onCheckedChanged(RadioGroup group, int checkedId) {

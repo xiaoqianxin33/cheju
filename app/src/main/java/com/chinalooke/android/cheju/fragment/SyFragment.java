@@ -35,6 +35,7 @@ import com.chinalooke.android.cheju.view.SyListView;
 import com.squareup.picasso.Picasso;
 
 import java.util.ArrayList;
+import java.util.Calendar;
 import java.util.List;
 
 import butterknife.Bind;
@@ -114,61 +115,69 @@ public class SyFragment extends Fragment {
         });
     }
 
+
     private void initEvent() {
         mGvSy.setOnItemClickListener(new AdapterView.OnItemClickListener() {
+            int MIN_CLICK_DELAY_TIME = 1000;
+            long lastClickTime = 0;
+
             @Override
             public void onItemClick(AdapterView<?> parent, View view, int position, long id) {
-                switch (position) {
-                    case 0:
-                        if (mCurrentUser != null) {
-                            Intent intent = new Intent();
-                            intent.setClass(getActivity(), WriteMessgeActivity.class);
-                            intent.putExtra("company", "");
+                long currentTime = Calendar.getInstance().getTimeInMillis();
+                if (currentTime - lastClickTime > MIN_CLICK_DELAY_TIME) {
+                    lastClickTime = currentTime;
+                    switch (position) {
+                        case 0:
+                            if (mCurrentUser != null) {
+                                Intent intent = new Intent();
+                                intent.setClass(getActivity(), WriteMessgeActivity.class);
+                                intent.putExtra("company", "");
+                                startActivity(intent);
+                            } else {
+                                Intent intent = new Intent();
+                                intent.setClass(getActivity(), LoginActivity.class);
+                                startActivity(intent);
+                            }
+
+                            break;
+
+                        case 1:
+                            startActivity(new Intent(getActivity(), LipeiActivity.class));
+                            break;
+
+                        case 2:
+                            startActivity(new Intent(getActivity(), YouhuiJuanActivity.class));
+                            break;
+                        case 7:
+                            if (mCurrentUser == null) {
+                                startActivity(new Intent(getActivity(), LoginActivity.class));
+                            } else {
+                                showShare();
+                            }
+                            break;
+                        case 3:
+                            Intent intent = new Intent(getActivity(), YouhuiJuanActivity.class);
+                            intent.putExtra("type", 1);
                             startActivity(intent);
-                        } else {
-                            Intent intent = new Intent();
-                            intent.setClass(getActivity(), LoginActivity.class);
-                            startActivity(intent);
-                        }
-                        break;
+                            break;
+                        case 4:
+                            Intent intent4 = new Intent(getActivity(), YouhuiJuanActivity.class);
+                            intent4.putExtra("type", 2);
+                            startActivity(intent4);
 
-                    case 1:
-                        startActivity(new Intent(getActivity(), LipeiActivity.class));
-                        break;
+                            break;
+                        case 5:
+                            Intent intent5 = new Intent(getActivity(), YouhuiJuanActivity.class);
+                            intent5.putExtra("type", 3);
+                            startActivity(intent5);
+                            break;
+                        case 6:
+                            Intent intent6 = new Intent(getActivity(), YouhuiJuanActivity.class);
+                            intent6.putExtra("type", 4);
+                            startActivity(intent6);
+                            break;
 
-                    case 2:
-//                        AVUser currentUser = AVUser.getCurrentUser();
-//                        if (currentUser != null)
-                        startActivity(new Intent(getActivity(), YouhuiJuanActivity.class));
-                        break;
-                    case 7:
-                        if (mCurrentUser == null) {
-                            startActivity(new Intent(getActivity(), LoginActivity.class));
-                        } else {
-                            showShare();
-                        }
-                        break;
-                    case 3:
-                        Intent intent = new Intent(getActivity(), YouhuiJuanActivity.class);
-                        intent.putExtra("type", 1);
-                        startActivity(intent);
-                        break;
-                    case 4:
-                        Intent intent4 = new Intent(getActivity(), YouhuiJuanActivity.class);
-                        intent4.putExtra("type", 2);
-                        startActivity(intent4);
-                        break;
-                    case 5:
-                        Intent intent5 = new Intent(getActivity(), YouhuiJuanActivity.class);
-                        intent5.putExtra("type", 3);
-                        startActivity(intent5);
-                        break;
-                    case 6:
-                        Intent intent6 = new Intent(getActivity(), YouhuiJuanActivity.class);
-                        intent6.putExtra("type", 4);
-                        startActivity(intent6);
-                        break;
-
+                    }
                 }
             }
         });

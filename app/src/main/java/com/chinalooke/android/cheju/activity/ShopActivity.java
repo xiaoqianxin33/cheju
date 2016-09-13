@@ -43,9 +43,8 @@ import com.chinalooke.android.cheju.utills.NetUtil;
 import com.chinalooke.android.cheju.view.RevealBackgroundView;
 import com.squareup.picasso.Picasso;
 
-import org.json.JSONArray;
-
 import java.util.ArrayList;
+import java.util.Calendar;
 import java.util.HashMap;
 import java.util.List;
 
@@ -157,15 +156,21 @@ public class ShopActivity extends AppCompatActivity implements RevealBackgroundV
 
     @Override
     public void onItemClick(AdapterView<?> parent, View view, int position, long id) {
-        mAvObject = mGood.get(position);
-        Intent intent = new Intent(this, GodsActivity.class);
-        Bundle bundle = new Bundle();
-        bundle.putParcelable("goods", mAvObject);
-        intent.putExtra("shapid", mShop1.getObjectId());
-        intent.putExtras(bundle);
-        startActivity(intent);
+        long currentTime = Calendar.getInstance().getTimeInMillis();
+        if (currentTime - lastClickTime > MIN_CLICK_DELAY_TIME) {
+            lastClickTime = currentTime;
+            mAvObject = mGood.get(position);
+            Intent intent = new Intent(this, GodsActivity.class);
+            Bundle bundle = new Bundle();
+            bundle.putParcelable("goods", mAvObject);
+            intent.putExtra("shapid", mShop1.getObjectId());
+            intent.putExtras(bundle);
+            startActivity(intent);
+        }
     }
 
+    private int MIN_CLICK_DELAY_TIME = 1000;
+    private long lastClickTime = 0;
 
     class MyAdapt extends BaseAdapter {
 

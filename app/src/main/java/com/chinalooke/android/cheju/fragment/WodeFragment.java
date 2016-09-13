@@ -39,6 +39,7 @@ import com.hyphenate.EMCallBack;
 import com.hyphenate.chat.EMClient;
 import com.squareup.picasso.Picasso;
 
+import java.util.Calendar;
 import java.util.List;
 
 import butterknife.Bind;
@@ -73,8 +74,8 @@ public class WodeFragment extends Fragment {
     private View mView;
     private Bitmap mBitmap;
     private Toast mToast;
-    private List<AVUser> mAVUsers;
-    private MainActivity mMainActivity;
+
+
     private AVUser mCurrentUser;
     private boolean isLogin = false;
 
@@ -83,7 +84,6 @@ public class WodeFragment extends Fragment {
     public View onCreateView(LayoutInflater inflater, ViewGroup container, Bundle savedInstanceState) {
         mView = inflater.inflate(R.layout.fragment_wode, container, false);
         ButterKnife.bind(this, mView);
-        mMainActivity = (MainActivity) getActivity();
         return mView;
 
     }
@@ -136,78 +136,81 @@ public class WodeFragment extends Fragment {
             mButtonLogin.setVisibility(View.VISIBLE);
         }
 
-
     }
 
     private void initEvent() {
         mLvWode.setOnItemClickListener(new AdapterView.OnItemClickListener() {
             @Override
             public void onItemClick(AdapterView<?> parent, View view, int position, long id) {
-                switch (position) {
-                    case 6:
-                        MyUtills.showSingerDialog(getActivity(), "提示"
-                                , "确定登出吗?", new DialogInterface.OnClickListener() {
-                                    @Override
-                                    public void onClick(DialogInterface dialog, int which) {
-                                        dialog.dismiss();
-                                        AVUser.logOut();
-                                        startActivity(new Intent(getActivity(), LoginActivity.class));
-                                        getActivity().finish();
-                                        if (NetUtil.is_Network_Available(getActivity())) {
+                long currentTime = Calendar.getInstance().getTimeInMillis();
+                if (currentTime - lastClickTime > MIN_CLICK_DELAY_TIME) {
+                    lastClickTime = currentTime;
+                    switch (position) {
+                        case 6:
+                            MyUtills.showSingerDialog(getActivity(), "提示"
+                                    , "确定登出吗?", new DialogInterface.OnClickListener() {
+                                        @Override
+                                        public void onClick(DialogInterface dialog, int which) {
+                                            dialog.dismiss();
+                                            AVUser.logOut();
+                                            startActivity(new Intent(getActivity(), LoginActivity.class));
+                                            getActivity().finish();
+                                            if (NetUtil.is_Network_Available(getActivity())) {
 
-                                            EMClient.getInstance().logout(true, new EMCallBack() {
+                                                EMClient.getInstance().logout(true, new EMCallBack() {
 
-                                                @Override
-                                                public void onSuccess() {
+                                                    @Override
+                                                    public void onSuccess() {
 //                                                    MyUtills.showToast(getActivity(), "退出成功");
-                                                }
+                                                    }
 
-                                                @Override
-                                                public void onProgress(int progress, String status) {
-                                                }
+                                                    @Override
+                                                    public void onProgress(int progress, String status) {
+                                                    }
 
-                                                @Override
-                                                public void onError(int code, String message) {
-                                                    Log.e("onError", message);
-                                                }
-                                            });
-                                        } else {
-                                            MyUtills.showToast(getActivity(), "退出成功");
+                                                    @Override
+                                                    public void onError(int code, String message) {
+                                                        Log.e("onError", message);
+                                                    }
+                                                });
+                                            } else {
+                                                MyUtills.showToast(getActivity(), "退出成功");
+                                            }
+
+
                                         }
+                                    }, new DialogInterface.OnClickListener() {
+                                        @Override
+                                        public void onClick(DialogInterface dialog, int which) {
+                                            dialog.dismiss();
+                                        }
+                                    });
+                            break;
 
+                        case 5:
+                            showShare();
 
-                                    }
-                                }, new DialogInterface.OnClickListener() {
-                                    @Override
-                                    public void onClick(DialogInterface dialog, int which) {
-                                        dialog.dismiss();
-                                    }
-                                });
-                        break;
+                            break;
+                        case 4:
+                            startActivity(new Intent(getActivity(), AddressActivity.class));
+                            break;
 
-                    case 5:
-                        showShare();
+                        case 3:
+                            startActivity(new Intent(getActivity(), CustomerActivity.class));
+                            break;
 
-                        break;
-                    case 4:
-                        startActivity(new Intent(getActivity(), AddressActivity.class));
-                        break;
-
-                    case 3:
-                        startActivity(new Intent(getActivity(), CustomerActivity.class));
-                        break;
-
-                    case 1:
-                        startActivity(new Intent(getActivity(), ScoreActivity.class));
-                        break;
-                    case 2:
-                        Intent intent = new Intent(getActivity(), YouhuiJuanActivity.class);
-                        intent.putExtra("wode", "wode");
-                        startActivity(intent);
-                        break;
-                    case 0:
-                        startActivity(new Intent(getActivity(), CollectActivity.class));
-                        break;
+                        case 1:
+                            startActivity(new Intent(getActivity(), ScoreActivity.class));
+                            break;
+                        case 2:
+                            Intent intent = new Intent(getActivity(), YouhuiJuanActivity.class);
+                            intent.putExtra("wode", "wode");
+                            startActivity(intent);
+                            break;
+                        case 0:
+                            startActivity(new Intent(getActivity(), CollectActivity.class));
+                            break;
+                    }
                 }
             }
         });
@@ -220,27 +223,36 @@ public class WodeFragment extends Fragment {
                 .substring(0, 5) + "******");
     }
 
+    private int MIN_CLICK_DELAY_TIME = 1000;
+    private long lastClickTime = 0;
+
+
     @OnClick({R.id.iv_qcord, R.id.tv_userphone_wode
             , R.id.iv_arrow, R.id.button_login, R.id.rl_wode})
     public void onClick(View view) {
-        switch (view.getId()) {
+
+        long currentTime = Calendar.getInstance().getTimeInMillis();
+        if (currentTime - lastClickTime > MIN_CLICK_DELAY_TIME) {
+            lastClickTime = currentTime;
+
+            switch (view.getId()) {
 //            case R.id.tv_userphone_wode:
 //                startActivity(new Intent(getActivity(), PersonActivity.class));
 //                break;
-            case R.id.rl_wode:
-                startActivity(new Intent(getActivity(), LoginActivity.class));
-                break;
-            case R.id.button_login:
-                startActivity(new Intent(getActivity(), LoginActivity.class));
-                break;
+                case R.id.rl_wode:
+                    startActivity(new Intent(getActivity(), LoginActivity.class));
+                    break;
+                case R.id.button_login:
+                    startActivity(new Intent(getActivity(), LoginActivity.class));
+                    break;
 //            case R.id.iv_arrow:
 //                startActivity(new Intent(getActivity(), PersonActivity.class));
 //                break;
-            case R.id.iv_qcord:
-                startActivity(new Intent(getActivity(), UserQcodeActivity.class));
-                break;
+                case R.id.iv_qcord:
+                    startActivity(new Intent(getActivity(), UserQcodeActivity.class));
+                    break;
+            }
         }
-
     }
 
     private class MyAdapt extends BaseAdapter {

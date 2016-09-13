@@ -56,7 +56,7 @@
             android:drawableLeft="@mipmap/user"
             android:drawablePadding="16dp"
             android:hint="请填写手机号码"
-            android:inputType="number"
+            android:inputType="phone"
             android:paddingLeft="8dp"
             android:textColor="@android:color/black"
             android:textSize="16sp"/>
@@ -180,7 +180,7 @@
             android:drawablePadding="16dp"
             android:background="@null"
             android:hint="请填写推荐人手机号(选填)"
-            android:inputType="textPassword"
+            android:inputType="phone"
             android:paddingLeft="8dp"
             android:textColor="@android:color/black"
             android:textSize="16sp"/>

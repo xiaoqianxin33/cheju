@@ -131,13 +131,10 @@ public class WriteMessgeActivity extends FragmentActivity {
 
     @Override
     public void onBackPressed() {
-        switch (currentFragment) {
-            case 0:
-                finish();
-                break;
-            case 1:
-                switchContent(mWriteCheliangFragment, mWriteChezhuFragment);
-                break;
+        if (mContent == mWriteCheliangFragment) {
+            switchContent(mWriteCheliangFragment, mWriteChezhuFragment);
+        } else {
+            finish();
         }
     }
 
