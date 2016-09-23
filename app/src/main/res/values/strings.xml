@@ -25,6 +25,8 @@
     <string name="hello_world">Hello world!</string>
     <string name="str_turn_back">取消</string>
     <string name="str_forward">前进</string>
+    <string name="business_cheju">车聚管家</string>
+    <string name="mygoods">我的商品</string>
 
 
 </resources>

@@ -70,6 +70,18 @@
     <TextView
         style="@style/linestyle"/>
 
+    <RelativeLayout
+        android:layout_width="match_parent"
+        android:layout_height="32dp"
+        android:background="@android:color/white">
+
+        <Spinner
+            android:id="@+id/spinner"
+            android:layout_width="100dp"
+            android:layout_height="match_parent"
+            android:layout_alignParentRight="true"/>
+    </RelativeLayout>
+
     <TextView
         android:id="@+id/tv_none"
         android:layout_width="match_parent"

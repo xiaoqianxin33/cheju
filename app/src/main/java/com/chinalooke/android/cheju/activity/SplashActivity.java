@@ -16,6 +16,8 @@ import com.avos.avoscloud.GetCallback;
 import com.avos.avoscloud.PushService;
 import com.avos.avoscloud.SaveCallback;
 import com.chinalooke.android.cheju.R;
+import com.chinalooke.android.cheju.activity.business.BusinessMainActivity;
+import com.chinalooke.android.cheju.utills.NetUtil;
 import com.chinalooke.android.cheju.utills.PreferenceUtils;
 import com.hyphenate.EMCallBack;
 import com.hyphenate.chat.EMClient;
@@ -31,8 +33,13 @@ public class SplashActivity extends AppCompatActivity {
         public void handleMessage(Message msg) {
             super.handleMessage(msg);
             if (msg.what == 1) {
-                startActivity(new Intent(SplashActivity.this, MainActivity.class));
-                finish();
+                if (mCurrentUser != null && mCurrentUser.getString("type").equals("business")) {
+                    startActivity(new Intent(SplashActivity.this, BusinessMainActivity.class));
+                    finish();
+                } else {
+                    startActivity(new Intent(SplashActivity.this, MainActivity.class));
+                    finish();
+                }
             }
         }
     };
@@ -42,7 +49,20 @@ public class SplashActivity extends AppCompatActivity {
         super.onCreate(savedInstanceState);
         setContentView(R.layout.activity_splash);
         mCurrentUser = AVUser.getCurrentUser();
-        mHandler.sendEmptyMessageDelayed(1, 2000);
+        if (mCurrentUser != null) {
+            if (NetUtil.is_Network_Available(getApplicationContext())) {
+                mCurrentUser.fetchInBackground(new GetCallback<AVObject>() {
+                    @Override
+                    public void done(AVObject avObject, AVException e) {
+                        mHandler.sendEmptyMessageDelayed(1, 1000);
+                    }
+                });
+            } else {
+                mHandler.sendEmptyMessageDelayed(1, 1000);
+            }
+        } else {
+            mHandler.sendEmptyMessageDelayed(1, 1000);
+        }
     }
 
 

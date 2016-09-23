@@ -2,7 +2,6 @@ package com.chinalooke.android.cheju.activity;
 
 import android.app.ProgressDialog;
 import android.content.Intent;
-import android.graphics.BitmapFactory;
 import android.graphics.drawable.Drawable;
 import android.os.Bundle;
 import android.os.Handler;
@@ -16,6 +15,7 @@ import android.widget.AbsListView;
 import android.widget.AdapterView;
 import android.widget.BaseAdapter;
 import android.widget.ListView;
+import android.widget.Spinner;
 import android.widget.TextView;
 import android.widget.Toast;
 
@@ -37,7 +37,6 @@ import com.chinalooke.android.cheju.utills.ImageTools;
 import com.chinalooke.android.cheju.utills.MyUtills;
 import com.chinalooke.android.cheju.utills.NetUtil;
 import com.chinalooke.android.cheju.utills.PreferenceUtils;
-import com.hyphenate.util.ImageUtils;
 import com.makeramen.roundedimageview.RoundedImageView;
 import com.squareup.picasso.Picasso;
 
@@ -67,6 +66,8 @@ public class YouhuiJuanActivity extends AppCompatActivity implements AMapLocatio
     TextView mTvTitle;
     @Bind(R.id.tv_score)
     TextView mTvScore;
+    @Bind(R.id.spinner)
+    Spinner mSpinner;
     private double mLongitude;
     private double mLatitude;
     private List<AVObject> mNearbyShops = new ArrayList<>();
@@ -127,6 +128,7 @@ public class YouhuiJuanActivity extends AppCompatActivity implements AMapLocatio
 
     private void initView() {
         mDrawable = ImageTools.setDrwableSize2(this, R.mipmap.placeholder, 54, 54);
+
     }
 
 

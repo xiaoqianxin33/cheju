@@ -15,6 +15,7 @@ public class Constant {
     public static final String SALESMAN = "业务员";
     public static final String ADMIN = "管理员";
     public static final String USER = "普通用户";
+    public static final String ACTION = "com.chinalooke.android.cheju.MainActivity.SENDBROADCAST";
 
 
     public static int[] mainIcon = {R.mipmap.buybx, R.mipmap.lipei, R.mipmap.youhui,

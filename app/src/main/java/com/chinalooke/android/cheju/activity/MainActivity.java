@@ -1,6 +1,9 @@
 package com.chinalooke.android.cheju.activity;
 
+import android.content.BroadcastReceiver;
+import android.content.Context;
 import android.content.Intent;
+import android.content.IntentFilter;
 import android.graphics.drawable.Drawable;
 import android.os.Bundle;
 import android.support.v4.app.Fragment;
@@ -10,10 +13,12 @@ import android.support.v4.view.ViewPager;
 import android.view.KeyEvent;
 import android.widget.RadioButton;
 import android.widget.RadioGroup;
+import android.widget.Toast;
 
 import com.avos.avoscloud.AVUser;
 import com.chinalooke.android.cheju.R;
 import com.chinalooke.android.cheju.adapter.MyPagerAdapter;
+import com.chinalooke.android.cheju.constant.Constant;
 import com.chinalooke.android.cheju.db.CacheDbHelper;
 import com.chinalooke.android.cheju.fragment.OrderFragment;
 import com.chinalooke.android.cheju.fragment.ServiceFragment;
@@ -47,6 +52,7 @@ public class MainActivity extends FragmentActivity {
     private AVUser mCurrentUser;
     private CacheDbHelper mCacheDbHelper;
 
+
     public AVUser getCurrentUser() {
         return mCurrentUser;
     }
@@ -63,6 +69,14 @@ public class MainActivity extends FragmentActivity {
         initEvent();
     }
 
+    private BroadcastReceiver myReceiver = new BroadcastReceiver() {
+
+        @Override
+        public void onReceive(Context context, Intent intent) {
+            MainActivity.this.finish();
+        }
+
+    };
 
     public CacheDbHelper getCacheDbHelper() {
         return mCacheDbHelper;
@@ -144,6 +158,11 @@ public class MainActivity extends FragmentActivity {
 
             }
         });
+
+        IntentFilter filter = new IntentFilter();
+        filter.addAction(Constant.ACTION);
+        filter.setPriority(Integer.MAX_VALUE);
+        registerReceiver(myReceiver, filter);
     }
 
     private void setDrwableSize() {

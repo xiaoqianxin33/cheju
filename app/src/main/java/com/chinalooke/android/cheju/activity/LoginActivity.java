@@ -14,15 +14,22 @@ import android.widget.Toast;
 
 import com.avos.avoscloud.AVException;
 import com.avos.avoscloud.AVInstallation;
+import com.avos.avoscloud.AVObject;
+import com.avos.avoscloud.AVQuery;
 import com.avos.avoscloud.AVUser;
+import com.avos.avoscloud.FindCallback;
 import com.avos.avoscloud.LogInCallback;
 import com.avos.avoscloud.PushService;
 import com.avos.avoscloud.SaveCallback;
 import com.chinalooke.android.cheju.R;
+import com.chinalooke.android.cheju.activity.business.BusinessMainActivity;
 import com.chinalooke.android.cheju.bean.User;
+import com.chinalooke.android.cheju.config.MyLeanCloudApp;
+import com.chinalooke.android.cheju.constant.Constant;
 import com.chinalooke.android.cheju.utills.MyUtills;
 import com.chinalooke.android.cheju.utills.NetUtil;
-import com.chinalooke.android.cheju.utills.PreferenceUtils;
+
+import java.util.List;
 
 import butterknife.Bind;
 import butterknife.ButterKnife;
@@ -120,17 +127,24 @@ public class LoginActivity extends Activity {
                             if (e == null) {
                                 PushService.subscribe(LoginActivity.this, "private", CustomerActivity.class);
                                 String mInstallationId = AVInstallation.getCurrentInstallation().getInstallationId();
-                                AVUser currentUser = AVUser.getCurrentUser();
+                                final AVUser currentUser = AVUser.getCurrentUser();
                                 currentUser.put("installationId", mInstallationId);
                                 currentUser.saveInBackground(new SaveCallback() {
                                     @Override
                                     public void done(AVException e) {
-                                        mProgressDialog.dismiss();
                                         if (e == null) {
                                             PushService.setDefaultPushCallback(getApplicationContext(), TakePhotoActivity.class);
-                                            startActivity(new Intent(LoginActivity.this, MainActivity.class));
+                                            String type = currentUser.getString("type");
+                                            if ("user".equals(type)) {
+                                                mProgressDialog.dismiss();
+                                                startActivity(new Intent(LoginActivity.this, MainActivity.class));
+                                            } else if ("business".equals(type)) {
+                                                startActivity(new Intent(LoginActivity.this, BusinessMainActivity.class));
+                                                sendBroadcast(new Intent(Constant.ACTION));
+                                            }
                                             finish();
                                         } else {
+                                            mProgressDialog.dismiss();
                                             mToast.setText("登录失败");
                                             mToast.show();
                                         }

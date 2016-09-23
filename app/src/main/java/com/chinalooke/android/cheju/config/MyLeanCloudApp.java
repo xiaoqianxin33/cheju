@@ -5,8 +5,10 @@ import android.app.Application;
 import android.content.pm.PackageManager;
 import android.os.Environment;
 import android.support.multidex.MultiDex;
+import android.widget.Toast;
 
 import com.avos.avoscloud.AVOSCloud;
+import com.avos.avoscloud.AVObject;
 import com.hyphenate.chat.EMClient;
 import com.hyphenate.chat.EMOptions;
 import com.hyphenate.easeui.controller.EaseUI;
@@ -25,11 +27,25 @@ public class MyLeanCloudApp extends Application {
     private MyLeanCloudApp appContext;
     public static String sdcardCacheDir;
     private String picPath = "pic.jpg";
+    private static AVObject sAVObject;
+    private static Toast mToast;
 
+    public static Toast getToast() {
+        return mToast;
+    }
+
+    public static AVObject getAVObject() {
+        return sAVObject;
+    }
+
+    public static void setAVObject(AVObject AVObject) {
+        sAVObject = AVObject;
+    }
 
     @Override
     public void onCreate() {
         super.onCreate();
+        mToast = Toast.makeText(getApplicationContext(), "", Toast.LENGTH_SHORT);
         AVOSCloud.initialize(this, "IXN9lU9PD8RGArnaNM08pX4s-gzGzoHsz", "g4Dt8awTrsnjbsYQpPu1dCMj");
         MultiDex.install(this);
         appContext = this;
@@ -42,7 +58,6 @@ public class MyLeanCloudApp extends Application {
         EMClient.getInstance().init(getApplicationContext(), options);
         EaseUI.getInstance().init(getApplicationContext(), options);
         EMClient.getInstance().setDebugMode(true);
-
 
 
         if (Environment.getExternalStorageState().equals(

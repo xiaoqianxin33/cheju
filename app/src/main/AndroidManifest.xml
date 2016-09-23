@@ -211,6 +211,14 @@
         </activity>
         <activity android:name=".activity.UserQcodeActivity">
         </activity>
+        <activity
+            android:name=".activity.business.BusinessMainActivity"
+            android:launchMode="singleTask">
+        </activity>
+        <activity android:name=".activity.business.MyGoodsActivity">
+        </activity>
+        <activity android:name=".activity.business.ReleaseGoodsActivity">
+        </activity>
     </application>
 
 </manifest>

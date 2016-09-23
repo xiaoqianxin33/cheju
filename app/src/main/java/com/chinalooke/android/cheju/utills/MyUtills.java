@@ -149,6 +149,16 @@ public class MyUtills {
         return date;
     }
 
+    public static String getTimeAll(Date date) {
+        SimpleDateFormat format = new SimpleDateFormat("yyyy-MM-dd HH:mm");
+        return format.format(date);
+    }
+
+    public static String getTime(Date date) {
+        SimpleDateFormat format = new SimpleDateFormat("yyyy-MM-dd");
+        return format.format(date);
+    }
+
 
     public static Date ConverToDate(String strDate) throws Exception {
         DateFormat df = new SimpleDateFormat("yyyy-MM-dd");
