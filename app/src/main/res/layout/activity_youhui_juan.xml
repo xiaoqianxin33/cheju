@@ -71,15 +71,37 @@
         style="@style/linestyle"/>
 
     <RelativeLayout
+        android:id="@+id/rl_sp"
         android:layout_width="match_parent"
         android:layout_height="32dp"
         android:background="@android:color/white">
 
+        <!--<TextView-->
+            <!--android:layout_width="wrap_content"-->
+            <!--android:layout_height="match_parent"-->
+            <!--android:layout_marginRight="3dp"-->
+            <!--android:layout_toLeftOf="@+id/spinner"-->
+            <!--android:gravity="center_vertical"-->
+            <!--android:text="商家类型:"/>-->
+
+        <TextView
+            android:layout_width="1dp"
+            android:layout_height="match_parent"
+            android:layout_toLeftOf="@+id/spinner"
+            android:background="@color/dialog_pressed_bg_color"/>
+
         <Spinner
             android:id="@+id/spinner"
-            android:layout_width="100dp"
+            style="@style/Widget.AppCompat.Spinner"
+            android:layout_width="150dp"
             android:layout_height="match_parent"
-            android:layout_alignParentRight="true"/>
+            android:layout_alignParentRight="true"
+            android:layout_marginRight="8dp"
+            android:paddingLeft="0dp"
+            android:paddingRight="0dp"
+            android:paddingTop="0dp"
+            android:spinnerMode="dropdown"
+            />
     </RelativeLayout>
 
     <TextView
