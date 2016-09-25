@@ -46,37 +46,210 @@
             />
     </RelativeLayout>
 
+    <ScrollView
+        android:layout_width="match_parent"
+        android:layout_height="0dp"
+        android:layout_weight="1">
 
-    <EditText
-        android:id="@+id/et_title"
+        <LinearLayout
+            android:layout_width="match_parent"
+            android:layout_height="wrap_content"
+            android:orientation="vertical">
+
+            <EditText
+                android:id="@+id/et_title"
+                android:layout_width="match_parent"
+                android:layout_height="48dp"
+                android:layout_marginTop="16dp"
+                android:background="@android:color/white"
+                android:gravity="center_vertical"
+                android:hint="商品标题"
+                android:paddingLeft="16dp"
+                android:textColor="@android:color/black"
+                android:textSize="14sp"/>
+
+            <EditText
+                android:id="@+id/et_descript"
+                android:layout_width="match_parent"
+                android:layout_height="120dp"
+                android:layout_marginTop="8dp"
+                android:background="@android:color/white"
+                android:gravity="top"
+                android:hint="描述一下你的商品"
+                android:minLines="3"
+                android:paddingLeft="16dp"
+                android:paddingTop="3dp"
+                android:textSize="14sp"/>
+
+            <LinearLayout
+                android:layout_width="match_parent"
+                android:layout_height="wrap_content"
+                android:layout_marginTop="8dp"
+                android:background="@android:color/white"
+                android:orientation="vertical">
+
+                <TextView
+                    android:layout_width="match_parent"
+                    android:layout_height="32dp"
+                    android:gravity="center_vertical"
+                    android:paddingLeft="16dp"
+                    android:text="上传商品图片"
+                    android:textColor="@android:color/black"
+                    android:textSize="14sp"/>
+
+
+                <cn.bingoogolapple.photopicker.widget.BGASortableNinePhotoLayout
+                    android:id="@+id/snpl_moment_add_photos"
+                    style="@style/WrapWrap"
+                    android:layout_margin="16dp"
+                    android:background="@android:color/white"/>
+            </LinearLayout>
+
+            <LinearLayout
+                android:layout_width="match_parent"
+                android:layout_height="48dp"
+                android:layout_marginEnd="8dp"
+                android:layout_marginStart="8dp"
+                android:layout_marginTop="16dp"
+                android:background="@android:color/white"
+
+                android:orientation="horizontal">
+
+                <TextView
+                    style="@style/rowstyle"
+                    android:layout_marginTop="0dp"
+                    android:paddingLeft="8dp"
+                    android:text="原价"
+                    />
+
+                <EditText
+                    android:id="@+id/et_price"
+                    style="@style/rowstyle"
+                    android:layout_marginTop="0dp"
+                    android:background="@null"
+                    android:inputType="number"
+                    android:text="¥0.0"/>
+            </LinearLayout>
+
+            <LinearLayout
+                android:layout_width="match_parent"
+                android:layout_height="48dp"
+                android:layout_marginEnd="8dp"
+                android:layout_marginStart="8dp"
+                android:background="@android:color/white"
+
+                android:orientation="horizontal">
+
+                <TextView
+                    style="@style/rowstyle"
+                    android:layout_marginTop="0dp"
+                    android:paddingLeft="8dp"
+                    android:text="折后价"
+                    />
+
+                <EditText
+                    android:id="@+id/et_currentPrice"
+                    style="@style/rowstyle"
+                    android:layout_marginTop="0dp"
+                    android:background="@null"
+                    android:inputType="number"
+                    android:text="¥0.0"/>
+            </LinearLayout>
+
+            <LinearLayout
+                android:layout_width="match_parent"
+                android:layout_height="48dp"
+                android:layout_marginEnd="8dp"
+                android:layout_marginStart="8dp"
+                android:background="@android:color/white"
+
+                android:orientation="horizontal">
+
+                <TextView
+                    style="@style/rowstyle"
+                    android:layout_marginTop="0dp"
+                    android:paddingLeft="8dp"
+                    android:text="折后价"
+                    />
+
+                <EditText
+                    android:id="@+id/et_score"
+                    style="@style/rowstyle"
+                    android:layout_marginTop="0dp"
+                    android:background="@null"
+                    android:inputType="number"
+                    android:text="0积分"/>
+            </LinearLayout>
+
+            <LinearLayout
+                android:layout_width="match_parent"
+                android:layout_height="48dp"
+                android:layout_marginEnd="8dp"
+                android:layout_marginStart="8dp"
+                android:background="@android:color/white"
+                android:orientation="horizontal">
+
+                <TextView
+                    style="@style/rowstyle"
+                    android:layout_marginTop="0dp"
+                    android:paddingLeft="8dp"
+                    android:text="分类"
+                    />
+
+                <LinearLayout
+                    android:layout_width="0dp"
+                    android:layout_height="match_parent"
+                    android:layout_weight="1"
+                    android:orientation="horizontal">
+
+                    <TextView
+                        android:id="@+id/tv_type"
+                        style="@style/rowstyle"
+                        android:layout_marginTop="0dp"
+                        android:background="@null"
+                        android:text="请选择分类"/>
+
+                    <ImageView
+                        android:id="@+id/iv_type"
+                        android:layout_width="16dp"
+                        android:layout_height="16dp"
+                        android:layout_alignParentRight="true"
+                        android:layout_centerInParent="true"
+                        android:layout_gravity="center_vertical"
+                        android:layout_marginEnd="8dp"
+                        android:layout_marginRight="8dp"
+                        android:background="#EDEBE9"
+                        android:src="@mipmap/blowarrow"/>
+                </LinearLayout>
+
+            </LinearLayout>
+
+            <EditText
+                android:id="@+id/et_mark"
+                android:layout_width="match_parent"
+                android:layout_height="120dp"
+                android:layout_marginTop="8dp"
+                android:background="@android:color/white"
+                android:gravity="top"
+                android:hint="商品备注"
+                android:minLines="3"
+                android:paddingLeft="16dp"
+                android:paddingTop="3dp"
+                android:textSize="14sp"/>
+
+        </LinearLayout>
+
+    </ScrollView>
+
+    <Button
+        android:id="@+id/release"
         android:layout_width="match_parent"
         android:layout_height="48dp"
-        android:layout_marginTop="16dp"
-        android:background="@android:color/white"
-        android:gravity="center_vertical"
-        android:hint="商品标题"
-        android:paddingLeft="16dp"
-        android:textColor="@android:color/black"
-        android:textSize="14sp"/>
-
-    <EditText
-        android:id="@+id/et_descript"
-        android:layout_width="match_parent"
-        android:layout_height="120dp"
-        android:layout_marginTop="8dp"
-        android:background="@android:color/white"
-        android:gravity="top"
-        android:hint="描述一下你的商品"
-        android:minLines="3"
-        android:paddingLeft="16dp"
-        android:paddingTop="3dp"
-        android:textSize="14sp"/>
-
-    <cn.bingoogolapple.photopicker.widget.BGASortableNinePhotoLayout
-        android:id="@+id/snpl_moment_add_photos"
-        style="@style/WrapWrap"
-        android:layout_margin="16dp"
-        android:background="@android:color/white"/>
+        android:background="@drawable/shape"
+        android:gravity="center"
+        android:text="确定发布"
+        android:textColor="@android:color/white"
+        android:textSize="16sp"/>
 
 
 </LinearLayout>

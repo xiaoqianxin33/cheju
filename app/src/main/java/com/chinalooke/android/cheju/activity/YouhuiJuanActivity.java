@@ -52,7 +52,7 @@ import butterknife.Bind;
 import butterknife.ButterKnife;
 import butterknife.OnClick;
 
-public class YouhuiJuanActivity extends AppCompatActivity implements AMapLocationListener, AdapterView.OnItemClickListener, AdapterView.OnItemSelectedListener {
+public class YouhuiJuanActivity extends AppCompatActivity implements AMapLocationListener, AdapterView.OnItemClickListener {
 
     @Bind(R.id.tv_location_youhui)
     TextView mTvLocationYouhui;
@@ -97,7 +97,8 @@ public class YouhuiJuanActivity extends AppCompatActivity implements AMapLocatio
     private ProgressDialog mProgressDialog;
     private List<AVObject> good = new ArrayList<>();
     private Drawable mDrawable;
-    private String[] mStrings = {"全部", "特惠洗车", "正品轮胎", "道路救援", "优质快修"};
+    private String[] mStrings = {"商家类型", "全部", "特惠洗车", "正品轮胎", "道路救援", "优质快修"};
+    private boolean isFirst = true;
 
 
     @Override
@@ -136,10 +137,10 @@ public class YouhuiJuanActivity extends AppCompatActivity implements AMapLocatio
         if (mType != 0) {
             mRlSp.setVisibility(View.GONE);
         }
-        ArrayAdapter<String> adapter = new ArrayAdapter<String>(getApplicationContext(), android.R.layout.simple_spinner_item, mStrings);
+        ArrayAdapter<String> adapter = new ArrayAdapter<String>(YouhuiJuanActivity.this, android.R.layout.simple_spinner_item, mStrings);
         adapter.setDropDownViewResource(android.R.layout.simple_spinner_dropdown_item);
         mSpinner.setAdapter(adapter);
-        mSpinner.setOnItemSelectedListener(this);
+
     }
 
 
@@ -175,6 +176,56 @@ public class YouhuiJuanActivity extends AppCompatActivity implements AMapLocatio
                 if (firstVisibleItem + visibleItemCount == totalItemCount && !isLoading) {
                     loadMore();
                 }
+            }
+        });
+
+        mSpinner.setOnItemSelectedListener(new AdapterView.OnItemSelectedListener() {
+            @Override
+            public void onItemSelected(AdapterView<?> parent, View view, int position, long id) {
+                switch (position) {
+                    case 1:
+                        mType = 0;
+                        mNearbyShops.clear();
+                        mSkip = 0;
+                        initData();
+                        break;
+                    case 2:
+                        mType = 1;
+                        mNearbyShops.clear();
+                        mSkip = 0;
+                        initData();
+                        break;
+                    case 3:
+                        mType = 2;
+                        mNearbyShops.clear();
+                        mSkip = 0;
+                        initData();
+                        break;
+                    case 4:
+                        mType = 3;
+                        mNearbyShops.clear();
+                        mSkip = 0;
+                        initData();
+                        break;
+                    case 5:
+                        mType = 4;
+                        mNearbyShops.clear();
+                        mSkip = 0;
+                        initData();
+                        break;
+                    case 6:
+                        mType = 5;
+                        mNearbyShops.clear();
+                        mSkip = 0;
+                        initData();
+                        break;
+
+                }
+            }
+
+            @Override
+            public void onNothingSelected(AdapterView<?> parent) {
+
             }
         });
     }
@@ -237,6 +288,8 @@ public class YouhuiJuanActivity extends AppCompatActivity implements AMapLocatio
                             mTvNone.setVisibility(View.VISIBLE);
                         }
                     }
+
+                    isFirst = false;
                 }
             });
         } else {
@@ -319,48 +372,6 @@ public class YouhuiJuanActivity extends AppCompatActivity implements AMapLocatio
                 break;
 
         }
-
-    }
-
-    @Override
-    public void onItemSelected(AdapterView<?> parent, View view, int position, long id) {
-        switch (position) {
-            case 0:
-                mType = 0;
-                initData();
-                mNearbyShops.clear();
-                mSkip = 0;
-                break;
-            case 1:
-                mType = 1;
-                mNearbyShops.clear();
-                mSkip = 0;
-                initData();
-                break;
-            case 2:
-                mType = 2;
-                mNearbyShops.clear();
-                mSkip = 0;
-                initData();
-                break;
-            case 3:
-                mType = 3;
-                mNearbyShops.clear();
-                mSkip = 0;
-                initData();
-                break;
-            case 4:
-                mType = 4;
-                mNearbyShops.clear();
-                mSkip = 0;
-                initData();
-                break;
-
-        }
-    }
-
-    @Override
-    public void onNothingSelected(AdapterView<?> parent) {
 
     }
 

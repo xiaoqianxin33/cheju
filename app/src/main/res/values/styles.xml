@@ -60,9 +60,9 @@
         <item name="android:height">48dp</item>
         <item name="android:background">@drawable/table_frame_gray_shape</item>
         <item name="android:gravity">center_vertical</item>
-        <item name="android:paddingStart">8dp</item>
+        <item name="android:paddingLeft">8dp</item>
         <item name="android:textSize">@dimen/mid_textsize</item>
-        <item name="android:layout_marginEnd">16dp</item>
+        <item name="android:layout_marginRight">16dp</item>
 
     </style>
 

@@ -219,6 +219,12 @@
         </activity>
         <activity android:name=".activity.business.ReleaseGoodsActivity">
         </activity>
+        <activity android:name=".activity.business.QRCodeActivity">
+        </activity>
+        <activity android:name=".activity.business.WriteQcodeActivity">
+        </activity>
+        <activity android:name=".activity.business.SweepQcodeActivity">
+        </activity>
     </application>
 
 </manifest>

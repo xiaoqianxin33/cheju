@@ -285,7 +285,11 @@ public class MyGoodsActivity extends AppCompatActivity {
                 finish();
                 break;
             case R.id.release:
-                startActivity(new Intent(MyGoodsActivity.this, ReleaseGoodsActivity.class));
+                Number type = mAvObject.getNumber("type");
+                int i = type.intValue();
+                Intent intent = new Intent(MyGoodsActivity.this, ReleaseGoodsActivity.class);
+                intent.putExtra("shopType", i);
+                startActivity(intent);
                 break;
         }
     }

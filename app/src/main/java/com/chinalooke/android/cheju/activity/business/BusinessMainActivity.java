@@ -1,5 +1,6 @@
 package com.chinalooke.android.cheju.activity.business;
 
+import android.Manifest;
 import android.content.Intent;
 import android.os.Bundle;
 import android.support.v7.app.AppCompatActivity;
@@ -25,11 +26,14 @@ import java.util.List;
 
 import butterknife.ButterKnife;
 import butterknife.OnClick;
+import pub.devrel.easypermissions.EasyPermissions;
 
-public class BusinessMainActivity extends AppCompatActivity {
+public class BusinessMainActivity extends AppCompatActivity implements EasyPermissions.PermissionCallbacks {
 
     private AVObject mAvObject;
     private Toast mToast;
+    private int RC_CAMERA_AND_WIFI = 1;
+
 
     @Override
     protected void onCreate(Bundle savedInstanceState) {
@@ -45,7 +49,7 @@ public class BusinessMainActivity extends AppCompatActivity {
         }
     }
 
-    private long lastClickTime = 0;
+    private long lastClickTime = 1;
 
     @OnClick({R.id.rl_goods, R.id.rl_qcode, R.id.rl_profit})
     public void onClick(View view) {
@@ -64,7 +68,21 @@ public class BusinessMainActivity extends AppCompatActivity {
                     }
                     break;
                 case R.id.rl_qcode:
-                    break;
+                    String[] perms = {Manifest.permission.CAMERA, Manifest.permission.CHANGE_WIFI_STATE};
+                    if (EasyPermissions.hasPermissions(this, perms)) {
+                        if (mAvObject != null) {
+                            Intent intent = new Intent(BusinessMainActivity.this, QRCodeActivity.class);
+                            Bundle bundle = new Bundle();
+                            bundle.putParcelable("shop", mAvObject);
+                            intent.putExtras(bundle);
+                            startActivity(intent);
+                        }
+                        break;
+                    } else {
+                        EasyPermissions.requestPermissions(this, "拍照需要摄像头权限",
+                                RC_CAMERA_AND_WIFI, perms);
+                    }
+
                 case R.id.rl_profit:
                     break;
             }
@@ -81,6 +99,7 @@ public class BusinessMainActivity extends AppCompatActivity {
             public void done(List<AVObject> list, AVException e) {
                 if (e == null) {
                     mAvObject = list.get(0);
+                    MyLeanCloudApp.setAVObject(mAvObject);
                 } else {
                     mToast.setText("获取商店信息失败");
                     mToast.show();
@@ -98,5 +117,28 @@ public class BusinessMainActivity extends AppCompatActivity {
             MyUtills.showDialog(BusinessMainActivity.this, "提示", "确定退出车聚吗?");
         }
         return super.onKeyDown(keyCode, event);
+    }
+
+    @Override
+    public void onRequestPermissionsResult(int requestCode, String[] permissions, int[] grantResults) {
+        super.onRequestPermissionsResult(requestCode, permissions, grantResults);
+        EasyPermissions.onRequestPermissionsResult(requestCode, permissions, grantResults, this);
+    }
+
+
+    @Override
+    public void onPermissionsGranted(int requestCode, List<String> perms) {
+        if (mAvObject != null && requestCode == RC_CAMERA_AND_WIFI) {
+            Intent intent = new Intent(BusinessMainActivity.this, QRCodeActivity.class);
+            Bundle bundle = new Bundle();
+            bundle.putParcelable("shop", mAvObject);
+            intent.putExtras(bundle);
+            startActivity(intent);
+        }
+    }
+
+    @Override
+    public void onPermissionsDenied(int requestCode, List<String> perms) {
+
     }
 }

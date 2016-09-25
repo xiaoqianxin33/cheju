@@ -76,13 +76,6 @@
         android:layout_height="32dp"
         android:background="@android:color/white">
 
-        <!--<TextView-->
-            <!--android:layout_width="wrap_content"-->
-            <!--android:layout_height="match_parent"-->
-            <!--android:layout_marginRight="3dp"-->
-            <!--android:layout_toLeftOf="@+id/spinner"-->
-            <!--android:gravity="center_vertical"-->
-            <!--android:text="商家类型:"/>-->
 
         <TextView
             android:layout_width="1dp"
@@ -93,7 +86,7 @@
         <Spinner
             android:id="@+id/spinner"
             style="@style/Widget.AppCompat.Spinner"
-            android:layout_width="150dp"
+            android:layout_width="100dp"
             android:layout_height="match_parent"
             android:layout_alignParentRight="true"
             android:layout_marginRight="8dp"
