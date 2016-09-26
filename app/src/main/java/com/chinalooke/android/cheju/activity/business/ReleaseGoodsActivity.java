@@ -249,7 +249,7 @@ public class ReleaseGoodsActivity extends AppCompatActivity implements BGASortab
         avObject.put("price", mPrice);
         avObject.put("currentPrice", mCurrentPrice);
         avObject.put("mark", mEtMark.getText().toString() + "");
-        avObject.put("GoodsType", mTypes.get(mTypeChose).getObjectId());
+        avObject.put("GoodType", mTypes.get(mTypeChose).getObjectId());
         avObject.put("score", mSroce);
         for (String s : mPhotosSnplData) {
             try {
@@ -264,9 +264,20 @@ public class ReleaseGoodsActivity extends AppCompatActivity implements BGASortab
                             @Override
                             public void done(List<AVObject> list, AVException e) {
                                 AVObject avObject1 = list.get(0);
-                                AVRelation<AVObject> goods = avObject.getRelation("goods");
+                                AVRelation<AVObject> goods = avObject.getRelation("images");
                                 goods.add(avObject1);
-                                avObject.saveInBackground();
+                                avObject.saveInBackground(new SaveCallback() {
+                                    @Override
+                                    public void done(AVException e) {
+                                        if (e == null) {
+                                            AVRelation<AVObject> goods1 = mShop.getRelation("goods");
+                                            goods1.add(avObject);
+                                            mShop.saveInBackground();
+                                        } else {
+                                            mToast.setText("商品保存失败");
+                                        }
+                                    }
+                                });
                                 mCount++;
                                 if (mCount == mPhotosSnplData.size()) {
                                     mProgressDialog.dismiss();
@@ -294,6 +305,7 @@ public class ReleaseGoodsActivity extends AppCompatActivity implements BGASortab
             }
         }
     }
+
 
     private boolean checkInput() {
         mTitle = mEtTitle.getText().toString();

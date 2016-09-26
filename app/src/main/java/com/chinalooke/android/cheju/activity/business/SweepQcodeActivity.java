@@ -54,7 +54,6 @@ public class SweepQcodeActivity extends AppCompatActivity {
             mToast.setText("网络不可用，请检查网络连接");
             mToast.show();
         }
-
     }
 
     private void initData() {
@@ -95,6 +94,7 @@ public class SweepQcodeActivity extends AppCompatActivity {
                 finish();
                 break;
             case R.id.button:
+                mButton.setEnabled(false);
                 MyUtills.showSingerDialog(SweepQcodeActivity.this, "提示", "确定要消费掉这个兑换码？", new
                         DialogInterface.OnClickListener() {
                             @Override
@@ -105,6 +105,7 @@ public class SweepQcodeActivity extends AppCompatActivity {
                                     mProgressDialog.show();
                                     saveLeanCould();
                                 } else {
+                                    mButton.setEnabled(true);
                                     mToast.setText("网络不可用，请检查网络连接");
                                     mToast.show();
                                 }
@@ -113,6 +114,7 @@ public class SweepQcodeActivity extends AppCompatActivity {
                     @Override
                     public void onClick(DialogInterface dialog, int which) {
                         dialog.dismiss();
+                        mButton.setEnabled(true);
                     }
                 });
                 break;
@@ -152,6 +154,7 @@ public class SweepQcodeActivity extends AppCompatActivity {
                                     }
                                 });
                     } else {
+                        mButton.setEnabled(true);
                         mToast.setText("解析失败");
                         mToast.show();
                     }
@@ -159,6 +162,7 @@ public class SweepQcodeActivity extends AppCompatActivity {
             });
         } else if (i == 4) {
             mProgressDialog.dismiss();
+            mButton.setEnabled(true);
             mToast.setText("该优惠劵已使用");
             mToast.show();
         }

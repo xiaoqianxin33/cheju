@@ -2,11 +2,11 @@ package com.chinalooke.android.cheju.activity;
 
 import android.graphics.Bitmap;
 import android.os.Bundle;
-import android.os.Parcelable;
 import android.support.v7.app.AppCompatActivity;
 import android.view.View;
 import android.widget.ImageView;
 import android.widget.ProgressBar;
+import android.widget.TextView;
 import android.widget.Toast;
 
 import com.android.volley.RequestQueue;
@@ -17,6 +17,7 @@ import com.android.volley.toolbox.Volley;
 import com.avos.avoscloud.AVObject;
 import com.avos.avoscloud.AVUser;
 import com.chinalooke.android.cheju.R;
+import com.chinalooke.android.cheju.config.MyLeanCloudApp;
 
 import butterknife.Bind;
 import butterknife.ButterKnife;
@@ -28,6 +29,8 @@ public class QRCodeActivity extends AppCompatActivity {
     ImageView mIvQcord;
     @Bind(R.id.pb_qr)
     ProgressBar mPbQr;
+    @Bind(R.id.tv_privilegeCode)
+    TextView mTvPrivilegeCode;
     private AVObject mOrder;
     private AVUser mCurrentUser;
     private Toast mToast;
@@ -38,21 +41,16 @@ public class QRCodeActivity extends AppCompatActivity {
         setContentView(R.layout.activity_qrcode);
         ButterKnife.bind(this);
         mCurrentUser = AVUser.getCurrentUser();
-        mToast = Toast.makeText(getApplicationContext(), "", Toast.LENGTH_SHORT);
+        mToast = MyLeanCloudApp.getToast();
         initData();
     }
 
     private void initData() {
         mOrder = getIntent().getParcelableExtra("order");
-        String mGoods = mOrder.getString("goodsId");
-        String mCount = mOrder.getNumber("count") + "";
-        final String mPrice = mOrder.getNumber("price") + "";
-        String message = mCurrentUser.getObjectId() + ":" + mGoods
-                + ":" + mCount + ":" + mPrice;
-
-
+        String privilegeCode = mOrder.getString("privilegeCode");
+        mTvPrivilegeCode.setText("优惠码： " + privilegeCode);
         RequestQueue mQueue = Volley.newRequestQueue(getApplicationContext());
-        ImageRequest imageRequest = new ImageRequest("http://api.k780.com:88/?app=qr.get&data=" + message + "&level=L&size=6",
+        ImageRequest imageRequest = new ImageRequest("http://api.k780.com:88/?app=qr.get&data=" + privilegeCode + "&level=L&size=6",
                 new Response.Listener<Bitmap>() {
                     @Override
                     public void onResponse(Bitmap bitmap) {
@@ -66,7 +64,6 @@ public class QRCodeActivity extends AppCompatActivity {
                 mToast.show();
             }
         });
-
         mQueue.add(imageRequest);
     }
 

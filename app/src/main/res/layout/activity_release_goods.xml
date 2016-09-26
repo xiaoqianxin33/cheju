@@ -169,7 +169,7 @@
                     style="@style/rowstyle"
                     android:layout_marginTop="0dp"
                     android:paddingLeft="8dp"
-                    android:text="折后价"
+                    android:text="积分额"
                     />
 
                 <EditText
@@ -218,7 +218,6 @@
                         android:layout_gravity="center_vertical"
                         android:layout_marginEnd="8dp"
                         android:layout_marginRight="8dp"
-                        android:background="#EDEBE9"
                         android:src="@mipmap/blowarrow"/>
                 </LinearLayout>
 

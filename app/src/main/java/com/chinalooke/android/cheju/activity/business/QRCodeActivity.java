@@ -61,14 +61,12 @@ public class QRCodeActivity extends AppCompatActivity implements QRCodeView.Dele
                 Intent intent = new Intent(QRCodeActivity.this, SweepQcodeActivity.class);
                 intent.putExtra("result", result);
                 startActivity(intent);
-
             }
         } else {
             mToast.setText("网络不可用，请检查网络连接");
             mToast.show();
         }
     }
-
 
 
     @Override

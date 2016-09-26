@@ -30,6 +30,7 @@ import com.chinalooke.android.cheju.utills.MyUtills;
 import com.chinalooke.android.cheju.utills.NetUtil;
 
 import java.util.Date;
+import java.util.Random;
 
 import butterknife.Bind;
 import butterknife.ButterKnife;
@@ -159,7 +160,7 @@ public class GoodsCountActivity extends AppCompatActivity {
     private void saveLeanCloud() {
         Number oldScore = AVUser.getCurrentUser().getNumber("score");
         int i = oldScore.intValue();
-
+        mPrice = mNbtn.getNumber() * mUnitPrice + "";
         int i2 = Integer.parseInt(mPrice);
 
         if (i < i2) {
@@ -173,9 +174,9 @@ public class GoodsCountActivity extends AppCompatActivity {
                 @Override
                 public void done(AVException e) {
                     if (e == null) {
-                        String message = mCurrentUser.getObjectId() + ":" + mGoods.getObjectId()
-                                + ":" + mCount + ":" + mPrice;
-                        creatOrder(message);
+                        int creatRandom = creatRandom();
+
+                        creatOrder(creatRandom);
                     } else {
                         mProgressDialog.dismiss();
                         mToast.setText("购买失败，请重试");
@@ -187,7 +188,11 @@ public class GoodsCountActivity extends AppCompatActivity {
 
     }
 
-    private void creatOrder(String message) {
+    private int creatRandom() {
+        return (int) ((Math.random() * 9 + 1) * 10000000);
+    }
+
+    private void creatOrder(int message) {
         final AVObject order = new AVObject("Order");
         order.put("userId", mCurrentUser.getObjectId());
         order.put("addDate", new Date());
@@ -196,6 +201,7 @@ public class GoodsCountActivity extends AppCompatActivity {
         order.put("count", mCount);
         order.put("status", "2");
         order.put("type", "1");
+        order.put("privilegeCode", message + "");
         RequestQueue mQueue = Volley.newRequestQueue(getApplicationContext());
         ImageRequest imageRequest = new ImageRequest(
                 "http://api.k780.com:88/?app=qr.get&data=" + message + "&level=L&size=6",
@@ -217,6 +223,7 @@ public class GoodsCountActivity extends AppCompatActivity {
                                 } else {
                                     mToast.setText("订单创建失败，请重试");
                                     mToast.show();
+                                    Log.e("TAG", e.getMessage());
                                 }
                             }
                         });

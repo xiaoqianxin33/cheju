@@ -98,7 +98,6 @@ public class OrderFragment extends Fragment {
             childFragmentManager.setAccessible(true);
             childFragmentManager.set(this, null);
 
-
         } catch (NoSuchFieldException e) {
             throw new RuntimeException(e);
         } catch (IllegalAccessException e) {
