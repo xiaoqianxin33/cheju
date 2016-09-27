@@ -225,6 +225,8 @@
         </activity>
         <activity android:name=".activity.business.SweepQcodeActivity">
         </activity>
+        <activity android:name=".activity.business.ProfitActivity">
+        </activity>
     </application>
 
 </manifest>

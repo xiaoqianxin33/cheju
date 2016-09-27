@@ -40,6 +40,7 @@ public class SweepQcodeActivity extends AppCompatActivity {
     private Toast mToast;
     private AVObject mOrder;
     private ProgressDialog mProgressDialog;
+    private AVObject mShop;
 
     @Override
     protected void onCreate(Bundle savedInstanceState) {
@@ -48,6 +49,7 @@ public class SweepQcodeActivity extends AppCompatActivity {
         ButterKnife.bind(this);
         mCurrentUser = AVUser.getCurrentUser();
         mToast = MyLeanCloudApp.getToast();
+        mShop = MyLeanCloudApp.getAVObject();
         if (NetUtil.is_Network_Available(getApplicationContext())) {
             initData();
         } else {
@@ -139,6 +141,7 @@ public class SweepQcodeActivity extends AppCompatActivity {
                 public void done(AVException e) {
                     mProgressDialog.dismiss();
                     if (e == null) {
+                        saveStatistics();
                         MyUtills.showSingerDialog(SweepQcodeActivity.this, "提示", "本兑换券已消费！",
                                 new DialogInterface.OnClickListener() {
                                     @Override
@@ -166,5 +169,15 @@ public class SweepQcodeActivity extends AppCompatActivity {
             mToast.setText("该优惠劵已使用");
             mToast.show();
         }
+    }
+
+    private void saveStatistics() {
+        AVObject avObject = new AVObject("Statistics");
+        avObject.put("userId", mOrder.getString("userId"));
+        avObject.put("type", "user");
+        avObject.put("score", mOrder.getNumber("price"));
+        if (mShop != null)
+            avObject.put("shopId", mShop.getObjectId());
+        avObject.saveInBackground();
     }
 }

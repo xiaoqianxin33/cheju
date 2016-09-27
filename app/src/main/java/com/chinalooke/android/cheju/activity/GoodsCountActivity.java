@@ -201,6 +201,7 @@ public class GoodsCountActivity extends AppCompatActivity {
         order.put("count", mCount);
         order.put("status", "2");
         order.put("type", "1");
+        order.put("shopId", mShopId);
         order.put("privilegeCode", message + "");
         RequestQueue mQueue = Volley.newRequestQueue(getApplicationContext());
         ImageRequest imageRequest = new ImageRequest(

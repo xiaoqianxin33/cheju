@@ -10,6 +10,7 @@ import android.util.Log;
 import android.view.View;
 import android.view.ViewGroup;
 import android.widget.AbsListView;
+import android.widget.AdapterView;
 import android.widget.BaseAdapter;
 import android.widget.Button;
 import android.widget.ListView;
@@ -25,6 +26,7 @@ import com.avos.avoscloud.AVUser;
 import com.avos.avoscloud.DeleteCallback;
 import com.avos.avoscloud.FindCallback;
 import com.chinalooke.android.cheju.R;
+import com.chinalooke.android.cheju.activity.GodsActivity;
 import com.chinalooke.android.cheju.activity.ShopActivity;
 import com.chinalooke.android.cheju.config.MyLeanCloudApp;
 import com.chinalooke.android.cheju.utills.MyUtills;
@@ -41,7 +43,7 @@ import butterknife.Bind;
 import butterknife.ButterKnife;
 import butterknife.OnClick;
 
-public class MyGoodsActivity extends AppCompatActivity {
+public class MyGoodsActivity extends AppCompatActivity implements AdapterView.OnItemClickListener {
 
     @Bind(R.id.lv_goods)
     ListView mLvGoods;
@@ -107,6 +109,8 @@ public class MyGoodsActivity extends AppCompatActivity {
                 }
             }
         });
+
+        mLvGoods.setOnItemClickListener(this);
     }
 
     private void loadMore() {
@@ -147,6 +151,18 @@ public class MyGoodsActivity extends AppCompatActivity {
             }
 
         }
+    }
+
+    @Override
+    public void onItemClick(AdapterView<?> parent, View view, int position, long id) {
+        Log.e("TAG", "itemclick");
+        AVObject avObject = mGoods.get(position);
+        Intent intent = new Intent(MyGoodsActivity.this, GodsActivity.class);
+        Bundle bundle = new Bundle();
+        bundle.putParcelable("goods", avObject);
+        intent.putExtra("shop", true);
+        intent.putExtras(bundle);
+        startActivity(intent);
     }
 
     class MyAdapter extends BaseAdapter {
@@ -208,8 +224,7 @@ public class MyGoodsActivity extends AppCompatActivity {
             public void done(List<AVObject> list, AVException e) {
                 if (e == null) {
                     AVObject avObject1 = list.get(0);
-                    Log.e("TBB", list.size() + "");
-                    viewHolder.mTvFenlei.setText(avObject1.getString("name"));
+                    viewHolder.mTvFenlei.setText("分类：" + avObject1.getString("name"));
                 }
             }
         });
@@ -217,7 +232,8 @@ public class MyGoodsActivity extends AppCompatActivity {
         viewHolder.mTvGodsTitle.setText(avObject.getString("name"));
         Date createdAt = avObject.getDate("createdAt");
         String timeAll = MyUtills.getTimeAll(createdAt);
-        viewHolder.mTvTime.setText(timeAll);
+        String substring = timeAll.substring(0, 10);
+        viewHolder.mTvTime.setText(substring);
         viewHolder.mTvScore.setText(avObject.getString("score") + "积分");
         viewHolder.mBtnShanchu.setOnClickListener(new View.OnClickListener() {
             @Override
@@ -252,7 +268,16 @@ public class MyGoodsActivity extends AppCompatActivity {
                 });
             }
         });
-
+        viewHolder.mBtnBianji.setOnClickListener(new View.OnClickListener() {
+            @Override
+            public void onClick(View v) {
+                Intent intent = new Intent(MyGoodsActivity.this, ReleaseGoodsActivity.class);
+                Bundle bundle = new Bundle();
+                bundle.putParcelable("bianji", avObject);
+                intent.putExtras(bundle);
+                startActivity(intent);
+            }
+        });
     }
 
     static class ViewHolder {

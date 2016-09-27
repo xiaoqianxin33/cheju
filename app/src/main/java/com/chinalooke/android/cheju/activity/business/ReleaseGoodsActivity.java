@@ -81,6 +81,9 @@ public class ReleaseGoodsActivity extends AppCompatActivity implements BGASortab
     private ArrayList<AVObject> mTypes = new ArrayList<>();
     private int mCount = 0;
     private int mTypeChose = -1;
+    private AVObject mBianji;
+    private boolean ifBianji = false;
+    private ArrayList<String> mBianjiImages = new ArrayList<>();
 
     @Override
     protected void onCreate(Bundle savedInstanceState) {
@@ -94,6 +97,11 @@ public class ReleaseGoodsActivity extends AppCompatActivity implements BGASortab
     }
 
     private void initData() {
+        mBianji = getIntent().getParcelableExtra("bianji");
+        if (mBianji != null) {
+            ifBianji = true;
+            initBianjiView();
+        }
         int shopType = getIntent().getIntExtra("shopType", -1);
         if (NetUtil.is_Network_Available(getApplicationContext())) {
             AVQuery<AVObject> query = new AVQuery<>("GoodsType");
@@ -115,6 +123,55 @@ public class ReleaseGoodsActivity extends AppCompatActivity implements BGASortab
             mToast.show();
         }
     }
+
+    private void initBianjiView() {
+        mEtTitle.setText(mBianji.getString("name"));
+        mEtCurrentPrice.setText(mBianji.getString("currentPrice"));
+        mEtScore.setText(mBianji.getString("score"));
+        mEtDescript.setText(mBianji.getString("descript"));
+        mEtPrice.setText(mBianji.getString("price"));
+        mEtMark.setText(mBianji.getString("mark"));
+        if (NetUtil.is_Network_Available(getApplicationContext())) {
+            AVRelation<AVObject> images = mBianji.getRelation("images");
+            AVQuery<AVObject> query = images.getQuery();
+            query.findInBackground(new FindCallback<AVObject>() {
+                @Override
+                public void done(List<AVObject> list, AVException e) {
+                    if (e == null) {
+                        if (list != null && list.size() != 0) {
+                            for (AVObject avObject : list) {
+                                mBianjiImages.add(avObject.getString("url"));
+                            }
+                            if (mBianjiImages.size() != 0) {
+                                mPhotosSnpl.setData(mBianjiImages);
+                            }
+                        }
+                    }
+                }
+            });
+
+            String goodType = mBianji.getString("GoodsType");
+            if (!TextUtils.isEmpty(goodType)) {
+                AVQuery<AVObject> query1 = new AVQuery<>("GoodsType");
+                query1.whereEqualTo("objectId", goodType);
+                query1.findInBackground(new FindCallback<AVObject>() {
+                    @Override
+                    public void done(List<AVObject> list, AVException e) {
+                        if (e == null && list != null && list.size() != 0) {
+                            AVObject avObject = list.get(0);
+                            mTvType.setText(avObject.getString("name"));
+                        }
+                    }
+                });
+            }
+
+        } else {
+            mToast.setText("网络不可用，请检查网络连接");
+            mToast.show();
+        }
+
+    }
+
 
     private void initEvent() {
         mPhotosSnpl.init(this);
@@ -243,13 +300,18 @@ public class ReleaseGoodsActivity extends AppCompatActivity implements BGASortab
     }
 
     private void saveLeanCloud() {
-        final AVObject avObject = new AVObject("Goods");
+        final AVObject avObject;
+        if (ifBianji) {
+            avObject = mBianji;
+        } else {
+            avObject = new AVObject("Goods");
+        }
         avObject.put("name", mTitle);
         avObject.put("descript", mDescript);
         avObject.put("price", mPrice);
         avObject.put("currentPrice", mCurrentPrice);
         avObject.put("mark", mEtMark.getText().toString() + "");
-        avObject.put("GoodType", mTypes.get(mTypeChose).getObjectId());
+        avObject.put("GoodsType", mTypes.get(mTypeChose).getObjectId());
         avObject.put("score", mSroce);
         for (String s : mPhotosSnplData) {
             try {

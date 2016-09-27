@@ -127,8 +127,8 @@
                     style="@style/rowstyle"
                     android:layout_marginTop="0dp"
                     android:background="@null"
-                    android:inputType="number"
-                    android:text="¥0.0"/>
+                    android:hint="填写原价"
+                    android:inputType="number"/>
             </LinearLayout>
 
             <LinearLayout
@@ -152,8 +152,8 @@
                     style="@style/rowstyle"
                     android:layout_marginTop="0dp"
                     android:background="@null"
-                    android:inputType="number"
-                    android:text="¥0.0"/>
+                    android:hint="填写折后价格"
+                    android:inputType="number"/>
             </LinearLayout>
 
             <LinearLayout
@@ -177,8 +177,8 @@
                     style="@style/rowstyle"
                     android:layout_marginTop="0dp"
                     android:background="@null"
-                    android:inputType="number"
-                    android:text="0积分"/>
+                    android:hint="填写所需积分"
+                    android:inputType="number"/>
             </LinearLayout>
 
             <LinearLayout

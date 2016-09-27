@@ -1,6 +1,5 @@
 package com.chinalooke.android.cheju.activity;
 
-import android.app.ProgressDialog;
 import android.content.Context;
 import android.content.Intent;
 import android.graphics.Paint;
@@ -11,6 +10,7 @@ import android.view.Gravity;
 import android.view.LayoutInflater;
 import android.view.View;
 import android.view.WindowManager;
+import android.widget.Button;
 import android.widget.ImageView;
 import android.widget.LinearLayout;
 import android.widget.TextView;
@@ -22,7 +22,6 @@ import com.avos.avoscloud.AVQuery;
 import com.avos.avoscloud.AVRelation;
 import com.avos.avoscloud.AVUser;
 import com.avos.avoscloud.FindCallback;
-import com.avos.avoscloud.SaveCallback;
 import com.chinalooke.android.cheju.R;
 import com.chinalooke.android.cheju.utills.MyUtills;
 import com.chinalooke.android.cheju.utills.NetUtil;
@@ -70,6 +69,8 @@ public class GodsActivity extends AppCompatActivity implements MyScrollView.OnSc
     TextView mTvGodsScore;
     @Bind(R.id.iv_qrcode)
     ImageView mIvQrcode;
+    @Bind(R.id.btn_buy)
+    Button mBtnBuy;
 
 
     private int screenWidth;
@@ -86,6 +87,7 @@ public class GodsActivity extends AppCompatActivity implements MyScrollView.OnSc
     private AVObject mGood;
     private AVUser mCurrentUser;
     private String mShopId;
+    private Number mGrade = 0;
 
     @Override
     protected void onCreate(Bundle savedInstanceState) {
@@ -108,9 +110,9 @@ public class GodsActivity extends AppCompatActivity implements MyScrollView.OnSc
         mTvGodsPrice.setText("¥" + mGood.getString("price"));
         mTvGodsPrice.getPaint().setFlags(Paint.STRIKE_THRU_TEXT_FLAG);
         mTvSales.setText("已售" + mGood.getString("sales"));
-        Number grade = mGood.getNumber("grade");
-        setStar(grade);
-        mTvScoreGoods.setText(grade + "分");
+        mGrade = mGood.getNumber("grade");
+        setStar(mGrade);
+        mTvScoreGoods.setText(mGrade + "分");
         mTvGoodsDescript.setText(mGood.getString("descript"));
         mTvGodsScore.setText("消耗积分:" + mGood.getString("score"));
     }
@@ -126,6 +128,10 @@ public class GodsActivity extends AppCompatActivity implements MyScrollView.OnSc
     private void initData() {
         mShopId = getIntent().getStringExtra("shopid");
         mGood = getIntent().getParcelableExtra("goods");
+        boolean shop = getIntent().getBooleanExtra("shop", false);
+        if (shop) {
+            mBtnBuy.setVisibility(View.INVISIBLE);
+        }
         AVRelation<AVObject> images = mGood.getRelation("images");
         AVQuery<AVObject> query = images.getQuery();
         if (NetUtil.is_Network_Available(getApplicationContext())) {
