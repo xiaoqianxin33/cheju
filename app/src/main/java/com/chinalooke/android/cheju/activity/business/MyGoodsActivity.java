@@ -218,7 +218,7 @@ public class MyGoodsActivity extends AppCompatActivity implements AdapterView.On
             }
         });
 
-        String goodType = avObject.getString("GoodType");
+        String goodType = avObject.getString("GoodsType");
         AVQuery<AVObject> query1 = new AVQuery<>("GoodsType");
         query1.whereEqualTo("objectId", goodType);
         query1.findInBackground(new FindCallback<AVObject>() {

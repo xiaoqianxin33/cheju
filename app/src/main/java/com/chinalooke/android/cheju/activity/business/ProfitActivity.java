@@ -1,8 +1,9 @@
 package com.chinalooke.android.cheju.activity.business;
 
+import android.content.Intent;
 import android.os.Bundle;
-import android.support.v4.widget.SwipeRefreshLayout;
 import android.support.v7.app.AppCompatActivity;
+import android.util.Log;
 import android.view.View;
 import android.view.ViewGroup;
 import android.widget.BaseAdapter;
@@ -16,19 +17,21 @@ import com.avos.avoscloud.AVObject;
 import com.avos.avoscloud.AVQuery;
 import com.avos.avoscloud.AVUser;
 import com.avos.avoscloud.FindCallback;
+import com.bigkoo.pickerview.TimePickerView;
 import com.chinalooke.android.cheju.R;
 import com.chinalooke.android.cheju.config.MyLeanCloudApp;
 import com.chinalooke.android.cheju.utills.DateUtils;
 import com.chinalooke.android.cheju.utills.MyUtills;
 import com.chinalooke.android.cheju.utills.NetUtil;
-import com.chinalooke.android.cheju.view.SyListView;
 
 import java.util.ArrayList;
 import java.util.Calendar;
 import java.util.Collections;
 import java.util.Comparator;
 import java.util.Date;
+import java.util.HashMap;
 import java.util.List;
+import java.util.Map;
 
 import butterknife.Bind;
 import butterknife.ButterKnife;
@@ -52,8 +55,6 @@ public class ProfitActivity extends AppCompatActivity {
     ProgressBar mProgressBar;
     @Bind(R.id.lv_goods)
     ListView mLvGoods;
-    @Bind(R.id.sr)
-    SwipeRefreshLayout mSr;
     @Bind(R.id.activity_profit)
     LinearLayout mActivityProfit;
     private AVUser mCurrentUser;
@@ -62,6 +63,7 @@ public class ProfitActivity extends AppCompatActivity {
     private MyAdapter mMyAdapter;
     private String mTimeAll;
     private Date mDate;
+    private Map<String, List<AVObject>> mMap = new HashMap<>();
 
     @Override
     protected void onCreate(Bundle savedInstanceState) {
@@ -70,16 +72,17 @@ public class ProfitActivity extends AppCompatActivity {
         ButterKnife.bind(this);
         mCurrentUser = AVUser.getCurrentUser();
         mShop = MyLeanCloudApp.getAVObject();
+        mDate = new Date();
+        initView();
         mMyAdapter = new MyAdapter();
         mLvGoods.setAdapter(mMyAdapter);
         initData();
-        initView();
-
     }
 
     private void initData() {
         if (NetUtil.is_Network_Available(getApplicationContext())) {
             AVQuery<AVObject> query = new AVQuery<>("Order");
+            Log.e("TAG", mShop.getObjectId());
             query.whereEqualTo("shopId", mShop.getObjectId());
             query.findInBackground(new FindCallback<AVObject>() {
                 @Override
@@ -93,9 +96,9 @@ public class ProfitActivity extends AppCompatActivity {
                             for (AVObject avObject : list) {
                                 String status = avObject.getString("status");
                                 if ("4".equals(status)) {
-                                    Date updatedAt = avObject.getUpdatedAt();
-                                    String timeAll = MyUtills.getTimeAll(updatedAt);
-                                    if (mTimeAll.substring(0, 7).equals(timeAll.substring(0, 7))) {
+                                    Date updatedAt = avObject.getCreatedAt();
+                                    Log.e("TAG", updatedAt.getMonth() + "");
+                                    if (mDate.getMonth() == updatedAt.getMonth() && mDate.getYear() == updatedAt.getYear()) {
                                         mStatics.add(avObject);
                                     }
                                 }
@@ -104,11 +107,12 @@ public class ProfitActivity extends AppCompatActivity {
                                 mTvNo.setText("该月暂无数据");
                                 mTvNo.setVisibility(View.VISIBLE);
                             } else {
+                                getCount();
                                 Collections.sort(mStatics, new Comparator<AVObject>() {
                                     @Override
                                     public int compare(AVObject lhs, AVObject rhs) {
-                                        Date updatedAt = lhs.getUpdatedAt();
-                                        Date updatedAt1 = rhs.getUpdatedAt();
+                                        Date updatedAt = lhs.getCreatedAt();
+                                        Date updatedAt1 = rhs.getCreatedAt();
                                         if (updatedAt.before(updatedAt1)) {
                                             return 0;
                                         } else {
@@ -117,8 +121,8 @@ public class ProfitActivity extends AppCompatActivity {
                                     }
                                 });
                                 mTvNo.setVisibility(View.GONE);
+                                mMyAdapter.notifyDataSetChanged();
                             }
-                            mMyAdapter.notifyDataSetChanged();
                         }
                     } else {
                         mTvNo.setText("获取数据失败");
@@ -134,13 +138,30 @@ public class ProfitActivity extends AppCompatActivity {
 
     }
 
+    private List<String> mList = new ArrayList<>();
+
+    private void getCount() {
+        for (AVObject avObject : mStatics) {
+            int day = avObject.getCreatedAt().getDay();
+            if (!mMap.containsKey(day + "")) {
+                List<AVObject> list = new ArrayList<>();
+                list.add(avObject);
+                mMap.put(day + "", list);
+                mList.add(day + "");
+            } else {
+                List<AVObject> list = mMap.get(day + "");
+                list.add(avObject);
+                mMap.put(day + "", list);
+            }
+        }
+    }
+
     private void initView() {
-        mDate = new Date();
         mTimeAll = MyUtills.getTimeAll(mDate);
+        int month = mDate.getMonth();
         String substring = mTimeAll.substring(0, 4);
         mTvTimeYear.setText(substring + "年");
-        String substring1 = mTimeAll.substring(6, 8);
-        mTvTimeMonth.setText(substring1 + "月");
+        mTvTimeMonth.setText(++month + "月");
         mTvScores.setText(mCurrentUser.getNumber("score") + "");
     }
 
@@ -157,30 +178,40 @@ public class ProfitActivity extends AppCompatActivity {
                     finish();
                     break;
                 case R.id.tv_shoutian:
+                    startActivity(new Intent(ProfitActivity.this, AccountsActivity.class));
                     break;
                 case R.id.rl_time:
+                    showOption();
                     break;
             }
         }
     }
 
-    private int getSize(int i) {
-        if (i == 1 || i == 3 || i == 5 || i == 7 || i == 8 || i == 10 | i == 12) {
-            return 31;
-        } else if (i == 2) {
-            return 28;
-        } else {
-            return 20;
-        }
+    private void showOption() {
+        TimePickerView timePickerView = new TimePickerView(ProfitActivity.this, TimePickerView.Type.YEAR_MONTH);
+        timePickerView.setTime(new Date());
+        timePickerView.setCyclic(false);
+        timePickerView.setCancelable(true);
+
+        timePickerView.setOnTimeSelectListener(new TimePickerView.OnTimeSelectListener() {
+
+            @Override
+            public void onTimeSelect(Date date) {
+                mDate = date;
+                mStatics.clear();
+                initView();
+                initData();
+            }
+        });
+        timePickerView.show();
     }
 
     class MyAdapter extends BaseAdapter {
+        private List<String> mLists = new ArrayList<>();
 
         @Override
         public int getCount() {
-            String s = mTvTimeMonth.getText().toString();
-            String substring = s.substring(0, 2);
-            return getSize(Integer.parseInt(substring));
+            return mStatics.size();
         }
 
         @Override
@@ -195,106 +226,53 @@ public class ProfitActivity extends AppCompatActivity {
 
         @Override
         public View getView(int position, View convertView, ViewGroup parent) {
+            AVObject avObject = mStatics.get(position);
+            int day = avObject.getCreatedAt().getDay();
+            Date updatedAt = avObject.getCreatedAt();
             ViewHolder viewHolder;
-            if (convertView == null) {
-                convertView = View.inflate(getApplicationContext(), R.layout.item_profit_listview, null);
-                viewHolder = new ViewHolder(convertView);
-                convertView.setTag(viewHolder);
-            } else {
-                viewHolder = (ViewHolder) convertView.getTag();
-            }
-            String year = mTvTimeYear.getText().toString().substring(0, 4);
-            String month = mTvTimeMonth.getText().toString().substring(0, 2);
-            String day = "";
-            int p = position + 1;
-            if (position < 9) {
-                day = "0" + p;
-            } else {
-                day = p + "";
-            }
-            List<AVObject> dayList = new ArrayList<>();
-            String date = year + "-" + month + "-" + day;
-            String week = DateUtils.getWeek(date);
-            viewHolder.mTvTime.setText(p + "日(" + week + ")");
-            for (AVObject avObject : mStatics) {
-                Date updatedAt = avObject.getUpdatedAt();
-                String timeAll = MyUtills.getTimeAll(updatedAt);
-                String days = timeAll.substring(8, 10);
-                if (day.equals(days)) {
-                    dayList.add(avObject);
+            ViewHolder2 viewHolder2;
+            if (mLists.contains(day + "")) {
+                if (convertView == null) {
+                    convertView = View.inflate(getApplicationContext(), R.layout.item_inner_profit_listview, null);
+                    viewHolder = new ViewHolder(convertView);
+                    convertView.setTag(viewHolder);
+                } else {
+                    viewHolder = (ViewHolder) convertView.getTag();
                 }
-            }
-
-            if (dayList.size() == 0) {
-                viewHolder.mLinearLayout.setVisibility(View.GONE);
+                viewHolder.mTvTime.setText(updatedAt.getDay() + "日" + updatedAt.getHours() + ":" + updatedAt
+                        .getMinutes() + "完成");
+                viewHolder.mTvHao.setText(avObject.getObjectId());
+                viewHolder.mTvScore.setText(avObject.getString("price") + "积分");
             } else {
-                InnerAdapter innerAdapter = new InnerAdapter(dayList);
-                viewHolder.mLvProfit.setAdapter(innerAdapter);
+                if (convertView == null) {
+                    mLists.add(day + "");
+                    convertView = View.inflate(getApplicationContext(), R.layout.item_profit_listview, null);
+                    viewHolder2 = new ViewHolder2(convertView);
+                    convertView.setTag(viewHolder2);
+                } else {
+                    viewHolder2 = (ViewHolder2) convertView.getTag();
+                }
+                String date = mDate.getYear() + "-" + mDate.getMonth() + "-" + day;
+                String week = DateUtils.getWeek(date);
+                viewHolder2.mTvTime.setText(day + "日(" + week + ")");
+                viewHolder2.mTvTimeIner.setText(updatedAt.getDay() + "日" + updatedAt.getHours() + ":" + updatedAt
+                        .getMinutes() + "完成");
+                viewHolder2.mTvHao.setText(avObject.getObjectId());
+                viewHolder2.mTvScore.setText(avObject.getString("price") + "积分");
             }
-            return convertView;
-        }
-    }
-
-    static class ViewHolder {
-        @Bind(R.id.tv_time)
-        TextView mTvTime;
-        @Bind(R.id.ll_item)
-        LinearLayout mLinearLayout;
-        @Bind(R.id.lv_profit)
-        SyListView mLvProfit;
-
-        ViewHolder(View view) {
-            ButterKnife.bind(this, view);
-        }
-    }
-
-    class InnerAdapter extends BaseAdapter {
-        private List<AVObject> mArrayList;
-
-        InnerAdapter(List<AVObject> list) {
-            this.mArrayList = list;
-        }
-
-        @Override
-        public int getCount() {
-            return mArrayList.size();
-        }
-
-        @Override
-        public Object getItem(int position) {
-            return null;
-        }
-
-        @Override
-        public long getItemId(int position) {
-            return 0;
-        }
-
-        @Override
-        public View getView(int position, View convertView, ViewGroup parent) {
-            ViewHolder viewHolder;
-            if (convertView == null) {
-                convertView = View.inflate(getApplicationContext(), R.layout.item_inner_profit_listview, null);
-                viewHolder = new ViewHolder(convertView);
-                convertView.setTag(viewHolder);
-            } else {
-                viewHolder = (ViewHolder) convertView.getTag();
-            }
-            AVObject avObject = mArrayList.get(0);
-            viewHolder.mTvHao.setText(avObject.getObjectId());
-            viewHolder.mTvScore.setText(avObject.getNumber("price") + "积分");
-            String timeAll = MyUtills.getTimeAll(avObject.getUpdatedAt());
-            String substring = timeAll.substring(5);
-            viewHolder.mTvTime.setText(substring + "完成");
 
             return convertView;
         }
 
         class ViewHolder {
+            @Bind(R.id.dingdanhao)
+            TextView mDingdanhao;
             @Bind(R.id.tv_hao)
             TextView mTvHao;
             @Bind(R.id.tv_time)
             TextView mTvTime;
+            @Bind(R.id.textView12)
+            TextView mTextView12;
             @Bind(R.id.tv_score)
             TextView mTvScore;
 
@@ -302,5 +280,28 @@ public class ProfitActivity extends AppCompatActivity {
                 ButterKnife.bind(this, view);
             }
         }
+
+        class ViewHolder2 {
+            @Bind(R.id.tv_time)
+            TextView mTvTime;
+            @Bind(R.id.dingdanhao)
+            TextView mDingdanhao;
+            @Bind(R.id.tv_hao)
+            TextView mTvHao;
+            @Bind(R.id.tv_time_iner)
+            TextView mTvTimeIner;
+            @Bind(R.id.textView12)
+            TextView mTextView12;
+            @Bind(R.id.tv_score)
+            TextView mTvScore;
+            @Bind(R.id.ll_item)
+            LinearLayout mLlItem;
+
+            ViewHolder2(View view) {
+                ButterKnife.bind(this, view);
+            }
+        }
     }
+
+
 }

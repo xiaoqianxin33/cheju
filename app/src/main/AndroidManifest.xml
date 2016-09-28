@@ -227,6 +227,8 @@
         </activity>
         <activity android:name=".activity.business.ProfitActivity">
         </activity>
+        <activity android:name=".activity.business.AccountsActivity">
+        </activity>
     </application>
 
 </manifest>

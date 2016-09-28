@@ -84,7 +84,9 @@ public class BusinessMainActivity extends AppCompatActivity implements EasyPermi
                     }
 
                 case R.id.rl_profit:
-                    startActivity(new Intent(BusinessMainActivity.this, ProfitActivity.class));
+                    if (mAvObject != null) {
+                        startActivity(new Intent(BusinessMainActivity.this, ProfitActivity.class));
+                    }
                     break;
             }
         }

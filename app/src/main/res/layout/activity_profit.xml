@@ -54,7 +54,7 @@
             android:layout_alignParentRight="true"
             android:layout_centerVertical="true"
             android:layout_marginRight="16dp"
-            android:text="结算账户"
+            android:text="积分提现"
             android:textColor="@android:color/white"
             android:textSize="14sp"/>
     </RelativeLayout>
@@ -201,41 +201,32 @@
     </LinearLayout>
 
 
-    <android.support.v4.widget.SwipeRefreshLayout
-        android:id="@+id/sr"
+    <FrameLayout
         android:layout_width="match_parent"
-        android:layout_height="0dp"
-        android:layout_marginTop="16dp"
-        android:layout_weight="1">
+        android:layout_height="match_parent">
 
-        <FrameLayout
+        <TextView
+            android:id="@+id/tv_no"
             android:layout_width="match_parent"
-            android:layout_height="match_parent">
+            android:layout_height="200dp"
+            android:gravity="center"
+            android:text="暂无商品"
+            android:visibility="gone"/>
 
-            <TextView
-                android:id="@+id/tv_no"
-                android:layout_width="match_parent"
-                android:layout_height="200dp"
-                android:gravity="center"
-                android:text="暂无商品"
-                android:visibility="gone"/>
+        <ProgressBar
+            android:id="@+id/progressBar"
+            style="?android:attr/progressBarStyle"
+            android:layout_width="40dp"
+            android:layout_height="40dp"
+            android:layout_gravity="center"/>
 
-            <ProgressBar
-                android:id="@+id/progressBar"
-                style="?android:attr/progressBarStyle"
-                android:layout_width="40dp"
-                android:layout_height="40dp"
-                android:layout_gravity="center"/>
-
-            <ListView
-                android:id="@+id/lv_goods"
-                android:layout_width="match_parent"
-                android:layout_height="wrap_content"
-                android:divider="@color/background"
-                android:dividerHeight="16dp"/>
-        </FrameLayout>
-
-    </android.support.v4.widget.SwipeRefreshLayout>
+        <ListView
+            android:id="@+id/lv_goods"
+            android:layout_width="match_parent"
+            android:layout_height="match_parent"
+            android:divider="@color/background"
+            android:dividerHeight="16dp"/>
+    </FrameLayout>
 
 
 </LinearLayout>

@@ -16,12 +16,94 @@
         android:textColor="@color/front"
         android:textSize="14sp"/>
 
-    <com.chinalooke.android.cheju.view.SyListView
-        android:id="@+id/lv_profit"
+    <LinearLayout
         android:layout_width="match_parent"
-        android:layout_height="wrap_content"
+        android:layout_height="120dp"
         android:background="@android:color/white"
-        android:divider="@color/background"
-        android:dividerHeight="3dp"/>
+        android:orientation="vertical">
+
+        <RelativeLayout
+            android:layout_width="match_parent"
+            android:layout_height="0dp"
+            android:layout_weight="1"
+            android:gravity="center_vertical"
+            >
+
+
+            <TextView
+                android:id="@+id/dingdanhao"
+                android:layout_width="wrap_content"
+                android:layout_height="wrap_content"
+                android:layout_alignParentLeft="true"
+                android:layout_alignParentStart="true"
+                android:layout_centerVertical="true"
+                android:layout_marginLeft="16dp"
+                android:layout_marginStart="16dp"
+                android:gravity="center_vertical"
+                android:text="订单号:"
+                android:textColor="@color/front"
+                android:textSize="14sp"/>
+
+            <TextView
+                android:id="@+id/tv_hao"
+                android:layout_width="wrap_content"
+                android:layout_height="wrap_content"
+                android:layout_alignBottom="@+id/dingdanhao"
+                android:layout_marginLeft="19dp"
+                android:layout_marginStart="19dp"
+                android:layout_toEndOf="@+id/dingdanhao"
+                android:layout_toRightOf="@+id/dingdanhao"
+                android:text="121212"
+                android:textColor="@android:color/black"
+                android:textSize="16sp"/>
+
+        </RelativeLayout>
+
+
+        <RelativeLayout
+            android:layout_width="match_parent"
+            android:layout_height="0dp"
+            android:layout_weight="1"
+            >
+
+            <TextView
+                android:id="@+id/textView12"
+                android:layout_width="wrap_content"
+                android:layout_height="wrap_content"
+                android:layout_alignParentRight="true"
+                android:layout_centerVertical="true"
+                android:layout_marginRight="80dp"
+                android:layout_marginTop="25dp"
+                android:text="收益:"
+                android:textColor="@color/front"
+                android:textSize="14sp"/>
+
+            <TextView
+                android:id="@+id/tv_score"
+                android:layout_width="wrap_content"
+                android:layout_height="wrap_content"
+                android:layout_alignParentEnd="true"
+                android:layout_alignParentRight="true"
+                android:layout_centerVertical="true"
+                android:layout_marginRight="16dp"
+                android:layout_marginTop="27dp"
+                android:text="10积分"
+                android:textColor="@android:color/holo_red_light"
+                android:textSize="18sp"/>
+
+            <TextView
+                android:id="@+id/tv_time_iner"
+                android:layout_width="wrap_content"
+                android:layout_height="wrap_content"
+                android:layout_centerVertical="true"
+                android:layout_marginLeft="16dp"
+                android:gravity="center_vertical"
+                android:text="11日19:28完成"
+                android:textColor="@android:color/holo_red_light"
+                android:textSize="14sp"/>
+        </RelativeLayout>
+
+
+    </LinearLayout>
 
 </LinearLayout>
