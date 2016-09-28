@@ -96,7 +96,7 @@ public class ProfitActivity extends AppCompatActivity {
                             for (AVObject avObject : list) {
                                 String status = avObject.getString("status");
                                 if ("4".equals(status)) {
-                                    Date updatedAt = avObject.getCreatedAt();
+                                    Date updatedAt = avObject.getUpdatedAt();
                                     Log.e("TAG", updatedAt.getMonth() + "");
                                     if (mDate.getMonth() == updatedAt.getMonth() && mDate.getYear() == updatedAt.getYear()) {
                                         mStatics.add(avObject);
@@ -111,8 +111,8 @@ public class ProfitActivity extends AppCompatActivity {
                                 Collections.sort(mStatics, new Comparator<AVObject>() {
                                     @Override
                                     public int compare(AVObject lhs, AVObject rhs) {
-                                        Date updatedAt = lhs.getCreatedAt();
-                                        Date updatedAt1 = rhs.getCreatedAt();
+                                        Date updatedAt = lhs.getUpdatedAt();
+                                        Date updatedAt1 = rhs.getUpdatedAt();
                                         if (updatedAt.before(updatedAt1)) {
                                             return 0;
                                         } else {
@@ -142,7 +142,7 @@ public class ProfitActivity extends AppCompatActivity {
 
     private void getCount() {
         for (AVObject avObject : mStatics) {
-            int day = avObject.getCreatedAt().getDay();
+            int day = avObject.getUpdatedAt().getDay();
             if (!mMap.containsKey(day + "")) {
                 List<AVObject> list = new ArrayList<>();
                 list.add(avObject);
@@ -227,8 +227,8 @@ public class ProfitActivity extends AppCompatActivity {
         @Override
         public View getView(int position, View convertView, ViewGroup parent) {
             AVObject avObject = mStatics.get(position);
-            int day = avObject.getCreatedAt().getDay();
-            Date updatedAt = avObject.getCreatedAt();
+            int day = avObject.getUpdatedAt().getDay();
+            Date updatedAt = avObject.getUpdatedAt();
             ViewHolder viewHolder;
             ViewHolder2 viewHolder2;
             if (mLists.contains(day + "")) {
