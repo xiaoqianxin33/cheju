@@ -125,6 +125,8 @@ public class MyGoodsActivity extends AppCompatActivity implements AdapterView.On
             AVQuery<AVObject> query = goods.getQuery();
             query.limit(8);
             query.skip(mSkip);
+            query.setCachePolicy(AVQuery.CachePolicy.NETWORK_ELSE_CACHE);
+            query.setMaxCacheAge(24 * 3600); //设置缓存有效期
             query.findInBackground(new FindCallback<AVObject>() {
                 @Override
                 public void done(List<AVObject> list, AVException e) {
