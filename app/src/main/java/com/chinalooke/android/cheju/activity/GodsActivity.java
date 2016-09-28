@@ -111,6 +111,9 @@ public class GodsActivity extends AppCompatActivity implements MyScrollView.OnSc
         mTvGodsPrice.getPaint().setFlags(Paint.STRIKE_THRU_TEXT_FLAG);
         mTvSales.setText("已售" + mGood.getString("sales"));
         mGrade = mGood.getNumber("grade");
+        if (mGrade == null) {
+            mGrade = 0;
+        }
         setStar(mGrade);
         mTvScoreGoods.setText(mGrade + "分");
         mTvGoodsDescript.setText(mGood.getString("descript"));
