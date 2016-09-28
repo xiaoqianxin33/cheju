@@ -6,16 +6,6 @@
               android:background="@color/background"
               android:orientation="vertical">
 
-    <TextView
-        android:id="@+id/tv_time"
-        android:layout_width="match_parent"
-        android:layout_height="32dp"
-        android:layout_marginLeft="16dp"
-        android:layout_marginTop="16dp"
-        android:gravity="center_vertical"
-        android:text="11日（周一）"
-        android:textColor="@color/front"
-        android:textSize="14sp"/>
 
     <LinearLayout
         android:layout_width="match_parent"
@@ -73,7 +63,7 @@
                 android:layout_centerVertical="true"
                 android:layout_marginRight="80dp"
                 android:layout_marginTop="25dp"
-                android:text="收益:"
+                android:text="消费积分:"
                 android:textColor="@color/front"
                 android:textSize="14sp"/>
 
@@ -97,8 +87,20 @@
                 android:layout_centerVertical="true"
                 android:layout_marginLeft="16dp"
                 android:gravity="center_vertical"
-                android:text="11日19:28完成"
-                android:textColor="@android:color/holo_red_light"
+                android:text="下单时间:"
+                android:textColor="@color/front"
+                android:textSize="14sp"/>
+
+            <TextView
+                android:id="@+id/tv_time"
+                android:layout_width="wrap_content"
+                android:layout_height="wrap_content"
+                android:layout_centerVertical="true"
+                android:layout_marginLeft="8dp"
+                android:layout_toRightOf="@+id/tv_time_iner"
+                android:gravity="center_vertical"
+                android:text="TextView"
+                android:textColor="@color/front"
                 android:textSize="14sp"/>
         </RelativeLayout>
 

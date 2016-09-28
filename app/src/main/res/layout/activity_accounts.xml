@@ -72,8 +72,9 @@
             android:layout_width="0dp"
             android:layout_height="match_parent"
             android:layout_weight="1"
-            android:gravity="center"
+            android:gravity="center_vertical|right"
             android:text="姓名"
+            android:paddingRight="8dp"
             android:textColor="@android:color/black"
             android:textSize="16sp"/>
 
@@ -82,7 +83,9 @@
             android:layout_width="0dp"
             android:layout_height="match_parent"
             android:layout_weight="2.5"
-            android:hint="请输入姓名"/>
+            android:background="@null"
+            android:hint="请输入姓名"
+            android:textColor="@android:color/black"/>
 
     </LinearLayout>
 
@@ -99,8 +102,9 @@
             android:layout_width="0dp"
             android:layout_height="match_parent"
             android:layout_weight="1"
-            android:gravity="center"
+            android:gravity="center_vertical|right"
             android:text="支付宝账户"
+            android:paddingRight="8dp"
             android:textColor="@android:color/black"
             android:textSize="16sp"/>
 
@@ -109,7 +113,9 @@
             android:layout_width="0dp"
             android:layout_height="match_parent"
             android:layout_weight="2.5"
-            android:hint="请输入支付宝账户"/>
+            android:background="@null"
+            android:hint="请输入支付宝账户"
+            android:textColor="@android:color/black"/>
 
     </LinearLayout>
 
@@ -126,8 +132,9 @@
             android:layout_width="0dp"
             android:layout_height="match_parent"
             android:layout_weight="1"
-            android:gravity="center"
+            android:gravity="center_vertical|right"
             android:text="手机号"
+            android:paddingRight="8dp"
             android:textColor="@android:color/black"
             android:textSize="16sp"/>
 
@@ -136,8 +143,10 @@
             android:layout_width="0dp"
             android:layout_height="match_parent"
             android:layout_weight="2.5"
+            android:background="@null"
             android:hint="请输入手机号"
-            android:inputType="phone"/>
+            android:inputType="phone"
+            android:textColor="@android:color/black"/>
 
     </LinearLayout>
 

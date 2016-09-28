@@ -1,0 +1,91 @@
+<?xml version="1.0" encoding="utf-8"?>
+<LinearLayout
+    xmlns:android="http://schemas.android.com/apk/res/android"
+    xmlns:tools="http://schemas.android.com/tools"
+    android:id="@+id/activity_no_account"
+    android:layout_width="match_parent"
+    android:layout_height="match_parent"
+    android:background="@color/background"
+    android:orientation="vertical"
+    tools:context="com.chinalooke.android.cheju.activity.business.NoAccountActivity">
+
+
+    <RelativeLayout
+        android:id="@+id/title"
+        android:layout_width="match_parent"
+        android:layout_height="wrap_content"
+        android:background="#3D96F8"
+        >
+
+        <FrameLayout
+            android:id="@+id/iv_wirte_back"
+            android:layout_width="36dp"
+            android:layout_height="36dp"
+            android:layout_marginTop="6dp"
+            android:clickable="true">
+
+            <ImageView
+                android:layout_width="24dp"
+                android:layout_height="24dp"
+                android:layout_centerVertical="true"
+                android:layout_gravity="center"
+                android:layout_marginLeft="8dp"
+                android:background="@mipmap/icon_back"/>
+
+
+        </FrameLayout>
+
+        <TextView
+            android:layout_width="match_parent"
+            android:layout_height="@dimen/edit_height"
+            android:gravity="center"
+            android:paddingLeft="16dp"
+            android:text="未结算订单"
+            android:textColor="#FFFFFF"
+            android:textSize="18dp"
+            android:textStyle="bold"
+            />
+
+
+    </RelativeLayout>
+
+
+    <android.support.v4.widget.SwipeRefreshLayout
+        android:id="@+id/sr"
+        android:layout_width="match_parent"
+        android:layout_height="match_parent"
+        android:layout_marginTop="16dp"
+        >
+
+        <FrameLayout
+            android:layout_width="match_parent"
+            android:layout_height="match_parent">
+
+            <TextView
+                android:id="@+id/tv_no"
+                android:layout_width="match_parent"
+                android:layout_height="200dp"
+                android:gravity="center"
+                android:text="暂无商品"
+                android:visibility="gone"/>
+
+            <ProgressBar
+                android:id="@+id/progressBar"
+                style="?android:attr/progressBarStyle"
+                android:layout_width="40dp"
+                android:layout_height="40dp"
+                android:layout_gravity="center"/>
+
+            <ListView
+                android:id="@+id/lv_no_accont"
+                android:layout_width="match_parent"
+                android:layout_height="match_parent"
+                android:background="@android:color/white"
+                android:divider="@color/background"
+                android:dividerHeight="16dp"/>
+        </FrameLayout>
+
+    </android.support.v4.widget.SwipeRefreshLayout>
+
+
+</LinearLayout>

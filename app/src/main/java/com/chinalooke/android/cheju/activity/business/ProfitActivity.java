@@ -7,7 +7,6 @@ import android.util.Log;
 import android.view.View;
 import android.view.ViewGroup;
 import android.widget.BaseAdapter;
-import android.widget.LinearLayout;
 import android.widget.ListView;
 import android.widget.ProgressBar;
 import android.widget.TextView;
@@ -29,9 +28,7 @@ import java.util.Calendar;
 import java.util.Collections;
 import java.util.Comparator;
 import java.util.Date;
-import java.util.HashMap;
 import java.util.List;
-import java.util.Map;
 
 import butterknife.Bind;
 import butterknife.ButterKnife;
@@ -55,15 +52,13 @@ public class ProfitActivity extends AppCompatActivity {
     ProgressBar mProgressBar;
     @Bind(R.id.lv_goods)
     ListView mLvGoods;
-    @Bind(R.id.activity_profit)
-    LinearLayout mActivityProfit;
+
     private AVUser mCurrentUser;
     private AVObject mShop;
     private List<AVObject> mStatics = new ArrayList<>();
     private MyAdapter mMyAdapter;
-    private String mTimeAll;
     private Date mDate;
-    private Map<String, List<AVObject>> mMap = new HashMap<>();
+    private Calendar mCal;
 
     @Override
     protected void onCreate(Bundle savedInstanceState) {
@@ -71,6 +66,7 @@ public class ProfitActivity extends AppCompatActivity {
         setContentView(R.layout.activity_profit);
         ButterKnife.bind(this);
         mCurrentUser = AVUser.getCurrentUser();
+        mCal = Calendar.getInstance();
         mShop = MyLeanCloudApp.getAVObject();
         mDate = new Date();
         initView();
@@ -82,7 +78,6 @@ public class ProfitActivity extends AppCompatActivity {
     private void initData() {
         if (NetUtil.is_Network_Available(getApplicationContext())) {
             AVQuery<AVObject> query = new AVQuery<>("Order");
-            Log.e("TAG", mShop.getObjectId());
             query.whereEqualTo("shopId", mShop.getObjectId());
             query.findInBackground(new FindCallback<AVObject>() {
                 @Override
@@ -97,7 +92,6 @@ public class ProfitActivity extends AppCompatActivity {
                                 String status = avObject.getString("status");
                                 if ("4".equals(status)) {
                                     Date updatedAt = avObject.getUpdatedAt();
-                                    Log.e("TAG", updatedAt.getMonth() + "");
                                     if (mDate.getMonth() == updatedAt.getMonth() && mDate.getYear() == updatedAt.getYear()) {
                                         mStatics.add(avObject);
                                     }
@@ -107,7 +101,6 @@ public class ProfitActivity extends AppCompatActivity {
                                 mTvNo.setText("该月暂无数据");
                                 mTvNo.setVisibility(View.VISIBLE);
                             } else {
-                                getCount();
                                 Collections.sort(mStatics, new Comparator<AVObject>() {
                                     @Override
                                     public int compare(AVObject lhs, AVObject rhs) {
@@ -121,13 +114,14 @@ public class ProfitActivity extends AppCompatActivity {
                                     }
                                 });
                                 mTvNo.setVisibility(View.GONE);
-                                mMyAdapter.notifyDataSetChanged();
+
                             }
                         }
                     } else {
                         mTvNo.setText("获取数据失败");
                         mTvNo.setVisibility(View.VISIBLE);
                     }
+                    mMyAdapter.notifyDataSetChanged();
                 }
             });
         } else {
@@ -138,28 +132,11 @@ public class ProfitActivity extends AppCompatActivity {
 
     }
 
-    private List<String> mList = new ArrayList<>();
-
-    private void getCount() {
-        for (AVObject avObject : mStatics) {
-            int day = avObject.getUpdatedAt().getDay();
-            if (!mMap.containsKey(day + "")) {
-                List<AVObject> list = new ArrayList<>();
-                list.add(avObject);
-                mMap.put(day + "", list);
-                mList.add(day + "");
-            } else {
-                List<AVObject> list = mMap.get(day + "");
-                list.add(avObject);
-                mMap.put(day + "", list);
-            }
-        }
-    }
 
     private void initView() {
-        mTimeAll = MyUtills.getTimeAll(mDate);
+        String timeAll = MyUtills.getTimeAll(mDate);
         int month = mDate.getMonth();
-        String substring = mTimeAll.substring(0, 4);
+        String substring = timeAll.substring(0, 4);
         mTvTimeYear.setText(substring + "年");
         mTvTimeMonth.setText(++month + "月");
         mTvScores.setText(mCurrentUser.getNumber("score") + "");
@@ -168,12 +145,15 @@ public class ProfitActivity extends AppCompatActivity {
     int MIN_CLICK_DELAY_TIME = 1000;
     long lastClickTime = 0;
 
-    @OnClick({R.id.iv_wirte_back, R.id.tv_shoutian, R.id.rl_time})
+    @OnClick({R.id.iv_wirte_back, R.id.tv_shoutian, R.id.rl_time, R.id.tv_nojiesuan})
     public void onClick(View view) {
         long currentTime = Calendar.getInstance().getTimeInMillis();
         if (currentTime - lastClickTime > MIN_CLICK_DELAY_TIME) {
             lastClickTime = currentTime;
             switch (view.getId()) {
+                case R.id.tv_nojiesuan:
+                    startActivity(new Intent(ProfitActivity.this, NoAccountActivity.class));
+                    break;
                 case R.id.iv_wirte_back:
                     finish();
                     break;
@@ -199,6 +179,7 @@ public class ProfitActivity extends AppCompatActivity {
             public void onTimeSelect(Date date) {
                 mDate = date;
                 mStatics.clear();
+                mMyAdapter.clear();
                 initView();
                 initData();
             }
@@ -208,6 +189,10 @@ public class ProfitActivity extends AppCompatActivity {
 
     class MyAdapter extends BaseAdapter {
         private List<String> mLists = new ArrayList<>();
+
+        public void clear() {
+            mLists.clear();
+        }
 
         @Override
         public int getCount() {
@@ -227,8 +212,9 @@ public class ProfitActivity extends AppCompatActivity {
         @Override
         public View getView(int position, View convertView, ViewGroup parent) {
             AVObject avObject = mStatics.get(position);
-            int day = avObject.getUpdatedAt().getDay();
             Date updatedAt = avObject.getUpdatedAt();
+            mCal.setTime(updatedAt);
+            int day = mCal.get(Calendar.DATE);
             ViewHolder viewHolder;
             ViewHolder2 viewHolder2;
             if (mLists.contains(day + "")) {
@@ -239,7 +225,7 @@ public class ProfitActivity extends AppCompatActivity {
                 } else {
                     viewHolder = (ViewHolder) convertView.getTag();
                 }
-                viewHolder.mTvTime.setText(updatedAt.getDay() + "日" + updatedAt.getHours() + ":" + updatedAt
+                viewHolder.mTvTime.setText(day + "日" + updatedAt.getHours() + ":" + updatedAt
                         .getMinutes() + "完成");
                 viewHolder.mTvHao.setText(avObject.getObjectId());
                 viewHolder.mTvScore.setText(avObject.getString("price") + "积分");
@@ -265,14 +251,10 @@ public class ProfitActivity extends AppCompatActivity {
         }
 
         class ViewHolder {
-            @Bind(R.id.dingdanhao)
-            TextView mDingdanhao;
             @Bind(R.id.tv_hao)
             TextView mTvHao;
             @Bind(R.id.tv_time)
             TextView mTvTime;
-            @Bind(R.id.textView12)
-            TextView mTextView12;
             @Bind(R.id.tv_score)
             TextView mTvScore;
 
@@ -284,18 +266,12 @@ public class ProfitActivity extends AppCompatActivity {
         class ViewHolder2 {
             @Bind(R.id.tv_time)
             TextView mTvTime;
-            @Bind(R.id.dingdanhao)
-            TextView mDingdanhao;
             @Bind(R.id.tv_hao)
             TextView mTvHao;
             @Bind(R.id.tv_time_iner)
             TextView mTvTimeIner;
-            @Bind(R.id.textView12)
-            TextView mTextView12;
             @Bind(R.id.tv_score)
             TextView mTvScore;
-            @Bind(R.id.ll_item)
-            LinearLayout mLlItem;
 
             ViewHolder2(View view) {
                 ButterKnife.bind(this, view);
