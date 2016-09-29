@@ -50,7 +50,7 @@ public class QRCodeActivity extends AppCompatActivity implements QRCodeView.Dele
     }
 
     private void initData() {
-        mAvObject = getIntent().getParcelableExtra("shop");
+        mAvObject = MyLeanCloudApp.getAVObject();
     }
 
     @Override

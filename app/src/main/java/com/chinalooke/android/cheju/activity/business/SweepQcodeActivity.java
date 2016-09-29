@@ -61,7 +61,7 @@ public class SweepQcodeActivity extends AppCompatActivity {
     private void initData() {
         String result = getIntent().getStringExtra("result");
         AVQuery<AVObject> query = new AVQuery<>("Order");
-        query.whereEqualTo("objectId", result);
+        query.whereEqualTo("privilegeCode", result);
         query.findInBackground(new FindCallback<AVObject>() {
             @Override
             public void done(List<AVObject> list, AVException e) {
@@ -125,7 +125,7 @@ public class SweepQcodeActivity extends AppCompatActivity {
 
 
     private void saveLeanCould() {
-        String type = mOrder.getString("type");
+        String type = mOrder.getString("status");
 
         int i = Integer.parseInt(type);
         if (i == 2) {
@@ -133,7 +133,7 @@ public class SweepQcodeActivity extends AppCompatActivity {
             String price = mOrder.getString("price");
             int parseInt = Integer.parseInt(price);
             int nPrice = parseInt + score.intValue();
-            mOrder.put("type", 4 + "");
+            mOrder.put("status", 4 + "");
             mOrder.saveInBackground();
             mCurrentUser.put("score", nPrice);
             mCurrentUser.saveInBackground(new SaveCallback() {
@@ -175,7 +175,7 @@ public class SweepQcodeActivity extends AppCompatActivity {
         AVObject avObject = new AVObject("Statistics");
         avObject.put("userId", mOrder.getString("userId"));
         avObject.put("type", "user");
-        avObject.put("score", mOrder.getNumber("price"));
+        avObject.put("score", Integer.parseInt(mOrder.getString("price")));
         if (mShop != null)
             avObject.put("shopId", mShop.getObjectId());
         avObject.saveInBackground();

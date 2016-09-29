@@ -163,7 +163,7 @@ public class ShopActivity extends AppCompatActivity implements RevealBackgroundV
             Intent intent = new Intent(this, GodsActivity.class);
             Bundle bundle = new Bundle();
             bundle.putParcelable("goods", mAvObject);
-            intent.putExtra("shapid", mShop1.getObjectId());
+            intent.putExtra("shopid", mShop1.getObjectId());
             intent.putExtras(bundle);
             startActivity(intent);
         }

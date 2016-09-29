@@ -40,6 +40,7 @@ public class WriteQcodeActivity extends AppCompatActivity {
         mToast = MyLeanCloudApp.getToast();
         initData();
         initView();
+        mPswView.requestFocus();
     }
 
     private void initData() {

@@ -7,6 +7,7 @@ import android.graphics.Bitmap;
 import android.os.Bundle;
 import android.support.v7.app.AppCompatActivity;
 import android.text.Editable;
+import android.text.TextUtils;
 import android.text.TextWatcher;
 import android.util.Log;
 import android.view.View;
@@ -119,40 +120,44 @@ public class GoodsCountActivity extends AppCompatActivity {
                 finish();
                 break;
             case R.id.btn_submit:
-                MyUtills.showSingerDialog(this, "提示", "确定购买吗?", new DialogInterface.OnClickListener() {
-                    @Override
-                    public void onClick(DialogInterface dialog, int which) {
-                        dialog.dismiss();
-                        if (NetUtil.is_Network_Available(getApplicationContext())) {
-                            mProgressDialog = MyUtills.initDialog("购买中...", GoodsCountActivity.this);
-                            mProgressDialog.show();
-                            mCurrentUser.fetchIfNeededInBackground(new GetCallback<AVObject>() {
-                                @Override
-                                public void done(AVObject avObject, AVException e) {
-                                    if (e == null) {
-                                        saveLeanCloud();
-                                    } else {
-                                        mProgressDialog.dismiss();
-                                        mToast.setText("积分查询失败，请检查网络连接");
-                                        mToast.show();
+                if (mCurrentUser == null) {
+                    mToast.setText("请先登录");
+                    mToast.show();
+                } else {
+
+                    MyUtills.showSingerDialog(this, "提示", "确定购买吗?", new DialogInterface.OnClickListener() {
+                        @Override
+                        public void onClick(DialogInterface dialog, int which) {
+                            dialog.dismiss();
+                            if (NetUtil.is_Network_Available(getApplicationContext())) {
+                                mProgressDialog = MyUtills.initDialog("购买中...", GoodsCountActivity.this);
+                                mProgressDialog.show();
+                                mCurrentUser.fetchIfNeededInBackground(new GetCallback<AVObject>() {
+                                    @Override
+                                    public void done(AVObject avObject, AVException e) {
+                                        if (e == null) {
+                                            saveLeanCloud();
+                                        } else {
+                                            mProgressDialog.dismiss();
+                                            mToast.setText("积分查询失败，请检查网络连接");
+                                            mToast.show();
+                                        }
                                     }
-                                }
-                            });
+                                });
 
-                        } else {
-                            mToast.setText("网络不可用，请检查网络连接");
-                            mToast.show();
+                            } else {
+                                mToast.setText("网络不可用，请检查网络连接");
+                                mToast.show();
+                            }
+
                         }
-
-                    }
-                }, new DialogInterface.OnClickListener() {
-                    @Override
-                    public void onClick(DialogInterface dialog, int which) {
-                        dialog.dismiss();
-                    }
-                });
-
-
+                    }, new DialogInterface.OnClickListener() {
+                        @Override
+                        public void onClick(DialogInterface dialog, int which) {
+                            dialog.dismiss();
+                        }
+                    });
+                }
                 break;
         }
     }
@@ -242,6 +247,9 @@ public class GoodsCountActivity extends AppCompatActivity {
 
     private void refreshGoods() {
         String sales = mGoods.getString("sales");
+        if (TextUtils.isEmpty(sales)) {
+            sales = "0";
+        }
         int newSales = Integer.parseInt(sales) + mCount;
         mGoods.put("sales", newSales);
         mGoods.saveInBackground();
