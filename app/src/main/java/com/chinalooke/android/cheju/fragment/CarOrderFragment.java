@@ -328,7 +328,7 @@ public class CarOrderFragment extends Fragment implements AdapterView.OnItemClic
             }
         }
         viewHolder.mTvCompanyOrder.setText(avObject.getString("company"));
-        String price = avObject.getString("price");
+        String price = avObject.getString("discountPrice");
 
         if (TextUtils.isEmpty(price)) {
             viewHolder.mTvPriceOrderListview.setText("");

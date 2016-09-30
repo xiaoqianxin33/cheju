@@ -97,8 +97,8 @@ public class TakePhotoActivity extends AppCompatActivity {
         mXlvDetail.setPullLoadEnable(false);
         mMyAdapt = new MyAdapt();
         mXlvDetail.setAdapter(mMyAdapt);
-        mTvPrice.setText(mPolicy.getPrice());
-        mTvDiscountprice.setText(mPolicy.getDiscountPrice());
+        mTvPrice.setText("¥" + mPolicy.getPrice());
+        mTvDiscountprice.setText("¥" + mPolicy.getDiscountPrice());
         mTvPrice.getPaint().setFlags(Paint.STRIKE_THRU_TEXT_FLAG);
     }
 
